@@ -1,0 +1,11 @@
+/target/
+/.settings/
+/test-output/
+/.classpath
+/.project
+/atlassian-ide-plugin.xml
+.sonar
+.idea
+*.iml
+*.iws
+*.ipr
