@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Uppsala University Library
+ * Copyright 2015 Uppsala University Library
  *
  * This file is part of Cora.
  *
@@ -16,21 +16,19 @@
  *     You should have received a copy of the GNU General Public License
  *     along with Cora.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.uu.ub.cora.clientbasicdata.converter.datatojson;
 
-import se.uu.ub.cora.clientdata.converter.DataToJsonConverterFactory;
-import se.uu.ub.cora.clientdata.converter.DataToJsonConverterFactoryCreator;
-import se.uu.ub.cora.json.builder.JsonBuilderFactory;
-import se.uu.ub.cora.json.builder.org.OrgJsonBuilderFactoryAdapter;
+package se.uu.ub.cora.clientbasicdata;
 
-public class BasicDataToJsonConverterFactoryCreator implements DataToJsonConverterFactoryCreator {
+import static org.testng.Assert.assertEquals;
 
-	JsonBuilderFactory builderFactory = new OrgJsonBuilderFactoryAdapter();
+import org.testng.annotations.Test;
 
-	@Override
-	public DataToJsonConverterFactory createFactory() {
-		return BasicClientDataToJsonConverterFactory
-				.usingBuilderFactory(builderFactory);
+import se.uu.ub.cora.clientdata.ClientDataMissingException;
+
+public class BasicClientDataMissingExceptionTest {
+	@Test
+	public void testInitWithMessage() {
+		ClientDataMissingException dataMissingException = new ClientDataMissingException("Message");
+		assertEquals(dataMissingException.getMessage(), "Message");
 	}
-
 }

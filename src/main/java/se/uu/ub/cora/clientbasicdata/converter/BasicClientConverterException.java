@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Uppsala University Library
+ * Copyright 2015 Uppsala University Library
  *
  * This file is part of Cora.
  *
@@ -16,21 +16,26 @@
  *     You should have received a copy of the GNU General Public License
  *     along with Cora.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.uu.ub.cora.clientbasicdata.converter.datatojson;
 
-import se.uu.ub.cora.clientdata.converter.DataToJsonConverterFactory;
-import se.uu.ub.cora.clientdata.converter.DataToJsonConverterFactoryCreator;
-import se.uu.ub.cora.json.builder.JsonBuilderFactory;
-import se.uu.ub.cora.json.builder.org.OrgJsonBuilderFactoryAdapter;
+package se.uu.ub.cora.clientbasicdata.converter;
 
-public class BasicDataToJsonConverterFactoryCreator implements DataToJsonConverterFactoryCreator {
+import se.uu.ub.cora.clientdata.converter.ConversionException;
 
-	JsonBuilderFactory builderFactory = new OrgJsonBuilderFactoryAdapter();
+/**
+ * ConverterException is an implementation of {@link ConversionException} used when conversion
+ * exceptions occure while converting in basicData.
+ *
+ */
+public class BasicClientConverterException extends ConversionException {
 
-	@Override
-	public DataToJsonConverterFactory createFactory() {
-		return BasicClientDataToJsonConverterFactory
-				.usingBuilderFactory(builderFactory);
+	private static final long serialVersionUID = 6721892121477803630L;
+
+	public BasicClientConverterException(String message) {
+		super(message);
+	}
+
+	public BasicClientConverterException(String message, Exception exception) {
+		super(message, exception);
 	}
 
 }

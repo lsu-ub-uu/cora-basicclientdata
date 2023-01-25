@@ -18,19 +18,18 @@
  */
 package se.uu.ub.cora.clientbasicdata.converter.datatojson;
 
-import se.uu.ub.cora.clientdata.converter.DataToJsonConverterFactory;
-import se.uu.ub.cora.clientdata.converter.DataToJsonConverterFactoryCreator;
-import se.uu.ub.cora.json.builder.JsonBuilderFactory;
-import se.uu.ub.cora.json.builder.org.OrgJsonBuilderFactoryAdapter;
+import java.util.ArrayList;
+import java.util.List;
 
-public class BasicDataToJsonConverterFactoryCreator implements DataToJsonConverterFactoryCreator {
+import se.uu.ub.cora.clientdata.ClientAction;
 
-	JsonBuilderFactory builderFactory = new OrgJsonBuilderFactoryAdapter();
-
-	@Override
-	public DataToJsonConverterFactory createFactory() {
-		return BasicClientDataToJsonConverterFactory
-				.usingBuilderFactory(builderFactory);
-	}
-
+/**
+ * ActionsConverterData is a container for gathering action converter variables to be used on
+ * {@link BasicClientRecordActionsToJsonConverter}.
+ */
+class BasicClientActionsConverterData {
+	final List<ClientAction> actions = new ArrayList<>();
+	String recordType;
+	String recordId;
+	String searchRecordId;
 }

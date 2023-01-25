@@ -18,19 +18,29 @@
  */
 package se.uu.ub.cora.clientbasicdata.converter.datatojson;
 
-import se.uu.ub.cora.clientdata.converter.DataToJsonConverterFactory;
-import se.uu.ub.cora.clientdata.converter.DataToJsonConverterFactoryCreator;
+import se.uu.ub.cora.json.builder.JsonArrayBuilder;
 import se.uu.ub.cora.json.builder.JsonBuilderFactory;
-import se.uu.ub.cora.json.builder.org.OrgJsonBuilderFactoryAdapter;
+import se.uu.ub.cora.json.builder.JsonObjectBuilder;
+import se.uu.ub.cora.testutils.mcr.MethodCallRecorder;
 
-public class BasicDataToJsonConverterFactoryCreator implements DataToJsonConverterFactoryCreator {
+public class BasicClientJsonBuilderFactorySpy implements JsonBuilderFactory {
 
-	JsonBuilderFactory builderFactory = new OrgJsonBuilderFactoryAdapter();
+	MethodCallRecorder MCR = new MethodCallRecorder();
 
 	@Override
-	public DataToJsonConverterFactory createFactory() {
-		return BasicClientDataToJsonConverterFactory
-				.usingBuilderFactory(builderFactory);
+	public JsonArrayBuilder createArrayBuilder() {
+		BasicClientJsonArrayBuilderSpy out = new BasicClientJsonArrayBuilderSpy();
+		MCR.addCall();
+		MCR.addReturned(out);
+		return out;
+	}
+
+	@Override
+	public JsonObjectBuilder createObjectBuilder() {
+		MCR.addCall();
+		BasicClientJsonObjectBuilderSpy jsonObjectBuilderSpy = new BasicClientJsonObjectBuilderSpy();
+		MCR.addReturned(jsonObjectBuilderSpy);
+		return jsonObjectBuilderSpy;
 	}
 
 }

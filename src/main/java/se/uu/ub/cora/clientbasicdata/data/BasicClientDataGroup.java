@@ -54,15 +54,6 @@ public class BasicClientDataGroup implements ClientDataGroup {
 		this.nameInData = nameInData;
 	}
 
-	@Deprecated
-	public static ClientDataGroup asLinkWithNameInDataAndTypeAndId(String nameInData, String type,
-			String id) {
-		ClientDataGroup dataGroup = new BasicClientDataGroup(nameInData);
-		dataGroup.addChild(BasicClientDataAtomic.withNameInDataAndValue("linkedRecordType", type));
-		dataGroup.addChild(BasicClientDataAtomic.withNameInDataAndValue("linkedRecordId", id));
-		return dataGroup;
-	}
-
 	@Override
 	public boolean hasChildren() {
 		return !children.isEmpty();

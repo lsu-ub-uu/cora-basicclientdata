@@ -18,19 +18,25 @@
  */
 package se.uu.ub.cora.clientbasicdata.converter.datatojson;
 
+import se.uu.ub.cora.clientdata.ClientDataGroup;
 import se.uu.ub.cora.clientdata.converter.DataToJsonConverterFactory;
-import se.uu.ub.cora.clientdata.converter.DataToJsonConverterFactoryCreator;
 import se.uu.ub.cora.json.builder.JsonBuilderFactory;
-import se.uu.ub.cora.json.builder.org.OrgJsonBuilderFactoryAdapter;
+import se.uu.ub.cora.testutils.mcr.MethodCallRecorder;
 
-public class BasicDataToJsonConverterFactoryCreator implements DataToJsonConverterFactoryCreator {
+/**
+ * DataToJsonConverterForTest is an extension to DataGroupToJsonConverter to help with testing of
+ * method hookForSubclassesToImplementExtraConversion.
+ */
+public class BasicClientDataToJsonConverterForTest extends BasicClientDataGroupToJsonConverter {
+	MethodCallRecorder MCR = new MethodCallRecorder();
 
-	JsonBuilderFactory builderFactory = new OrgJsonBuilderFactoryAdapter();
-
-	@Override
-	public DataToJsonConverterFactory createFactory() {
-		return BasicClientDataToJsonConverterFactory
-				.usingBuilderFactory(builderFactory);
+	BasicClientDataToJsonConverterForTest(DataToJsonConverterFactory converterFactory,
+			JsonBuilderFactory builderFactory, ClientDataGroup dataGroup) {
+		super(converterFactory, builderFactory, dataGroup);
 	}
 
+	@Override
+	void hookForSubclassesToImplementExtraConversion() {
+		MCR.addCall();
+	}
 }
