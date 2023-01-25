@@ -24,13 +24,13 @@ import java.util.Map.Entry;
 import se.uu.ub.cora.clientbasicdata.data.BasicClientDataAtomic;
 import se.uu.ub.cora.clientdata.ClientConvertible;
 import se.uu.ub.cora.clientdata.ClientDataChild;
-import se.uu.ub.cora.clientdata.converter.JsonToDataConverter;
+import se.uu.ub.cora.clientdata.converter.JsonToClientDataConverter;
 import se.uu.ub.cora.json.parser.JsonObject;
 import se.uu.ub.cora.json.parser.JsonParseException;
 import se.uu.ub.cora.json.parser.JsonString;
 import se.uu.ub.cora.json.parser.JsonValue;
 
-public final class JsonToBasicClientDataAtomicConverter implements JsonToDataConverter {
+public final class JsonToBasicClientDataAtomicConverter implements JsonToClientDataConverter {
 	private static final String ATTRIBUTES = "attributes";
 	private static final String REPEAT_ID = "repeatId";
 	private static final int ALLOWED_MAX_NO_OF_ELEMENTS_AT_TOP_LEVEL = 4;

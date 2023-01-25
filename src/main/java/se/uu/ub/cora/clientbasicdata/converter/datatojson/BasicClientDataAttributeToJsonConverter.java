@@ -20,15 +20,15 @@
 package se.uu.ub.cora.clientbasicdata.converter.datatojson;
 
 import se.uu.ub.cora.clientdata.ClientDataAttribute;
-import se.uu.ub.cora.clientdata.converter.DataToJsonConverter;
+import se.uu.ub.cora.clientdata.converter.ClientDataToJsonConverter;
 import se.uu.ub.cora.json.builder.JsonBuilderFactory;
 import se.uu.ub.cora.json.builder.JsonObjectBuilder;
 
-public final class BasicClientDataAttributeToJsonConverter implements DataToJsonConverter {
+public final class BasicClientDataAttributeToJsonConverter implements ClientDataToJsonConverter {
 	private ClientDataAttribute dataAttribute;
 	JsonBuilderFactory factory;
 
-	public static DataToJsonConverter usingJsonBuilderFactoryAndDataAttribute(
+	public static ClientDataToJsonConverter usingJsonBuilderFactoryAndDataAttribute(
 			JsonBuilderFactory factory, ClientDataAttribute dataAttribute) {
 		return new BasicClientDataAttributeToJsonConverter(factory, dataAttribute);
 	}

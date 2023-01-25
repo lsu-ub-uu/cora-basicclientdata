@@ -19,15 +19,15 @@
 package se.uu.ub.cora.clientbasicdata.converter.datatojson;
 
 import se.uu.ub.cora.clientdata.ClientConvertible;
-import se.uu.ub.cora.clientdata.converter.DataToJsonConverter;
-import se.uu.ub.cora.clientdata.converter.DataToJsonConverterFactory;
+import se.uu.ub.cora.clientdata.converter.ClientDataToJsonConverter;
+import se.uu.ub.cora.clientdata.converter.ClientDataToJsonConverterFactory;
 import se.uu.ub.cora.testutils.mcr.MethodCallRecorder;
 
-public class BasicClientDataToJsonConverterFactorySpy implements DataToJsonConverterFactory {
+public class BasicClientDataToJsonConverterFactorySpy implements ClientDataToJsonConverterFactory {
 	MethodCallRecorder MCR = new MethodCallRecorder();
 
 	@Override
-	public DataToJsonConverter factorUsingConvertible(ClientConvertible convertible) {
+	public ClientDataToJsonConverter factorUsingConvertible(ClientConvertible convertible) {
 		MCR.addCall("convertible", convertible);
 		BasicClientDataToJsonConverterSpy converter = new BasicClientDataToJsonConverterSpy();
 		MCR.addReturned(converter);
@@ -35,7 +35,7 @@ public class BasicClientDataToJsonConverterFactorySpy implements DataToJsonConve
 	}
 
 	@Override
-	public DataToJsonConverter factorUsingBaseUrlAndConvertible(String baseUrl,
+	public ClientDataToJsonConverter factorUsingBaseUrlAndConvertible(String baseUrl,
 			ClientConvertible convertible) {
 		MCR.addCall("baseUrl", baseUrl, "convertible", convertible);
 		BasicClientDataToJsonConverterSpy converter = new BasicClientDataToJsonConverterSpy();
@@ -44,7 +44,7 @@ public class BasicClientDataToJsonConverterFactorySpy implements DataToJsonConve
 	}
 
 	@Override
-	public DataToJsonConverter factorUsingBaseUrlAndRecordUrlAndConvertible(String baseUrl,
+	public ClientDataToJsonConverter factorUsingBaseUrlAndRecordUrlAndConvertible(String baseUrl,
 			String recordUrl, ClientConvertible convertible) {
 		MCR.addCall("baseUrl", baseUrl, "recordUrl", recordUrl, "convertible", convertible);
 		BasicClientDataToJsonConverterSpy converter = new BasicClientDataToJsonConverterSpy();

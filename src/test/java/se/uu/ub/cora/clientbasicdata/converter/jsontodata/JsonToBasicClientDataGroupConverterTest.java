@@ -29,7 +29,7 @@ import se.uu.ub.cora.clientbasicdata.data.BasicClientDataAtomic;
 import se.uu.ub.cora.clientdata.ClientConvertible;
 import se.uu.ub.cora.clientdata.ClientDataChild;
 import se.uu.ub.cora.clientdata.ClientDataGroup;
-import se.uu.ub.cora.clientdata.converter.JsonToDataConverter;
+import se.uu.ub.cora.clientdata.converter.JsonToClientDataConverter;
 import se.uu.ub.cora.json.parser.JsonObject;
 import se.uu.ub.cora.json.parser.JsonParseException;
 import se.uu.ub.cora.json.parser.JsonValue;
@@ -46,7 +46,7 @@ public class JsonToBasicClientDataGroupConverterTest {
 	private ClientDataGroup createDataGroupForJsonString(String json) {
 		OrgJsonParser jsonParser = new OrgJsonParser();
 		JsonValue jsonValue = jsonParser.parseString(json);
-		JsonToDataConverter jsonToDataConverter = JsonToBasicClientDataGroupConverter
+		JsonToClientDataConverter jsonToDataConverter = JsonToBasicClientDataGroupConverter
 				.forJsonObject((JsonObject) jsonValue);
 		ClientConvertible dataPart = jsonToDataConverter.toInstance();
 		ClientDataGroup dataGroup = (ClientDataGroup) dataPart;

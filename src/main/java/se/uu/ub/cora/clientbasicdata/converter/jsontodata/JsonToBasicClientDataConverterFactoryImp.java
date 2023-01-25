@@ -22,14 +22,14 @@ package se.uu.ub.cora.clientbasicdata.converter.jsontodata;
 import java.util.ArrayList;
 import java.util.List;
 
-import se.uu.ub.cora.clientdata.converter.JsonToDataConverter;
-import se.uu.ub.cora.clientdata.converter.JsonToDataConverterFactory;
+import se.uu.ub.cora.clientdata.converter.JsonToClientDataConverter;
+import se.uu.ub.cora.clientdata.converter.JsonToClientDataConverterFactory;
 import se.uu.ub.cora.json.parser.JsonArray;
 import se.uu.ub.cora.json.parser.JsonObject;
 import se.uu.ub.cora.json.parser.JsonParseException;
 import se.uu.ub.cora.json.parser.JsonValue;
 
-public class JsonToBasicClientDataConverterFactoryImp implements JsonToDataConverterFactory {
+public class JsonToBasicClientDataConverterFactoryImp implements JsonToClientDataConverterFactory {
 
 	private static final int NUM_OF_RECORDLINK_CHILDREN = 2;
 	private static final int NUM_OF_RECORDLINK_CHILDREN_ONE_OPTIONAL = 3;
@@ -37,7 +37,7 @@ public class JsonToBasicClientDataConverterFactoryImp implements JsonToDataConve
 	private static final int NUM_OF_RESOURCELINK_CHILDREN = 4;
 
 	@Override
-	public JsonToDataConverter createForJsonObject(JsonValue jsonValue) {
+	public JsonToClientDataConverter createForJsonObject(JsonValue jsonValue) {
 		if (!(jsonValue instanceof JsonObject)) {
 			throw new JsonParseException("Json value is not an object, can not convert");
 		}
@@ -52,7 +52,7 @@ public class JsonToBasicClientDataConverterFactoryImp implements JsonToDataConve
 		return JsonToBasicClientDataAttributeConverter.forJsonObject(jsonObject);
 	}
 
-	private JsonToDataConverter createConverterForGroupOrLink(JsonObject jsonObject) {
+	private JsonToClientDataConverter createConverterForGroupOrLink(JsonObject jsonObject) {
 		List<String> foundNames = extractChildNames(jsonObject);
 		if (isRecordLink(foundNames)) {
 			return JsonToBasicClientDataRecordLinkConverter.forJsonObject(jsonObject);

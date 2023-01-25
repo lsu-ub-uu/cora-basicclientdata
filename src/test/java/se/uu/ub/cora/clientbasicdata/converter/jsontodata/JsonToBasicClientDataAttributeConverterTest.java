@@ -25,7 +25,7 @@ import org.testng.annotations.Test;
 
 import se.uu.ub.cora.clientbasicdata.data.BasicClientDataAttribute;
 import se.uu.ub.cora.clientdata.ClientConvertible;
-import se.uu.ub.cora.clientdata.converter.JsonToDataConverter;
+import se.uu.ub.cora.clientdata.converter.JsonToClientDataConverter;
 import se.uu.ub.cora.json.parser.JsonObject;
 import se.uu.ub.cora.json.parser.JsonParseException;
 import se.uu.ub.cora.json.parser.JsonParser;
@@ -50,7 +50,7 @@ public class JsonToBasicClientDataAttributeConverterTest {
 
 	private BasicClientDataAttribute createDataAttributeForJsonString(String json) {
 		JsonValue jsonValue = jsonParser.parseString(json);
-		JsonToDataConverter jsonToDataConverter = JsonToBasicClientDataAttributeConverter
+		JsonToClientDataConverter jsonToDataConverter = JsonToBasicClientDataAttributeConverter
 				.forJsonObject((JsonObject) jsonValue);
 		ClientConvertible dataPart = jsonToDataConverter.toInstance();
 		BasicClientDataAttribute dataAttribute = (BasicClientDataAttribute) dataPart;
@@ -70,7 +70,7 @@ public class JsonToBasicClientDataAttributeConverterTest {
 		String json = "{\"id\":[]}";
 
 		JsonValue jsonValue = jsonParser.parseString(json);
-		JsonToDataConverter jsonToDataConverter = JsonToBasicClientDataAttributeConverter
+		JsonToClientDataConverter jsonToDataConverter = JsonToBasicClientDataAttributeConverter
 				.forJsonObject((JsonObject) jsonValue);
 		jsonToDataConverter.toInstance();
 	}
@@ -79,7 +79,7 @@ public class JsonToBasicClientDataAttributeConverterTest {
 	public void testToClassWrongJsonExtraKeyValuePair() {
 		String json = "{\"attributeNameInData\":\"attributeValue\",\"id2\":\"value2\"}";
 		JsonValue jsonValue = jsonParser.parseString(json);
-		JsonToDataConverter jsonToDataConverter = JsonToBasicClientDataAttributeConverter
+		JsonToClientDataConverter jsonToDataConverter = JsonToBasicClientDataAttributeConverter
 				.forJsonObject((JsonObject) jsonValue);
 		jsonToDataConverter.toInstance();
 	}
@@ -88,7 +88,7 @@ public class JsonToBasicClientDataAttributeConverterTest {
 	public void testToClassWrongJsonExtraArray() {
 		String json = "{\"attributeNameInData\":\"attributeValue\",\"id2\":[]}";
 		JsonValue jsonValue = jsonParser.parseString(json);
-		JsonToDataConverter jsonToDataConverter = JsonToBasicClientDataAttributeConverter
+		JsonToClientDataConverter jsonToDataConverter = JsonToBasicClientDataAttributeConverter
 				.forJsonObject((JsonObject) jsonValue);
 		jsonToDataConverter.toInstance();
 	}

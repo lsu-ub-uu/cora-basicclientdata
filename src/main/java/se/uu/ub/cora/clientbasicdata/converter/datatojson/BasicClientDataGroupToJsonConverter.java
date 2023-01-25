@@ -23,26 +23,26 @@ import se.uu.ub.cora.clientdata.ClientConvertible;
 import se.uu.ub.cora.clientdata.ClientDataAttribute;
 import se.uu.ub.cora.clientdata.ClientDataChild;
 import se.uu.ub.cora.clientdata.ClientDataGroup;
-import se.uu.ub.cora.clientdata.converter.DataToJsonConverter;
-import se.uu.ub.cora.clientdata.converter.DataToJsonConverterFactory;
+import se.uu.ub.cora.clientdata.converter.ClientDataToJsonConverter;
+import se.uu.ub.cora.clientdata.converter.ClientDataToJsonConverterFactory;
 import se.uu.ub.cora.json.builder.JsonArrayBuilder;
 import se.uu.ub.cora.json.builder.JsonBuilderFactory;
 import se.uu.ub.cora.json.builder.JsonObjectBuilder;
 
-public class BasicClientDataGroupToJsonConverter implements DataToJsonConverter {
+public class BasicClientDataGroupToJsonConverter implements ClientDataToJsonConverter {
 
 	private ClientDataGroup dataGroup;
 	JsonObjectBuilder dataGroupJsonObjectBuilder;
 	JsonBuilderFactory jsonBuilderFactory;
-	DataToJsonConverterFactory converterFactory;
+	ClientDataToJsonConverterFactory converterFactory;
 
-	public static DataToJsonConverter usingConverterFactoryAndBuilderFactoryAndDataGroup(
-			DataToJsonConverterFactory converterFactory, JsonBuilderFactory builderFactory,
+	public static ClientDataToJsonConverter usingConverterFactoryAndBuilderFactoryAndDataGroup(
+			ClientDataToJsonConverterFactory converterFactory, JsonBuilderFactory builderFactory,
 			ClientDataGroup dataGroup) {
 		return new BasicClientDataGroupToJsonConverter(converterFactory, builderFactory, dataGroup);
 	}
 
-	BasicClientDataGroupToJsonConverter(DataToJsonConverterFactory converterFactory,
+	BasicClientDataGroupToJsonConverter(ClientDataToJsonConverterFactory converterFactory,
 			JsonBuilderFactory builderFactory, ClientDataGroup dataGroup) {
 		this.converterFactory = converterFactory;
 		this.jsonBuilderFactory = builderFactory;

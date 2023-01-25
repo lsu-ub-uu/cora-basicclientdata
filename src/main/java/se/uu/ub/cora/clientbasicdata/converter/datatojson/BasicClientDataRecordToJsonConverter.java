@@ -22,15 +22,15 @@ import java.util.Set;
 
 import se.uu.ub.cora.clientdata.ClientDataGroup;
 import se.uu.ub.cora.clientdata.ClientDataRecord;
-import se.uu.ub.cora.clientdata.converter.DataToJsonConverter;
-import se.uu.ub.cora.clientdata.converter.DataToJsonConverterFactory;
+import se.uu.ub.cora.clientdata.converter.ClientDataToJsonConverter;
+import se.uu.ub.cora.clientdata.converter.ClientDataToJsonConverterFactory;
 import se.uu.ub.cora.json.builder.JsonArrayBuilder;
 import se.uu.ub.cora.json.builder.JsonBuilderFactory;
 import se.uu.ub.cora.json.builder.JsonObjectBuilder;
 
-public class BasicClientDataRecordToJsonConverter implements DataToJsonConverter {
+public class BasicClientDataRecordToJsonConverter implements ClientDataToJsonConverter {
 
-	DataToJsonConverterFactory converterFactory;
+	ClientDataToJsonConverterFactory converterFactory;
 	JsonBuilderFactory builderFactory;
 	BasicClientRecordActionsToJsonConverter actionsConverter;
 	String baseUrl;
@@ -38,14 +38,14 @@ public class BasicClientDataRecordToJsonConverter implements DataToJsonConverter
 	private JsonObjectBuilder recordJsonObjectBuilder;
 
 	public static BasicClientDataRecordToJsonConverter usingConverterFactoryAndActionsConverterAndBuilderFactoryAndBaseUrlAndDataRecord(
-			DataToJsonConverterFactory converterFactory,
+			ClientDataToJsonConverterFactory converterFactory,
 			BasicClientRecordActionsToJsonConverter actionsConverter, JsonBuilderFactory builderFactory,
 			String baseUrl, ClientDataRecord dataRecord) {
 		return new BasicClientDataRecordToJsonConverter(converterFactory, actionsConverter, builderFactory,
 				baseUrl, dataRecord);
 	}
 
-	BasicClientDataRecordToJsonConverter(DataToJsonConverterFactory converterFactory,
+	BasicClientDataRecordToJsonConverter(ClientDataToJsonConverterFactory converterFactory,
 			BasicClientRecordActionsToJsonConverter actionsConverter, JsonBuilderFactory builderFactory,
 			String baseUrl, ClientDataRecord dataRecord) {
 		this.converterFactory = converterFactory;
@@ -108,14 +108,14 @@ public class BasicClientDataRecordToJsonConverter implements DataToJsonConverter
 	}
 
 	private void convertMainDataGroup() {
-		DataToJsonConverter dataToJsonConverter;
+		ClientDataToJsonConverter dataToJsonConverter;
 		dataToJsonConverter = createConverterForMainDataGroup();
 
 		JsonObjectBuilder jsonDataGroupObjectBuilder = dataToJsonConverter.toJsonObjectBuilder();
 		recordJsonObjectBuilder.addKeyJsonObjectBuilder("data", jsonDataGroupObjectBuilder);
 	}
 
-	private DataToJsonConverter createConverterForMainDataGroup() {
+	private ClientDataToJsonConverter createConverterForMainDataGroup() {
 		if (actionLinksShouldBeCreated()) {
 			String recordUrl = baseUrl + dataRecord.getType() + "/" + dataRecord.getId();
 			return converterFactory.factorUsingBaseUrlAndRecordUrlAndConvertible(baseUrl, recordUrl,

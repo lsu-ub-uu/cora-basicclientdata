@@ -25,12 +25,12 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import se.uu.ub.cora.clientbasicdata.data.spy.BasicClientDataRecordLinkOldSpy;
-import se.uu.ub.cora.clientdata.converter.DataToJsonConverter;
-import se.uu.ub.cora.clientdata.converter.DataToJsonConverterFactory;
+import se.uu.ub.cora.clientdata.converter.ClientDataToJsonConverter;
+import se.uu.ub.cora.clientdata.converter.ClientDataToJsonConverterFactory;
 
 public class BasicClientDataRecordLinkToJsonConverterTest {
 	BasicClientDataRecordLinkToJsonConverter recordLinkToJsonConverter;
-	DataToJsonConverterFactory converterFactory;
+	ClientDataToJsonConverterFactory converterFactory;
 	BasicClientJsonBuilderFactorySpy jsonBuilderFactorySpy;
 	String baseURL;
 	BasicClientDataRecordLinkOldSpy dataRecordLink;
@@ -54,7 +54,7 @@ public class BasicClientDataRecordLinkToJsonConverterTest {
 
 	@Test
 	public void testRecordLinkConverterExtendsGroupConverter() throws Exception {
-		assertTrue(recordLinkToJsonConverter instanceof DataToJsonConverter);
+		assertTrue(recordLinkToJsonConverter instanceof ClientDataToJsonConverter);
 		assertTrue(recordLinkToJsonConverter instanceof BasicClientDataGroupToJsonConverter);
 	}
 

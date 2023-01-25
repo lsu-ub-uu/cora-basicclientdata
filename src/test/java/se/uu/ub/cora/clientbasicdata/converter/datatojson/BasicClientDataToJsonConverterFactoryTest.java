@@ -35,13 +35,13 @@ import se.uu.ub.cora.clientbasicdata.data.BasicClientDataRecord;
 import se.uu.ub.cora.clientbasicdata.data.BasicClientDataRecordLink;
 import se.uu.ub.cora.clientbasicdata.data.BasicClientDataResourceLink;
 import se.uu.ub.cora.clientdata.ClientConvertible;
-import se.uu.ub.cora.clientdata.converter.DataToJsonConverter;
-import se.uu.ub.cora.clientdata.converter.DataToJsonConverterFactory;
+import se.uu.ub.cora.clientdata.converter.ClientDataToJsonConverter;
+import se.uu.ub.cora.clientdata.converter.ClientDataToJsonConverterFactory;
 import se.uu.ub.cora.json.builder.JsonBuilderFactory;
 import se.uu.ub.cora.testutils.mcr.MethodCallRecorder;
 
 public class BasicClientDataToJsonConverterFactoryTest {
-	private DataToJsonConverterFactory converterFactory;
+	private ClientDataToJsonConverterFactory converterFactory;
 	private BasicClientJsonBuilderFactorySpy builderFactory;
 	private BasicClientDataGroup coraDataGroup;
 	private BasicClientDataAtomic dataAtomic;
@@ -221,7 +221,7 @@ public class BasicClientDataToJsonConverterFactoryTest {
 
 		converterFactory.factorUsingBaseUrlAndRecordUrlAndConvertible(baseUrl, recordUrl,
 				dataRecordLink);
-		DataToJsonConverter converter = converterFactory.factorUsingConvertible(dataRecordLink);
+		ClientDataToJsonConverter converter = converterFactory.factorUsingConvertible(dataRecordLink);
 
 		assertTrue(converter instanceof BasicClientDataRecordLinkToJsonConverter);
 	}
@@ -246,7 +246,7 @@ public class BasicClientDataToJsonConverterFactoryTest {
 	public void testRectorDownToRecordLink2() throws Exception {
 
 		converterFactory.factorUsingBaseUrlAndConvertible(baseUrl, dataRecordLink);
-		DataToJsonConverter converter = converterFactory.factorUsingConvertible(dataRecordLink);
+		ClientDataToJsonConverter converter = converterFactory.factorUsingConvertible(dataRecordLink);
 
 		assertTrue(converter instanceof BasicClientDataGroupToJsonConverter);
 	}
@@ -256,7 +256,7 @@ public class BasicClientDataToJsonConverterFactoryTest {
 			throws Exception {
 
 		converterFactory.factorUsingBaseUrlAndConvertible(baseUrl, dataResourceLink);
-		DataToJsonConverter converter = converterFactory.factorUsingConvertible(dataResourceLink);
+		ClientDataToJsonConverter converter = converterFactory.factorUsingConvertible(dataResourceLink);
 
 		assertTrue(converter instanceof BasicClientDataGroupToJsonConverter);
 		assertFalse(converter instanceof BasicClientDataResourceLinkToJsonConverter);
@@ -266,7 +266,7 @@ public class BasicClientDataToJsonConverterFactoryTest {
 	public void testFactorUsingBaseUrlAndConvertibleUsesFactorUsingConvertible() throws Exception {
 		BasicDataToJsonConverterFactoryForTest forTest = new BasicDataToJsonConverterFactoryForTest();
 
-		DataToJsonConverter converter = forTest.factorUsingBaseUrlAndConvertible(baseUrl,
+		ClientDataToJsonConverter converter = forTest.factorUsingBaseUrlAndConvertible(baseUrl,
 				dataRecordLink);
 
 		assertEquals(forTest.baseUrl, baseUrl);
@@ -279,7 +279,7 @@ public class BasicClientDataToJsonConverterFactoryTest {
 	public void testFactorUsingRecordUrlAndConvertibleUsesFactorUsingConvertible()
 			throws Exception {
 		BasicDataToJsonConverterFactoryForTest forTest = new BasicDataToJsonConverterFactoryForTest();
-		DataToJsonConverter converter = forTest
+		ClientDataToJsonConverter converter = forTest
 				.factorUsingBaseUrlAndRecordUrlAndConvertible(baseUrl, recordUrl, dataRecordLink);
 
 		assertEquals(forTest.baseUrl, baseUrl);
@@ -296,9 +296,9 @@ public class BasicClientDataToJsonConverterFactoryTest {
 		MethodCallRecorder MCR = new MethodCallRecorder();
 
 		@Override
-		public DataToJsonConverter factorUsingConvertible(ClientConvertible convertible) {
+		public ClientDataToJsonConverter factorUsingConvertible(ClientConvertible convertible) {
 			MCR.addCall("convertible", convertible);
-			DataToJsonConverter converter = new BasicClientDataToJsonConverterSpy();
+			ClientDataToJsonConverter converter = new BasicClientDataToJsonConverterSpy();
 			MCR.addReturned(converter);
 			return converter;
 		}

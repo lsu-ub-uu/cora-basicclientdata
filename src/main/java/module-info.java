@@ -12,8 +12,8 @@ module se.uu.ub.cora.clientbasicdata {
 
 	provides se.uu.ub.cora.clientdata.ClientDataFactory with BasicClientDataFactory;
 
-	provides se.uu.ub.cora.clientdata.converter.JsonToDataConverterFactory
+	provides se.uu.ub.cora.clientdata.converter.JsonToClientDataConverterFactory
 			with JsonToBasicClientDataConverterFactoryImp;
-	provides se.uu.ub.cora.clientdata.converter.DataToJsonConverterFactoryCreator
+	provides se.uu.ub.cora.clientdata.converter.ClientDataToJsonConverterFactoryCreator
 			with BasicDataToJsonConverterFactoryCreator;
 }

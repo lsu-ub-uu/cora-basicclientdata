@@ -21,16 +21,16 @@ package se.uu.ub.cora.clientbasicdata.converter.datatojson;
 
 import se.uu.ub.cora.clientdata.ClientDataAtomic;
 import se.uu.ub.cora.clientdata.ClientDataAttribute;
-import se.uu.ub.cora.clientdata.converter.DataToJsonConverter;
+import se.uu.ub.cora.clientdata.converter.ClientDataToJsonConverter;
 import se.uu.ub.cora.json.builder.JsonBuilderFactory;
 import se.uu.ub.cora.json.builder.JsonObjectBuilder;
 
-public final class BasicClientDataAtomicToJsonConverter implements DataToJsonConverter {
+public final class BasicClientDataAtomicToJsonConverter implements ClientDataToJsonConverter {
 
 	private ClientDataAtomic dataAtomic;
 	JsonBuilderFactory factory;
 
-	public static DataToJsonConverter usingJsonBuilderFactoryAndDataAtomic(
+	public static ClientDataToJsonConverter usingJsonBuilderFactoryAndDataAtomic(
 			JsonBuilderFactory factory, ClientDataAtomic dataAtomic) {
 		return new BasicClientDataAtomicToJsonConverter(factory, dataAtomic);
 	}

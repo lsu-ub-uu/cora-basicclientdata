@@ -25,13 +25,13 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import se.uu.ub.cora.clientbasicdata.data.BasicClientDataAttribute;
-import se.uu.ub.cora.clientdata.converter.DataToJsonConverter;
-import se.uu.ub.cora.clientdata.converter.DataToJsonConverterFactory;
+import se.uu.ub.cora.clientdata.converter.ClientDataToJsonConverter;
+import se.uu.ub.cora.clientdata.converter.ClientDataToJsonConverterFactory;
 import se.uu.ub.cora.json.builder.JsonBuilderFactory;
 import se.uu.ub.cora.json.builder.org.OrgJsonBuilderFactoryAdapter;
 
 public class BasicClientDataAttributeToJsonConverterTest {
-	private DataToJsonConverterFactory dataToJsonConverterFactory;
+	private ClientDataToJsonConverterFactory dataToJsonConverterFactory;
 	private JsonBuilderFactory factory;
 
 	@BeforeMethod
@@ -45,7 +45,7 @@ public class BasicClientDataAttributeToJsonConverterTest {
 	public void testToJson() {
 		BasicClientDataAttribute dataAttribute = BasicClientDataAttribute
 				.withNameInDataAndValue("attributeNameInData", "attributeValue");
-		DataToJsonConverter dataToJsonConverter = dataToJsonConverterFactory
+		ClientDataToJsonConverter dataToJsonConverter = dataToJsonConverterFactory
 				.factorUsingConvertible(dataAttribute);
 		String json = dataToJsonConverter.toJson();
 
@@ -56,7 +56,7 @@ public class BasicClientDataAttributeToJsonConverterTest {
 	public void testToJsonEmptyValue() {
 		BasicClientDataAttribute dataAttribute = BasicClientDataAttribute
 				.withNameInDataAndValue("attributeNameInData", "");
-		DataToJsonConverter dataToJsonConverter = dataToJsonConverterFactory
+		ClientDataToJsonConverter dataToJsonConverter = dataToJsonConverterFactory
 				.factorUsingConvertible(dataAttribute);
 		String json = dataToJsonConverter.toJson();
 
@@ -67,7 +67,7 @@ public class BasicClientDataAttributeToJsonConverterTest {
 	public void testToJsonCompactFormat() {
 		BasicClientDataAttribute dataAttribute = BasicClientDataAttribute
 				.withNameInDataAndValue("attributeNameInData", "attributeValue");
-		DataToJsonConverter dataToJsonConverter = dataToJsonConverterFactory
+		ClientDataToJsonConverter dataToJsonConverter = dataToJsonConverterFactory
 				.factorUsingConvertible(dataAttribute);
 		String json = dataToJsonConverter.toJsonCompactFormat();
 

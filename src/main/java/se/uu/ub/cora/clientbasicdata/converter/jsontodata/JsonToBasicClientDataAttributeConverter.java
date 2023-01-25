@@ -21,13 +21,13 @@ package se.uu.ub.cora.clientbasicdata.converter.jsontodata;
 
 import se.uu.ub.cora.clientbasicdata.data.BasicClientDataAttribute;
 import se.uu.ub.cora.clientdata.ClientConvertible;
-import se.uu.ub.cora.clientdata.converter.JsonToDataConverter;
+import se.uu.ub.cora.clientdata.converter.JsonToClientDataConverter;
 import se.uu.ub.cora.json.parser.JsonObject;
 import se.uu.ub.cora.json.parser.JsonParseException;
 import se.uu.ub.cora.json.parser.JsonString;
 import se.uu.ub.cora.json.parser.JsonValue;
 
-public final class JsonToBasicClientDataAttributeConverter implements JsonToDataConverter {
+public final class JsonToBasicClientDataAttributeConverter implements JsonToClientDataConverter {
 
 	private JsonObject jsonObject;
 

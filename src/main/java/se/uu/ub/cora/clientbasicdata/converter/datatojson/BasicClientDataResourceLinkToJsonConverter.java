@@ -20,13 +20,13 @@ package se.uu.ub.cora.clientbasicdata.converter.datatojson;
 
 import se.uu.ub.cora.clientdata.ClientDataGroup;
 import se.uu.ub.cora.clientdata.ClientDataResourceLink;
-import se.uu.ub.cora.clientdata.converter.DataToJsonConverter;
-import se.uu.ub.cora.clientdata.converter.DataToJsonConverterFactory;
+import se.uu.ub.cora.clientdata.converter.ClientDataToJsonConverter;
+import se.uu.ub.cora.clientdata.converter.ClientDataToJsonConverterFactory;
 import se.uu.ub.cora.json.builder.JsonBuilderFactory;
 import se.uu.ub.cora.json.builder.JsonObjectBuilder;
 
 public class BasicClientDataResourceLinkToJsonConverter extends BasicClientDataGroupToJsonConverter
-		implements DataToJsonConverter {
+		implements ClientDataToJsonConverter {
 
 	private ClientDataResourceLink dataResourceLink;
 	String recordURL;
@@ -34,7 +34,7 @@ public class BasicClientDataResourceLinkToJsonConverter extends BasicClientDataG
 	private static final String READ = "read";
 	private static final String GET = "GET";
 
-	private BasicClientDataResourceLinkToJsonConverter(DataToJsonConverterFactory converterFactory,
+	private BasicClientDataResourceLinkToJsonConverter(ClientDataToJsonConverterFactory converterFactory,
 			ClientDataResourceLink dataResourceLink, String recordURL,
 			JsonBuilderFactory jsonBuilderFactory) {
 
@@ -45,7 +45,7 @@ public class BasicClientDataResourceLinkToJsonConverter extends BasicClientDataG
 	}
 
 	public static BasicClientDataResourceLinkToJsonConverter usingConverterFactoryJsonBuilderFactoryAndDataResourceLinkAndRecordUrl(
-			DataToJsonConverterFactory converterFactory, JsonBuilderFactory factory,
+			ClientDataToJsonConverterFactory converterFactory, JsonBuilderFactory factory,
 			ClientDataResourceLink convertible, String recordUrl) {
 
 		return new BasicClientDataResourceLinkToJsonConverter(converterFactory, convertible, recordUrl,

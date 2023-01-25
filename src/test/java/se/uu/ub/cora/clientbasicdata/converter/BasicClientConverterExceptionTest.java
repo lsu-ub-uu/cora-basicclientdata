@@ -24,14 +24,14 @@ import static org.testng.Assert.assertTrue;
 
 import org.testng.annotations.Test;
 
-import se.uu.ub.cora.clientdata.converter.ConversionException;
+import se.uu.ub.cora.clientdata.converter.ClientDataConversionException;
 
 public class BasicClientConverterExceptionTest {
 
 	@Test
 	public void testName() throws Exception {
 		BasicClientConverterException converterException = new BasicClientConverterException("message");
-		assertTrue(converterException instanceof ConversionException);
+		assertTrue(converterException instanceof ClientDataConversionException);
 	}
 
 	@Test

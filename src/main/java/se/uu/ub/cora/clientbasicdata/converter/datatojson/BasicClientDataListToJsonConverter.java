@@ -21,26 +21,26 @@ package se.uu.ub.cora.clientbasicdata.converter.datatojson;
 
 import se.uu.ub.cora.clientdata.ClientData;
 import se.uu.ub.cora.clientdata.ClientDataList;
-import se.uu.ub.cora.clientdata.converter.DataToJsonConverter;
-import se.uu.ub.cora.clientdata.converter.DataToJsonConverterFactory;
+import se.uu.ub.cora.clientdata.converter.ClientDataToJsonConverter;
+import se.uu.ub.cora.clientdata.converter.ClientDataToJsonConverterFactory;
 import se.uu.ub.cora.json.builder.JsonArrayBuilder;
 import se.uu.ub.cora.json.builder.JsonBuilderFactory;
 import se.uu.ub.cora.json.builder.JsonObjectBuilder;
 
-public class BasicClientDataListToJsonConverter implements DataToJsonConverter {
-	DataToJsonConverterFactory converterFactory;
+public class BasicClientDataListToJsonConverter implements ClientDataToJsonConverter {
+	ClientDataToJsonConverterFactory converterFactory;
 	JsonBuilderFactory builderFactory;
 	ClientDataList dataList;
 	private JsonObjectBuilder dataListBuilder;
 	private JsonArrayBuilder dataBuilder;
 
 	public static BasicClientDataListToJsonConverter usingJsonFactoryForDataList(
-			DataToJsonConverterFactory converterFactory, JsonBuilderFactory builderFactory,
+			ClientDataToJsonConverterFactory converterFactory, JsonBuilderFactory builderFactory,
 			ClientDataList restRecordList) {
 		return new BasicClientDataListToJsonConverter(converterFactory, builderFactory, restRecordList);
 	}
 
-	BasicClientDataListToJsonConverter(DataToJsonConverterFactory converterFactory,
+	BasicClientDataListToJsonConverter(ClientDataToJsonConverterFactory converterFactory,
 			JsonBuilderFactory builderFactory, ClientDataList dataList) {
 		this.converterFactory = converterFactory;
 		this.builderFactory = builderFactory;
@@ -70,7 +70,7 @@ public class BasicClientDataListToJsonConverter implements DataToJsonConverter {
 
 	private void addAllRecordsOrGroupsFromListToDataBuilder() {
 		for (ClientData data : dataList.getDataList()) {
-			DataToJsonConverter dataConverter = converterFactory.factorUsingConvertible(data);
+			ClientDataToJsonConverter dataConverter = converterFactory.factorUsingConvertible(data);
 			JsonObjectBuilder jsonObjectBuilder = dataConverter.toJsonObjectBuilder();
 			dataBuilder.addJsonObjectBuilder(jsonObjectBuilder);
 		}

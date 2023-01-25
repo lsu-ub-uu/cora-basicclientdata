@@ -23,8 +23,8 @@ import java.util.List;
 import se.uu.ub.cora.clientbasicdata.data.BasicClientDataAtomic;
 import se.uu.ub.cora.clientbasicdata.data.BasicClientDataGroup;
 import se.uu.ub.cora.clientdata.ClientAction;
-import se.uu.ub.cora.clientdata.converter.DataToJsonConverter;
-import se.uu.ub.cora.clientdata.converter.DataToJsonConverterFactory;
+import se.uu.ub.cora.clientdata.converter.ClientDataToJsonConverter;
+import se.uu.ub.cora.clientdata.converter.ClientDataToJsonConverterFactory;
 import se.uu.ub.cora.json.builder.JsonBuilderFactory;
 import se.uu.ub.cora.json.builder.JsonObjectBuilder;
 
@@ -36,7 +36,7 @@ public class BasicClientRecordActionsToJsonConverterImp implements BasicClientRe
 	private static final String APPLICATION_VND_UUB_RECORD_LIST_JSON = "application/vnd.uub.recordList+json";
 	private static final String APPLICATION_VND_UUB_RECORD_JSON = "application/vnd.uub.record+json";
 
-	DataToJsonConverterFactory converterFactory;
+	ClientDataToJsonConverterFactory converterFactory;
 	JsonBuilderFactory builderFactory;
 	String baseUrl;
 	private JsonObjectBuilder mainBuilder;
@@ -51,12 +51,12 @@ public class BasicClientRecordActionsToJsonConverterImp implements BasicClientRe
 	private BasicClientActionsConverterData actionsConverterData;
 
 	public static BasicClientRecordActionsToJsonConverterImp usingConverterFactoryAndBuilderFactoryAndBaseUrl(
-			DataToJsonConverterFactory converterFactory, JsonBuilderFactory builderFactory,
+			ClientDataToJsonConverterFactory converterFactory, JsonBuilderFactory builderFactory,
 			String baseUrl) {
 		return new BasicClientRecordActionsToJsonConverterImp(converterFactory, builderFactory, baseUrl);
 	}
 
-	private BasicClientRecordActionsToJsonConverterImp(DataToJsonConverterFactory converterFactory,
+	private BasicClientRecordActionsToJsonConverterImp(ClientDataToJsonConverterFactory converterFactory,
 			JsonBuilderFactory builderFactory, String baseUrl) {
 		this.converterFactory = converterFactory;
 		this.builderFactory = builderFactory;
@@ -194,7 +194,7 @@ public class BasicClientRecordActionsToJsonConverterImp implements BasicClientRe
 
 	private JsonObjectBuilder convertBody() {
 		BasicClientDataGroup workOrder = createWorkOrderDataGroup();
-		DataToJsonConverter workOrderConverter = converterFactory.factorUsingConvertible(workOrder);
+		ClientDataToJsonConverter workOrderConverter = converterFactory.factorUsingConvertible(workOrder);
 		return workOrderConverter.toJsonObjectBuilder();
 	}
 

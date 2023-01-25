@@ -24,14 +24,14 @@ import java.util.Map.Entry;
 import se.uu.ub.cora.clientbasicdata.data.BasicClientDataGroup;
 import se.uu.ub.cora.clientdata.ClientConvertible;
 import se.uu.ub.cora.clientdata.ClientDataChild;
-import se.uu.ub.cora.clientdata.converter.JsonToDataConverter;
+import se.uu.ub.cora.clientdata.converter.JsonToClientDataConverter;
 import se.uu.ub.cora.json.parser.JsonArray;
 import se.uu.ub.cora.json.parser.JsonObject;
 import se.uu.ub.cora.json.parser.JsonParseException;
 import se.uu.ub.cora.json.parser.JsonString;
 import se.uu.ub.cora.json.parser.JsonValue;
 
-public class JsonToBasicClientDataGroupConverter implements JsonToDataConverter {
+public class JsonToBasicClientDataGroupConverter implements JsonToClientDataConverter {
 
 	private static final int ONE_OPTIONAL_KEY_IS_PRESENT = 3;
 	private static final String CHILDREN = "children";
@@ -165,7 +165,7 @@ public class JsonToBasicClientDataGroupConverter implements JsonToDataConverter 
 
 	private void addChildToGroup(JsonObject child) {
 		JsonToBasicClientDataConverterFactoryImp jsonToDataConverterFactoryImp = new JsonToBasicClientDataConverterFactoryImp();
-		JsonToDataConverter childJsonToDataConverter = jsonToDataConverterFactoryImp
+		JsonToClientDataConverter childJsonToDataConverter = jsonToDataConverterFactoryImp
 				.createForJsonObject(child);
 		dataGroup.addChild((ClientDataChild) childJsonToDataConverter.toInstance());
 	}

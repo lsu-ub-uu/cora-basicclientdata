@@ -19,14 +19,14 @@
 
 package se.uu.ub.cora.clientbasicdata.converter;
 
-import se.uu.ub.cora.clientdata.converter.ConversionException;
+import se.uu.ub.cora.clientdata.converter.ClientDataConversionException;
 
 /**
- * ConverterException is an implementation of {@link ConversionException} used when conversion
+ * ConverterException is an implementation of {@link ClientDataConversionException} used when conversion
  * exceptions occure while converting in basicData.
  *
  */
-public class BasicClientConverterException extends ConversionException {
+public class BasicClientConverterException extends ClientDataConversionException {
 
 	private static final long serialVersionUID = 6721892121477803630L;
 

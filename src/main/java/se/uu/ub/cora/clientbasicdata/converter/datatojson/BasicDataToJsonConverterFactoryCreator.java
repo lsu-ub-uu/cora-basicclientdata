@@ -18,17 +18,17 @@
  */
 package se.uu.ub.cora.clientbasicdata.converter.datatojson;
 
-import se.uu.ub.cora.clientdata.converter.DataToJsonConverterFactory;
-import se.uu.ub.cora.clientdata.converter.DataToJsonConverterFactoryCreator;
+import se.uu.ub.cora.clientdata.converter.ClientDataToJsonConverterFactory;
+import se.uu.ub.cora.clientdata.converter.ClientDataToJsonConverterFactoryCreator;
 import se.uu.ub.cora.json.builder.JsonBuilderFactory;
 import se.uu.ub.cora.json.builder.org.OrgJsonBuilderFactoryAdapter;
 
-public class BasicDataToJsonConverterFactoryCreator implements DataToJsonConverterFactoryCreator {
+public class BasicDataToJsonConverterFactoryCreator implements ClientDataToJsonConverterFactoryCreator {
 
 	JsonBuilderFactory builderFactory = new OrgJsonBuilderFactoryAdapter();
 
 	@Override
-	public DataToJsonConverterFactory createFactory() {
+	public ClientDataToJsonConverterFactory createFactory() {
 		return BasicClientDataToJsonConverterFactory
 				.usingBuilderFactory(builderFactory);
 	}

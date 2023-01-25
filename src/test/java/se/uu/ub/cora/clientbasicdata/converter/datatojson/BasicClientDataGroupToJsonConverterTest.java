@@ -29,13 +29,13 @@ import org.testng.annotations.Test;
 import se.uu.ub.cora.clientbasicdata.data.BasicClientDataAtomic;
 import se.uu.ub.cora.clientbasicdata.data.BasicClientDataGroup;
 import se.uu.ub.cora.clientdata.ClientDataGroup;
-import se.uu.ub.cora.clientdata.converter.DataToJsonConverter;
-import se.uu.ub.cora.clientdata.converter.DataToJsonConverterFactory;
+import se.uu.ub.cora.clientdata.converter.ClientDataToJsonConverter;
+import se.uu.ub.cora.clientdata.converter.ClientDataToJsonConverterFactory;
 import se.uu.ub.cora.json.builder.JsonBuilderFactory;
 import se.uu.ub.cora.json.builder.org.OrgJsonBuilderFactoryAdapter;
 
 public class BasicClientDataGroupToJsonConverterTest {
-	private DataToJsonConverterFactory dataToJsonConverterFactory;
+	private ClientDataToJsonConverterFactory dataToJsonConverterFactory;
 	private JsonBuilderFactory factory;
 	private BasicClientDataGroup dataGroup;
 
@@ -48,7 +48,7 @@ public class BasicClientDataGroupToJsonConverterTest {
 
 	@Test
 	public void testToJson() {
-		DataToJsonConverter dataToJsonConverter = dataToJsonConverterFactory
+		ClientDataToJsonConverter dataToJsonConverter = dataToJsonConverterFactory
 				.factorUsingConvertible(dataGroup);
 		String json = dataToJsonConverter.toJson();
 		String expectedJson = "{\"name\": \"groupNameInData\"}";
@@ -58,7 +58,7 @@ public class BasicClientDataGroupToJsonConverterTest {
 	@Test
 	public void testToJsonWithRepeatId() {
 		dataGroup.setRepeatId("4");
-		DataToJsonConverter dataToJsonConverter = dataToJsonConverterFactory
+		ClientDataToJsonConverter dataToJsonConverter = dataToJsonConverterFactory
 				.factorUsingConvertible(dataGroup);
 		String json = dataToJsonConverter.toJson();
 
@@ -73,7 +73,7 @@ public class BasicClientDataGroupToJsonConverterTest {
 	@Test
 	public void testToJsonWithEmptyRepeatId() {
 		dataGroup.setRepeatId("");
-		DataToJsonConverter dataToJsonConverter = dataToJsonConverterFactory
+		ClientDataToJsonConverter dataToJsonConverter = dataToJsonConverterFactory
 				.factorUsingConvertible(dataGroup);
 		String json = dataToJsonConverter.toJson();
 
@@ -85,7 +85,7 @@ public class BasicClientDataGroupToJsonConverterTest {
 	public void testToJsonGroupWithAttribute() {
 		dataGroup.addAttributeByIdWithValue("attributeNameInData", "attributeValue");
 
-		DataToJsonConverter dataToJsonConverter = dataToJsonConverterFactory
+		ClientDataToJsonConverter dataToJsonConverter = dataToJsonConverterFactory
 				.factorUsingConvertible(dataGroup);
 		String json = dataToJsonConverter.toJson();
 		String expectedJson = "{\n";
@@ -100,7 +100,7 @@ public class BasicClientDataGroupToJsonConverterTest {
 		dataGroup.addAttributeByIdWithValue("attributeNameInData", "attributeValue");
 		dataGroup.addAttributeByIdWithValue("attributeNameInData2", "attributeValue2");
 
-		DataToJsonConverter dataToJsonConverter = dataToJsonConverterFactory
+		ClientDataToJsonConverter dataToJsonConverter = dataToJsonConverterFactory
 				.factorUsingConvertible(dataGroup);
 		String json = dataToJsonConverter.toJson();
 		String expectedJson = "{\n";
@@ -118,7 +118,7 @@ public class BasicClientDataGroupToJsonConverterTest {
 		dataGroup.addChild(
 				BasicClientDataAtomic.withNameInDataAndValue("atomicNameInData", "atomicValue"));
 
-		DataToJsonConverter dataToJsonConverter = dataToJsonConverterFactory
+		ClientDataToJsonConverter dataToJsonConverter = dataToJsonConverterFactory
 				.factorUsingConvertible(dataGroup);
 		String json = dataToJsonConverter.toJson();
 		String expectedJson = "{\n";
@@ -142,7 +142,7 @@ public class BasicClientDataGroupToJsonConverterTest {
 		dataGroup2.addChild(
 				BasicClientDataAtomic.withNameInDataAndValue("atomicNameInData2", "atomicValue2"));
 
-		DataToJsonConverter dataToJsonConverter = dataToJsonConverterFactory
+		ClientDataToJsonConverter dataToJsonConverter = dataToJsonConverterFactory
 				.factorUsingConvertible(dataGroup);
 		String json = dataToJsonConverter.toJson();
 
@@ -187,7 +187,7 @@ public class BasicClientDataGroupToJsonConverterTest {
 		dataGroup2.addChild(
 				BasicClientDataAtomic.withNameInDataAndValue("atomicNameInData2", "atomicValue2"));
 
-		DataToJsonConverter dataToJsonConverter = dataToJsonConverterFactory
+		ClientDataToJsonConverter dataToJsonConverter = dataToJsonConverterFactory
 				.factorUsingConvertible(dataGroup);
 		String json = dataToJsonConverter.toJson();
 		String expectedJson = "{\n";
@@ -242,7 +242,7 @@ public class BasicClientDataGroupToJsonConverterTest {
 		dataGroup2.addChild(
 				BasicClientDataAtomic.withNameInDataAndValue("atomicNameInData2", "atomicValue2"));
 
-		DataToJsonConverter dataToJsonConverter = dataToJsonConverterFactory
+		ClientDataToJsonConverter dataToJsonConverter = dataToJsonConverterFactory
 				.factorUsingConvertible(dataGroup);
 		String json = dataToJsonConverter.toJsonCompactFormat();
 

@@ -21,12 +21,12 @@ package se.uu.ub.cora.clientbasicdata.converter.jsontodata;
 import se.uu.ub.cora.clientbasicdata.data.BasicClientDataRecordLink;
 import se.uu.ub.cora.clientdata.ClientConvertible;
 import se.uu.ub.cora.clientdata.ClientDataGroup;
-import se.uu.ub.cora.clientdata.converter.JsonToDataConverter;
+import se.uu.ub.cora.clientdata.converter.JsonToClientDataConverter;
 import se.uu.ub.cora.json.parser.JsonObject;
 import se.uu.ub.cora.json.parser.JsonParseException;
 
 public class JsonToBasicClientDataRecordLinkConverter extends JsonToBasicClientDataGroupConverter
-		implements JsonToDataConverter {
+		implements JsonToClientDataConverter {
 
 	private static final int OPTIONAL_NUM_OF_CHILDREN = 3;
 	private static final int MIN_NUM_OF_CHILDREN = 2;

@@ -20,13 +20,13 @@ package se.uu.ub.cora.clientbasicdata.converter.datatojson;
 
 import se.uu.ub.cora.clientdata.ClientDataGroup;
 import se.uu.ub.cora.clientdata.ClientDataRecordLink;
-import se.uu.ub.cora.clientdata.converter.DataToJsonConverter;
-import se.uu.ub.cora.clientdata.converter.DataToJsonConverterFactory;
+import se.uu.ub.cora.clientdata.converter.ClientDataToJsonConverter;
+import se.uu.ub.cora.clientdata.converter.ClientDataToJsonConverterFactory;
 import se.uu.ub.cora.json.builder.JsonBuilderFactory;
 import se.uu.ub.cora.json.builder.JsonObjectBuilder;
 
 public class BasicClientDataRecordLinkToJsonConverter extends BasicClientDataGroupToJsonConverter
-		implements DataToJsonConverter {
+		implements ClientDataToJsonConverter {
 	private static final String READ = "read";
 	private static final String GET = "GET";
 
@@ -34,13 +34,13 @@ public class BasicClientDataRecordLinkToJsonConverter extends BasicClientDataGro
 	ClientDataRecordLink dataRecordLink;
 
 	public static BasicClientDataRecordLinkToJsonConverter usingConverterFactoryAndJsonBuilderFactoryAndDataRecordLinkAndBaseUrl(
-			DataToJsonConverterFactory converterFactory, JsonBuilderFactory jsonBuilderFactory,
+			ClientDataToJsonConverterFactory converterFactory, JsonBuilderFactory jsonBuilderFactory,
 			ClientDataRecordLink dataRecordLink, String baseURL) {
 		return new BasicClientDataRecordLinkToJsonConverter(converterFactory, dataRecordLink, baseURL,
 				jsonBuilderFactory);
 	}
 
-	private BasicClientDataRecordLinkToJsonConverter(DataToJsonConverterFactory converterFactory,
+	private BasicClientDataRecordLinkToJsonConverter(ClientDataToJsonConverterFactory converterFactory,
 			ClientDataRecordLink dataRecordLink, String baseURL,
 			JsonBuilderFactory jsonBuilderFactory) {
 		super(converterFactory, jsonBuilderFactory, (ClientDataGroup) dataRecordLink);

@@ -26,12 +26,12 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import se.uu.ub.cora.clientbasicdata.data.BasicClientDataAtomic;
-import se.uu.ub.cora.clientdata.converter.DataToJsonConverter;
+import se.uu.ub.cora.clientdata.converter.ClientDataToJsonConverter;
 import se.uu.ub.cora.json.builder.org.OrgJsonBuilderFactoryAdapter;
 
 public class BasicClientDataAtomicToJsonConverterTest {
 	private BasicClientDataAtomic dataAtomic;
-	private DataToJsonConverter converter;
+	private ClientDataToJsonConverter converter;
 
 	@BeforeMethod
 	public void beforeMethod() {

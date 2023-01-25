@@ -19,7 +19,7 @@
 package se.uu.ub.cora.clientbasicdata.converter.datatojson;
 
 import se.uu.ub.cora.clientdata.ClientDataGroup;
-import se.uu.ub.cora.clientdata.converter.DataToJsonConverterFactory;
+import se.uu.ub.cora.clientdata.converter.ClientDataToJsonConverterFactory;
 import se.uu.ub.cora.json.builder.JsonBuilderFactory;
 import se.uu.ub.cora.testutils.mcr.MethodCallRecorder;
 
@@ -30,7 +30,7 @@ import se.uu.ub.cora.testutils.mcr.MethodCallRecorder;
 public class BasicClientDataToJsonConverterForTest extends BasicClientDataGroupToJsonConverter {
 	MethodCallRecorder MCR = new MethodCallRecorder();
 
-	BasicClientDataToJsonConverterForTest(DataToJsonConverterFactory converterFactory,
+	BasicClientDataToJsonConverterForTest(ClientDataToJsonConverterFactory converterFactory,
 			JsonBuilderFactory builderFactory, ClientDataGroup dataGroup) {
 		super(converterFactory, builderFactory, dataGroup);
 	}

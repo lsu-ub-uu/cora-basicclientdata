@@ -18,11 +18,11 @@
  */
 package se.uu.ub.cora.clientbasicdata.converter.datatojson;
 
-import se.uu.ub.cora.clientdata.converter.DataToJsonConverter;
+import se.uu.ub.cora.clientdata.converter.ClientDataToJsonConverter;
 import se.uu.ub.cora.json.builder.JsonObjectBuilder;
 import se.uu.ub.cora.testutils.mcr.MethodCallRecorder;
 
-public class BasicClientDataToJsonConverterSpy implements DataToJsonConverter {
+public class BasicClientDataToJsonConverterSpy implements ClientDataToJsonConverter {
 	MethodCallRecorder MCR = new MethodCallRecorder();
 
 	@Override

@@ -35,7 +35,7 @@ import org.testng.annotations.Test;
 
 import se.uu.ub.cora.clientdata.ClientAction;
 import se.uu.ub.cora.clientdata.ClientDataGroup;
-import se.uu.ub.cora.clientdata.converter.DataToJsonConverter;
+import se.uu.ub.cora.clientdata.converter.ClientDataToJsonConverter;
 import se.uu.ub.cora.clientdata.spies.ClientDataGroupSpy;
 import se.uu.ub.cora.clientdata.spies.ClientDataRecordSpy;
 import se.uu.ub.cora.json.builder.JsonObjectBuilder;
@@ -71,7 +71,7 @@ public class BasicClientDataRecordToJsonConverterTest {
 	@Test
 	public void testConverterImplementsDataToJsonConverter() throws Exception {
 		createDataRecordToJsonConverter();
-		assertTrue(dataRecordToJsonConverter instanceof DataToJsonConverter);
+		assertTrue(dataRecordToJsonConverter instanceof ClientDataToJsonConverter);
 	}
 
 	@Test

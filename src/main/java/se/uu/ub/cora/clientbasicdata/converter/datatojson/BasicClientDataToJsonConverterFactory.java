@@ -27,11 +27,11 @@ import se.uu.ub.cora.clientdata.ClientDataList;
 import se.uu.ub.cora.clientdata.ClientDataRecord;
 import se.uu.ub.cora.clientdata.ClientDataRecordLink;
 import se.uu.ub.cora.clientdata.ClientDataResourceLink;
-import se.uu.ub.cora.clientdata.converter.DataToJsonConverter;
-import se.uu.ub.cora.clientdata.converter.DataToJsonConverterFactory;
+import se.uu.ub.cora.clientdata.converter.ClientDataToJsonConverter;
+import se.uu.ub.cora.clientdata.converter.ClientDataToJsonConverterFactory;
 import se.uu.ub.cora.json.builder.JsonBuilderFactory;
 
-public class BasicClientDataToJsonConverterFactory implements DataToJsonConverterFactory {
+public class BasicClientDataToJsonConverterFactory implements ClientDataToJsonConverterFactory {
 	JsonBuilderFactory builderFactory;
 	String baseUrl;
 	String recordUrl;
@@ -55,7 +55,7 @@ public class BasicClientDataToJsonConverterFactory implements DataToJsonConverte
 	}
 
 	@Override
-	public DataToJsonConverter factorUsingConvertible(ClientConvertible convertible) {
+	public ClientDataToJsonConverter factorUsingConvertible(ClientConvertible convertible) {
 		if (convertible instanceof ClientDataList) {
 			return BasicClientDataListToJsonConverter.usingJsonFactoryForDataList(this, builderFactory,
 					(ClientDataList) convertible);
@@ -102,7 +102,7 @@ public class BasicClientDataToJsonConverterFactory implements DataToJsonConverte
 	}
 
 	@Override
-	public DataToJsonConverter factorUsingBaseUrlAndConvertible(String baseUrl,
+	public ClientDataToJsonConverter factorUsingBaseUrlAndConvertible(String baseUrl,
 			ClientConvertible convertible) {
 		this.baseUrl = baseUrl;
 
@@ -110,7 +110,7 @@ public class BasicClientDataToJsonConverterFactory implements DataToJsonConverte
 	}
 
 	@Override
-	public DataToJsonConverter factorUsingBaseUrlAndRecordUrlAndConvertible(String baseUrl,
+	public ClientDataToJsonConverter factorUsingBaseUrlAndRecordUrlAndConvertible(String baseUrl,
 			String recordUrl, ClientConvertible convertible) {
 		this.baseUrl = baseUrl;
 		this.recordUrl = recordUrl;
