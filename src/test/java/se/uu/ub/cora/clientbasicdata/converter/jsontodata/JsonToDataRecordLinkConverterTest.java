@@ -24,10 +24,9 @@ import static org.testng.Assert.assertTrue;
 
 import org.testng.annotations.Test;
 
-import se.uu.ub.cora.clientbasicdata.converter.jsontodata.JsonToDataRecordLinkConverter;
 import se.uu.ub.cora.clientbasicdata.data.BasicClientDataRecordLink;
-import se.uu.ub.cora.data.DataGroup;
-import se.uu.ub.cora.data.DataLink;
+import se.uu.ub.cora.clientdata.ClientDataGroup;
+import se.uu.ub.cora.clientdata.ClientDataLink;
 import se.uu.ub.cora.json.parser.JsonObject;
 import se.uu.ub.cora.json.parser.JsonParseException;
 import se.uu.ub.cora.json.parser.JsonValue;
@@ -84,26 +83,26 @@ public class JsonToDataRecordLinkConverterTest {
 	}
 
 	private void assertCorrectDataInLinkedPath(BasicClientDataRecordLink dataLink) {
-		DataGroup outerLinkedPath = dataLink.getFirstGroupWithNameInData("linkedPath");
+		ClientDataGroup outerLinkedPath = dataLink.getFirstGroupWithNameInData("linkedPath");
 		assertEquals(outerLinkedPath.getFirstAtomicValueWithNameInData("nameInData"), "recordInfo");
-		DataGroup innerLinkedPath = outerLinkedPath.getFirstGroupWithNameInData("linkedPath");
+		ClientDataGroup innerLinkedPath = outerLinkedPath.getFirstGroupWithNameInData("linkedPath");
 		assertEquals(innerLinkedPath.getFirstAtomicValueWithNameInData("nameInData"), "type");
 	}
 
-	private DataLink getConverterdLink(String json) {
+	private ClientDataLink getConverterdLink(String json) {
 		OrgJsonParser jsonParser = new OrgJsonParser();
 		JsonValue jsonValue = jsonParser.parseString(json);
 		JsonToDataRecordLinkConverter converter = JsonToDataRecordLinkConverter
 				.forJsonObject((JsonObject) jsonValue);
 
-		DataLink dataLink = (DataLink) converter.toInstance();
+		ClientDataLink dataLink = (ClientDataLink) converter.toInstance();
 		return dataLink;
 	}
 
 	@Test
 	public void testToClassWithRepeatId() {
 		String json = "{\"children\":[{\"name\":\"linkedRecordType\",\"value\":\"recordType\"},{\"name\":\"linkedRecordId\",\"value\":\"place\"}],\"repeatId\":\"0\",\"name\":\"someLink\"}";
-		DataLink dataLink = getConverterdLink(json);
+		ClientDataLink dataLink = getConverterdLink(json);
 		assertEquals(dataLink.getNameInData(), "someLink");
 		assertEquals(dataLink.getRepeatId(), "0");
 	}
@@ -111,7 +110,7 @@ public class JsonToDataRecordLinkConverterTest {
 	@Test
 	public void testToClassWithAttribute() {
 		String json = "{\"children\":[{\"name\":\"linkedRecordType\",\"value\":\"recordType\"},{\"name\":\"linkedRecordId\",\"value\":\"place\"}],\"attributes\":{\"type\":\"someType\"},\"name\":\"someLink\"}";
-		DataLink dataLink = getConverterdLink(json);
+		ClientDataLink dataLink = getConverterdLink(json);
 
 		assertEquals(dataLink.getNameInData(), "someLink");
 		String attributeValue = dataLink.getAttribute("type").getValue();
@@ -121,7 +120,7 @@ public class JsonToDataRecordLinkConverterTest {
 	@Test
 	public void testToClassWithRepeatIdAndAttribute() {
 		String json = "{\"children\":[{\"name\":\"linkedRecordType\",\"value\":\"recordType\"},{\"name\":\"linkedRecordId\",\"value\":\"place\"}],\"repeatId\":\"0\",\"attributes\":{\"type\":\"someType\"},\"name\":\"someLink\"}";
-		DataLink dataLink = getConverterdLink(json);
+		ClientDataLink dataLink = getConverterdLink(json);
 
 		assertEquals(dataLink.getNameInData(), "someLink");
 		String attributeValue = dataLink.getAttribute("type").getValue();

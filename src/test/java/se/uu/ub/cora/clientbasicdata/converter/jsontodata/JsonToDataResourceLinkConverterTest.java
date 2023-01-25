@@ -23,9 +23,8 @@ import static org.testng.Assert.assertEquals;
 
 import org.testng.annotations.Test;
 
-import se.uu.ub.cora.clientbasicdata.converter.jsontodata.JsonToDataResourceLinkConverter;
 import se.uu.ub.cora.clientbasicdata.data.BasicClientDataResourceLink;
-import se.uu.ub.cora.data.DataLink;
+import se.uu.ub.cora.clientdata.ClientDataLink;
 import se.uu.ub.cora.json.parser.JsonObject;
 import se.uu.ub.cora.json.parser.JsonParseException;
 import se.uu.ub.cora.json.parser.JsonValue;
@@ -36,7 +35,8 @@ public class JsonToDataResourceLinkConverterTest {
 	@Test
 	public void testToInstance() {
 		String json = "{\"children\":[{\"name\":\"streamId\",\"value\":\"aStreamId\"},{\"name\":\"filename\",\"value\":\"aFilename\"},{\"name\":\"filesize\",\"value\":\"12345\"},{\"name\":\"mimeType\",\"value\":\"application/png\"}],\"name\":\"someResourceLink\"}";
-		BasicClientDataResourceLink resourceLink = (BasicClientDataResourceLink) getConverterdLink(json);
+		BasicClientDataResourceLink resourceLink = (BasicClientDataResourceLink) getConverterdLink(
+				json);
 		assertEquals(resourceLink.getNameInData(), "someResourceLink");
 		assertEquals(resourceLink.getFirstAtomicValueWithNameInData("streamId"), "aStreamId");
 		assertEquals(resourceLink.getFirstAtomicValueWithNameInData("filename"), "aFilename");
@@ -44,20 +44,20 @@ public class JsonToDataResourceLinkConverterTest {
 		assertEquals(resourceLink.getFirstAtomicValueWithNameInData("mimeType"), "application/png");
 	}
 
-	private DataLink getConverterdLink(String json) {
+	private ClientDataLink getConverterdLink(String json) {
 		OrgJsonParser jsonParser = new OrgJsonParser();
 		JsonValue jsonValue = jsonParser.parseString(json);
 		JsonToDataResourceLinkConverter converter = JsonToDataResourceLinkConverter
 				.forJsonObject((JsonObject) jsonValue);
 
-		DataLink dataLink = (DataLink) converter.toInstance();
+		ClientDataLink dataLink = (ClientDataLink) converter.toInstance();
 		return dataLink;
 	}
 
 	@Test
 	public void testToClassWithRepeatId() {
 		String json = "{\"children\":[{\"name\":\"streamId\",\"value\":\"aStreamId\"},{\"name\":\"filename\",\"value\":\"aFilename\"},{\"name\":\"filesize\",\"value\":\"12345\"},{\"name\":\"mimeType\",\"value\":\"application/png\"}],\"repeatId\":\"0\",\"name\":\"someResourceLink\"}";
-		DataLink dataLink = getConverterdLink(json);
+		ClientDataLink dataLink = getConverterdLink(json);
 		assertEquals(dataLink.getNameInData(), "someResourceLink");
 		assertEquals(dataLink.getRepeatId(), "0");
 	}
@@ -65,7 +65,7 @@ public class JsonToDataResourceLinkConverterTest {
 	@Test
 	public void testToClassWithAttribute() {
 		String json = "{\"children\":[{\"name\":\"streamId\",\"value\":\"aStreamId\"},{\"name\":\"filename\",\"value\":\"aFilename\"},{\"name\":\"filesize\",\"value\":\"12345\"},{\"name\":\"mimeType\",\"value\":\"application/png\"}],\"attributes\":{\"type\":\"someType\"},\"name\":\"someResourceLink\"}";
-		DataLink dataLink = getConverterdLink(json);
+		ClientDataLink dataLink = getConverterdLink(json);
 
 		assertEquals(dataLink.getNameInData(), "someResourceLink");
 		String attributeValue = dataLink.getAttribute("type").getValue();
@@ -75,7 +75,7 @@ public class JsonToDataResourceLinkConverterTest {
 	@Test
 	public void testToClassWithRepeatIdAndAttribute() {
 		String json = "{\"children\":[{\"name\":\"streamId\",\"value\":\"aStreamId\"},{\"name\":\"filename\",\"value\":\"aFilename\"},{\"name\":\"filesize\",\"value\":\"12345\"},{\"name\":\"mimeType\",\"value\":\"application/png\"}],\"repeatId\":\"0\",\"attributes\":{\"type\":\"someType\"},\"name\":\"someResourceLink\"}";
-		DataLink dataLink = getConverterdLink(json);
+		ClientDataLink dataLink = getConverterdLink(json);
 
 		assertEquals(dataLink.getNameInData(), "someResourceLink");
 		String attributeValue = dataLink.getAttribute("type").getValue();

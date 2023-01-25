@@ -18,16 +18,16 @@
  */
 package se.uu.ub.cora.clientbasicdata.converter.datatojson;
 
-import se.uu.ub.cora.data.Convertible;
-import se.uu.ub.cora.data.converter.DataToJsonConverter;
-import se.uu.ub.cora.data.converter.DataToJsonConverterFactory;
+import se.uu.ub.cora.clientdata.ClientConvertible;
+import se.uu.ub.cora.clientdata.converter.DataToJsonConverter;
+import se.uu.ub.cora.clientdata.converter.DataToJsonConverterFactory;
 import se.uu.ub.cora.testutils.mcr.MethodCallRecorder;
 
 public class DataToJsonConverterFactorySpy implements DataToJsonConverterFactory {
 	MethodCallRecorder MCR = new MethodCallRecorder();
 
 	@Override
-	public DataToJsonConverter factorUsingConvertible(Convertible convertible) {
+	public DataToJsonConverter factorUsingConvertible(ClientConvertible convertible) {
 		MCR.addCall("convertible", convertible);
 		DataToJsonConverterSpy converter = new DataToJsonConverterSpy();
 		MCR.addReturned(converter);
@@ -36,7 +36,7 @@ public class DataToJsonConverterFactorySpy implements DataToJsonConverterFactory
 
 	@Override
 	public DataToJsonConverter factorUsingBaseUrlAndConvertible(String baseUrl,
-			Convertible convertible) {
+			ClientConvertible convertible) {
 		MCR.addCall("baseUrl", baseUrl, "convertible", convertible);
 		DataToJsonConverterSpy converter = new DataToJsonConverterSpy();
 		MCR.addReturned(converter);
@@ -44,8 +44,8 @@ public class DataToJsonConverterFactorySpy implements DataToJsonConverterFactory
 	}
 
 	@Override
-	public DataToJsonConverter factorUsingBaseUrlAndRecordUrlAndConvertible(String baseUrl, String recordUrl,
-			Convertible convertible) {
+	public DataToJsonConverter factorUsingBaseUrlAndRecordUrlAndConvertible(String baseUrl,
+			String recordUrl, ClientConvertible convertible) {
 		MCR.addCall("baseUrl", baseUrl, "recordUrl", recordUrl, "convertible", convertible);
 		DataToJsonConverterSpy converter = new DataToJsonConverterSpy();
 		MCR.addReturned(converter);

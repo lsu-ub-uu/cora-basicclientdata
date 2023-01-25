@@ -24,11 +24,9 @@ import static org.testng.Assert.assertTrue;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import se.uu.ub.cora.clientbasicdata.converter.datatojson.DataGroupToJsonConverter;
-import se.uu.ub.cora.clientbasicdata.converter.datatojson.DataRecordLinkToJsonConverter;
 import se.uu.ub.cora.clientbasicdata.data.spy.DataRecordLinkOldSpy;
-import se.uu.ub.cora.data.converter.DataToJsonConverter;
-import se.uu.ub.cora.data.converter.DataToJsonConverterFactory;
+import se.uu.ub.cora.clientdata.converter.DataToJsonConverter;
+import se.uu.ub.cora.clientdata.converter.DataToJsonConverterFactory;
 
 public class DataRecordLinkToJsonConverterTest {
 	DataRecordLinkToJsonConverter recordLinkToJsonConverter;

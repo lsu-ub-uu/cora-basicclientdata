@@ -19,11 +19,10 @@
 
 package se.uu.ub.cora.clientbasicdata.converter.datatojson;
 
-import javax.xml.crypto.Data;
-
+import se.uu.ub.cora.clientdata.ClientData;
+import se.uu.ub.cora.clientdata.ClientDataList;
 import se.uu.ub.cora.clientdata.converter.DataToJsonConverter;
 import se.uu.ub.cora.clientdata.converter.DataToJsonConverterFactory;
-import se.uu.ub.cora.data.DataList;
 import se.uu.ub.cora.json.builder.JsonArrayBuilder;
 import se.uu.ub.cora.json.builder.JsonBuilderFactory;
 import se.uu.ub.cora.json.builder.JsonObjectBuilder;
@@ -31,18 +30,18 @@ import se.uu.ub.cora.json.builder.JsonObjectBuilder;
 public class DataListToJsonConverter implements DataToJsonConverter {
 	DataToJsonConverterFactory converterFactory;
 	JsonBuilderFactory builderFactory;
-	DataList dataList;
+	ClientDataList dataList;
 	private JsonObjectBuilder dataListBuilder;
 	private JsonArrayBuilder dataBuilder;
 
 	public static DataListToJsonConverter usingJsonFactoryForDataList(
 			DataToJsonConverterFactory converterFactory, JsonBuilderFactory builderFactory,
-			DataList restRecordList) {
+			ClientDataList restRecordList) {
 		return new DataListToJsonConverter(converterFactory, builderFactory, restRecordList);
 	}
 
 	DataListToJsonConverter(DataToJsonConverterFactory converterFactory,
-			JsonBuilderFactory builderFactory, DataList dataList) {
+			JsonBuilderFactory builderFactory, ClientDataList dataList) {
 		this.converterFactory = converterFactory;
 		this.builderFactory = builderFactory;
 		this.dataList = dataList;
@@ -70,7 +69,7 @@ public class DataListToJsonConverter implements DataToJsonConverter {
 	}
 
 	private void addAllRecordsOrGroupsFromListToDataBuilder() {
-		for (Data data : dataList.getDataList()) {
+		for (ClientData data : dataList.getDataList()) {
 			DataToJsonConverter dataConverter = converterFactory.factorUsingConvertible(data);
 			JsonObjectBuilder jsonObjectBuilder = dataConverter.toJsonObjectBuilder();
 			dataBuilder.addJsonObjectBuilder(jsonObjectBuilder);

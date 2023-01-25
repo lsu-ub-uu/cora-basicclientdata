@@ -20,10 +20,10 @@ package se.uu.ub.cora.clientbasicdata.converter.datatojson;
 
 import java.util.Set;
 
+import se.uu.ub.cora.clientdata.ClientDataGroup;
+import se.uu.ub.cora.clientdata.ClientDataRecord;
 import se.uu.ub.cora.clientdata.converter.DataToJsonConverter;
 import se.uu.ub.cora.clientdata.converter.DataToJsonConverterFactory;
-import se.uu.ub.cora.data.DataGroup;
-import se.uu.ub.cora.data.DataRecord;
 import se.uu.ub.cora.json.builder.JsonArrayBuilder;
 import se.uu.ub.cora.json.builder.JsonBuilderFactory;
 import se.uu.ub.cora.json.builder.JsonObjectBuilder;
@@ -34,20 +34,20 @@ public class DataRecordToJsonConverter implements DataToJsonConverter {
 	JsonBuilderFactory builderFactory;
 	RecordActionsToJsonConverter actionsConverter;
 	String baseUrl;
-	DataRecord dataRecord;
+	ClientDataRecord dataRecord;
 	private JsonObjectBuilder recordJsonObjectBuilder;
 
 	public static DataRecordToJsonConverter usingConverterFactoryAndActionsConverterAndBuilderFactoryAndBaseUrlAndDataRecord(
 			DataToJsonConverterFactory converterFactory,
 			RecordActionsToJsonConverter actionsConverter, JsonBuilderFactory builderFactory,
-			String baseUrl, DataRecord dataRecord) {
+			String baseUrl, ClientDataRecord dataRecord) {
 		return new DataRecordToJsonConverter(converterFactory, actionsConverter, builderFactory,
 				baseUrl, dataRecord);
 	}
 
 	DataRecordToJsonConverter(DataToJsonConverterFactory converterFactory,
 			RecordActionsToJsonConverter actionsConverter, JsonBuilderFactory builderFactory,
-			String baseUrl, DataRecord dataRecord) {
+			String baseUrl, ClientDataRecord dataRecord) {
 		this.converterFactory = converterFactory;
 		this.actionsConverter = actionsConverter;
 		this.builderFactory = builderFactory;
@@ -89,15 +89,15 @@ public class DataRecordToJsonConverter implements DataToJsonConverter {
 
 	private void possiblySetSearchIdFromRecordType(ActionsConverterData actionsConverterData) {
 		if (thisRecordIsRecordType()) {
-			DataGroup dataGroup = dataRecord.getDataGroup();
+			ClientDataGroup dataGroup = dataRecord.getDataGroup();
 			possiblySetSearchRecordIdIfDefinedInDataGroup(actionsConverterData, dataGroup);
 		}
 	}
 
 	private void possiblySetSearchRecordIdIfDefinedInDataGroup(
-			ActionsConverterData actionsConverterData, DataGroup dataGroup) {
+			ActionsConverterData actionsConverterData, ClientDataGroup dataGroup) {
 		if (dataGroup.containsChildWithNameInData("search")) {
-			DataGroup searchGroup = dataGroup.getFirstGroupWithNameInData("search");
+			ClientDataGroup searchGroup = dataGroup.getFirstGroupWithNameInData("search");
 			actionsConverterData.searchRecordId = searchGroup
 					.getFirstAtomicValueWithNameInData("linkedRecordId");
 		}

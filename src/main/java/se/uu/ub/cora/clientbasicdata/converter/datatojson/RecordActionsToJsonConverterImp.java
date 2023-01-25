@@ -22,6 +22,7 @@ import java.util.List;
 
 import se.uu.ub.cora.clientbasicdata.data.BasicClientDataAtomic;
 import se.uu.ub.cora.clientbasicdata.data.BasicClientDataGroup;
+import se.uu.ub.cora.clientdata.ClientAction;
 import se.uu.ub.cora.clientdata.converter.DataToJsonConverter;
 import se.uu.ub.cora.clientdata.converter.DataToJsonConverterFactory;
 import se.uu.ub.cora.json.builder.JsonBuilderFactory;
@@ -39,7 +40,7 @@ public class RecordActionsToJsonConverterImp implements RecordActionsToJsonConve
 	JsonBuilderFactory builderFactory;
 	String baseUrl;
 	private JsonObjectBuilder mainBuilder;
-	private List<Action> actions;
+	private List<ClientAction> actions;
 	private String recordType;
 	private String recordId;
 	private String currentLowerCaseAction;
@@ -75,7 +76,7 @@ public class RecordActionsToJsonConverterImp implements RecordActionsToJsonConve
 	}
 
 	private void createJsonForActions() {
-		for (Action action : actions) {
+		for (ClientAction action : actions) {
 			setStandardForAction(action);
 
 			possiblyCreateActionsForAll(action);
@@ -87,23 +88,23 @@ public class RecordActionsToJsonConverterImp implements RecordActionsToJsonConve
 		}
 	}
 
-	private void possiblyCreateActionsForAll(Action action) {
-		if (action == Action.READ) {
+	private void possiblyCreateActionsForAll(ClientAction action) {
+		if (action == ClientAction.READ) {
 			addStandardParametersToCurrentLinkBuilder();
 			currentLinkBuilder.addKeyString(ACCEPT, currentAccept);
-		} else if (action == Action.UPDATE) {
+		} else if (action == ClientAction.UPDATE) {
 			currentRequestMethod = "POST";
 			addStandardParametersToCurrentLinkBuilder();
 			currentLinkBuilder.addKeyString(ACCEPT, currentAccept);
 			currentLinkBuilder.addKeyString(CONTENT_TYPE, APPLICATION_VND_UUB_RECORD_JSON);
-		} else if (action == Action.READ_INCOMING_LINKS) {
+		} else if (action == ClientAction.READ_INCOMING_LINKS) {
 			currentUrl = currentUrl + "/incomingLinks";
 			addStandardParametersToCurrentLinkBuilder();
 			currentLinkBuilder.addKeyString(ACCEPT, APPLICATION_VND_UUB_RECORD_LIST_JSON);
-		} else if (action == Action.DELETE) {
+		} else if (action == ClientAction.DELETE) {
 			currentRequestMethod = "DELETE";
 			addStandardParametersToCurrentLinkBuilder();
-		} else if (action == Action.INDEX) {
+		} else if (action == ClientAction.INDEX) {
 			currentRequestMethod = "POST";
 			currentUrl = baseUrl + "workOrder/";
 			addStandardParametersToCurrentLinkBuilder();
@@ -113,8 +114,8 @@ public class RecordActionsToJsonConverterImp implements RecordActionsToJsonConve
 		}
 	}
 
-	private void possiblyCreateUploadActionForBinaryAndItsChildren(Action action) {
-		if (action == Action.UPLOAD) {
+	private void possiblyCreateUploadActionForBinaryAndItsChildren(ClientAction action) {
+		if (action == ClientAction.UPLOAD) {
 			currentRequestMethod = "POST";
 			currentUrl = baseUrl + recordType + "/" + recordId + "/master";
 			addStandardParametersToCurrentLinkBuilder();
@@ -122,8 +123,8 @@ public class RecordActionsToJsonConverterImp implements RecordActionsToJsonConve
 		}
 	}
 
-	private void possiblyCreateSearchActionForSearchOrRecordType(Action action) {
-		if (action == Action.SEARCH) {
+	private void possiblyCreateSearchActionForSearchOrRecordType(ClientAction action) {
+		if (action == ClientAction.SEARCH) {
 			String searchIdOrRecordId = setSearchRecordId();
 			currentUrl = baseUrl + "searchResult/" + searchIdOrRecordId;
 			addStandardParametersToCurrentLinkBuilder();
@@ -142,28 +143,28 @@ public class RecordActionsToJsonConverterImp implements RecordActionsToJsonConve
 		return actionsConverterData.searchRecordId != null;
 	}
 
-	private void possiblyCreateActionsForRecordType(Action action) {
-		if (action == Action.CREATE) {
+	private void possiblyCreateActionsForRecordType(ClientAction action) {
+		if (action == ClientAction.CREATE) {
 			currentRequestMethod = "POST";
 			String urlForRecordTypeActions = baseUrl + recordId + "/";
 			currentUrl = urlForRecordTypeActions;
 			addStandardParametersToCurrentLinkBuilder();
 			currentLinkBuilder.addKeyString(ACCEPT, currentAccept);
 			currentLinkBuilder.addKeyString(CONTENT_TYPE, APPLICATION_VND_UUB_RECORD_JSON);
-		} else if (action == Action.LIST) {
+		} else if (action == ClientAction.LIST) {
 			currentRequestMethod = "GET";
 			String urlForRecordTypeActions = baseUrl + recordId + "/";
 			currentUrl = urlForRecordTypeActions;
 			currentAccept = APPLICATION_VND_UUB_RECORD_LIST_JSON;
 			addStandardParametersToCurrentLinkBuilder();
 			currentLinkBuilder.addKeyString(ACCEPT, currentAccept);
-		} else if (action == Action.BATCH_INDEX) {
+		} else if (action == ClientAction.BATCH_INDEX) {
 			currentRequestMethod = "POST";
 			currentUrl = baseUrl + "index/" + recordId + "/";
 			addStandardParametersToCurrentLinkBuilder();
 			currentLinkBuilder.addKeyString(ACCEPT, currentAccept);
 			currentLinkBuilder.addKeyString(CONTENT_TYPE, APPLICATION_VND_UUB_RECORD_JSON);
-		} else if (action == Action.VALIDATE) {
+		} else if (action == ClientAction.VALIDATE) {
 			createActionLinkForValidate();
 		}
 	}
@@ -176,7 +177,7 @@ public class RecordActionsToJsonConverterImp implements RecordActionsToJsonConve
 		currentLinkBuilder.addKeyString(CONTENT_TYPE, "application/vnd.uub.workorder+json");
 	}
 
-	private void setStandardForAction(Action action) {
+	private void setStandardForAction(ClientAction action) {
 		currentLowerCaseAction = action.name().toLowerCase();
 		currentLinkBuilder = builderFactory.createObjectBuilder();
 		currentRequestMethod = "GET";
@@ -200,10 +201,10 @@ public class RecordActionsToJsonConverterImp implements RecordActionsToJsonConve
 	private BasicClientDataGroup createWorkOrderDataGroup() {
 		BasicClientDataGroup workOrder = BasicClientDataGroup.withNameInData("workOrder");
 		BasicClientDataGroup recordTypeGroup = BasicClientDataGroup.withNameInData(RECORD_TYPE);
-		recordTypeGroup
-				.addChild(BasicClientDataAtomic.withNameInDataAndValue("linkedRecordType", RECORD_TYPE));
-		recordTypeGroup
-				.addChild(BasicClientDataAtomic.withNameInDataAndValue("linkedRecordId", recordType));
+		recordTypeGroup.addChild(
+				BasicClientDataAtomic.withNameInDataAndValue("linkedRecordType", RECORD_TYPE));
+		recordTypeGroup.addChild(
+				BasicClientDataAtomic.withNameInDataAndValue("linkedRecordId", recordType));
 		workOrder.addChild(recordTypeGroup);
 		workOrder.addChild(BasicClientDataAtomic.withNameInDataAndValue("recordId", recordId));
 		workOrder.addChild(BasicClientDataAtomic.withNameInDataAndValue("type", "index"));

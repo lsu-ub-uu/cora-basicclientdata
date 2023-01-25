@@ -25,9 +25,8 @@ import static org.testng.Assert.assertEquals;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import se.uu.ub.cora.clientbasicdata.converter.datatojson.DataAtomicToJsonConverter;
 import se.uu.ub.cora.clientbasicdata.data.BasicClientDataAtomic;
-import se.uu.ub.cora.data.converter.DataToJsonConverter;
+import se.uu.ub.cora.clientdata.converter.DataToJsonConverter;
 import se.uu.ub.cora.json.builder.org.OrgJsonBuilderFactoryAdapter;
 
 public class DataAtomicToJsonConverterTest {
@@ -36,7 +35,8 @@ public class DataAtomicToJsonConverterTest {
 
 	@BeforeMethod
 	public void beforeMethod() {
-		dataAtomic = BasicClientDataAtomic.withNameInDataAndValue("atomicNameInData", "atomicValue");
+		dataAtomic = BasicClientDataAtomic.withNameInDataAndValue("atomicNameInData",
+				"atomicValue");
 		OrgJsonBuilderFactoryAdapter factory = new OrgJsonBuilderFactoryAdapter();
 		converter = DataAtomicToJsonConverter.usingJsonBuilderFactoryAndDataAtomic(factory,
 				dataAtomic);
@@ -79,7 +79,8 @@ public class DataAtomicToJsonConverterTest {
 
 	@Test
 	public void testToJsonEmptyValue() {
-		BasicClientDataAtomic dataAtomic = BasicClientDataAtomic.withNameInDataAndValue("atomicNameInData", "");
+		BasicClientDataAtomic dataAtomic = BasicClientDataAtomic
+				.withNameInDataAndValue("atomicNameInData", "");
 		OrgJsonBuilderFactoryAdapter factory = new OrgJsonBuilderFactoryAdapter();
 		converter = DataAtomicToJsonConverter.usingJsonBuilderFactoryAndDataAtomic(factory,
 				dataAtomic);

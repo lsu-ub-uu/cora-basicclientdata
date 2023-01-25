@@ -22,9 +22,9 @@ package se.uu.ub.cora.clientbasicdata.converter.jsontodata;
 import java.util.Map.Entry;
 
 import se.uu.ub.cora.clientbasicdata.data.BasicClientDataGroup;
-import se.uu.ub.cora.data.Convertible;
-import se.uu.ub.cora.data.DataChild;
-import se.uu.ub.cora.data.converter.JsonToDataConverter;
+import se.uu.ub.cora.clientdata.ClientConvertible;
+import se.uu.ub.cora.clientdata.ClientDataChild;
+import se.uu.ub.cora.clientdata.converter.JsonToDataConverter;
 import se.uu.ub.cora.json.parser.JsonArray;
 import se.uu.ub.cora.json.parser.JsonObject;
 import se.uu.ub.cora.json.parser.JsonParseException;
@@ -49,7 +49,7 @@ public class JsonToDataGroupConverter implements JsonToDataConverter {
 	}
 
 	@Override
-	public Convertible toInstance() {
+	public ClientConvertible toInstance() {
 		try {
 			return tryToInstanciate();
 		} catch (Exception e) {
@@ -57,7 +57,7 @@ public class JsonToDataGroupConverter implements JsonToDataConverter {
 		}
 	}
 
-	private Convertible tryToInstanciate() {
+	private ClientConvertible tryToInstanciate() {
 		validateOnlyCorrectKeysAtTopLevel();
 		return createDataGroupInstance();
 	}
@@ -110,7 +110,7 @@ public class JsonToDataGroupConverter implements JsonToDataConverter {
 		return jsonObject.keySet().size() > NUM_OF_ALLOWED_KEYS_AT_TOP_LEVEL;
 	}
 
-	private Convertible createDataGroupInstance() {
+	private ClientConvertible createDataGroupInstance() {
 		String nameInData = getNameInDataFromJsonObject();
 		createInstanceOfDataElement(nameInData);
 		addRepeatIdToGroup();
@@ -167,6 +167,6 @@ public class JsonToDataGroupConverter implements JsonToDataConverter {
 		JsonToDataConverterFactoryImp jsonToDataConverterFactoryImp = new JsonToDataConverterFactoryImp();
 		JsonToDataConverter childJsonToDataConverter = jsonToDataConverterFactoryImp
 				.createForJsonObject(child);
-		dataGroup.addChild((DataChild) childJsonToDataConverter.toInstance());
+		dataGroup.addChild((ClientDataChild) childJsonToDataConverter.toInstance());
 	}
 }

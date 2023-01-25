@@ -24,10 +24,9 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import se.uu.ub.cora.clientbasicdata.converter.datatojson.BasicDataToJsonConverterFactory;
 import se.uu.ub.cora.clientbasicdata.data.BasicClientDataAttribute;
-import se.uu.ub.cora.data.converter.DataToJsonConverter;
-import se.uu.ub.cora.data.converter.DataToJsonConverterFactory;
+import se.uu.ub.cora.clientdata.converter.DataToJsonConverter;
+import se.uu.ub.cora.clientdata.converter.DataToJsonConverterFactory;
 import se.uu.ub.cora.json.builder.JsonBuilderFactory;
 import se.uu.ub.cora.json.builder.org.OrgJsonBuilderFactoryAdapter;
 
@@ -38,8 +37,7 @@ public class DataAttributeToJsonConverterTest {
 	@BeforeMethod
 	public void beforeMethod() {
 		factory = new OrgJsonBuilderFactoryAdapter();
-		dataToJsonConverterFactory = BasicDataToJsonConverterFactory
-				.usingBuilderFactory(factory);
+		dataToJsonConverterFactory = BasicDataToJsonConverterFactory.usingBuilderFactory(factory);
 
 	}
 
@@ -47,7 +45,8 @@ public class DataAttributeToJsonConverterTest {
 	public void testToJson() {
 		BasicClientDataAttribute dataAttribute = BasicClientDataAttribute
 				.withNameInDataAndValue("attributeNameInData", "attributeValue");
-		DataToJsonConverter dataToJsonConverter = dataToJsonConverterFactory.factorUsingConvertible(dataAttribute);
+		DataToJsonConverter dataToJsonConverter = dataToJsonConverterFactory
+				.factorUsingConvertible(dataAttribute);
 		String json = dataToJsonConverter.toJson();
 
 		Assert.assertEquals(json, "{\"attributeNameInData\": \"attributeValue\"}");
@@ -57,7 +56,8 @@ public class DataAttributeToJsonConverterTest {
 	public void testToJsonEmptyValue() {
 		BasicClientDataAttribute dataAttribute = BasicClientDataAttribute
 				.withNameInDataAndValue("attributeNameInData", "");
-		DataToJsonConverter dataToJsonConverter = dataToJsonConverterFactory.factorUsingConvertible(dataAttribute);
+		DataToJsonConverter dataToJsonConverter = dataToJsonConverterFactory
+				.factorUsingConvertible(dataAttribute);
 		String json = dataToJsonConverter.toJson();
 
 		Assert.assertEquals(json, "{\"attributeNameInData\": \"\"}");
@@ -67,7 +67,8 @@ public class DataAttributeToJsonConverterTest {
 	public void testToJsonCompactFormat() {
 		BasicClientDataAttribute dataAttribute = BasicClientDataAttribute
 				.withNameInDataAndValue("attributeNameInData", "attributeValue");
-		DataToJsonConverter dataToJsonConverter = dataToJsonConverterFactory.factorUsingConvertible(dataAttribute);
+		DataToJsonConverter dataToJsonConverter = dataToJsonConverterFactory
+				.factorUsingConvertible(dataAttribute);
 		String json = dataToJsonConverter.toJsonCompactFormat();
 
 		Assert.assertEquals(json, "{\"attributeNameInData\":\"attributeValue\"}");

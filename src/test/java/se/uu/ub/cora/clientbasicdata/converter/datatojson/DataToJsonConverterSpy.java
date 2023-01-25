@@ -18,7 +18,7 @@
  */
 package se.uu.ub.cora.clientbasicdata.converter.datatojson;
 
-import se.uu.ub.cora.data.converter.DataToJsonConverter;
+import se.uu.ub.cora.clientdata.converter.DataToJsonConverter;
 import se.uu.ub.cora.json.builder.JsonObjectBuilder;
 import se.uu.ub.cora.testutils.mcr.MethodCallRecorder;
 

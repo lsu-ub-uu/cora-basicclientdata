@@ -26,13 +26,11 @@ import static org.testng.Assert.assertTrue;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import se.uu.ub.cora.clientbasicdata.converter.datatojson.BasicDataToJsonConverterFactory;
-import se.uu.ub.cora.clientbasicdata.converter.datatojson.DataGroupToJsonConverter;
 import se.uu.ub.cora.clientbasicdata.data.BasicClientDataAtomic;
 import se.uu.ub.cora.clientbasicdata.data.BasicClientDataGroup;
-import se.uu.ub.cora.data.DataGroup;
-import se.uu.ub.cora.data.converter.DataToJsonConverter;
-import se.uu.ub.cora.data.converter.DataToJsonConverterFactory;
+import se.uu.ub.cora.clientdata.ClientDataGroup;
+import se.uu.ub.cora.clientdata.converter.DataToJsonConverter;
+import se.uu.ub.cora.clientdata.converter.DataToJsonConverterFactory;
 import se.uu.ub.cora.json.builder.JsonBuilderFactory;
 import se.uu.ub.cora.json.builder.org.OrgJsonBuilderFactoryAdapter;
 
@@ -44,14 +42,14 @@ public class DataGroupToJsonConverterTest {
 	@BeforeMethod
 	public void beforeMethod() {
 		factory = new OrgJsonBuilderFactoryAdapter();
-		dataToJsonConverterFactory = BasicDataToJsonConverterFactory
-				.usingBuilderFactory(factory);
+		dataToJsonConverterFactory = BasicDataToJsonConverterFactory.usingBuilderFactory(factory);
 		dataGroup = BasicClientDataGroup.withNameInData("groupNameInData");
 	}
 
 	@Test
 	public void testToJson() {
-		DataToJsonConverter dataToJsonConverter = dataToJsonConverterFactory.factorUsingConvertible(dataGroup);
+		DataToJsonConverter dataToJsonConverter = dataToJsonConverterFactory
+				.factorUsingConvertible(dataGroup);
 		String json = dataToJsonConverter.toJson();
 		String expectedJson = "{\"name\": \"groupNameInData\"}";
 		assertEquals(json, expectedJson);
@@ -60,7 +58,8 @@ public class DataGroupToJsonConverterTest {
 	@Test
 	public void testToJsonWithRepeatId() {
 		dataGroup.setRepeatId("4");
-		DataToJsonConverter dataToJsonConverter = dataToJsonConverterFactory.factorUsingConvertible(dataGroup);
+		DataToJsonConverter dataToJsonConverter = dataToJsonConverterFactory
+				.factorUsingConvertible(dataGroup);
 		String json = dataToJsonConverter.toJson();
 
 		String expectedJson = "{\n";
@@ -74,7 +73,8 @@ public class DataGroupToJsonConverterTest {
 	@Test
 	public void testToJsonWithEmptyRepeatId() {
 		dataGroup.setRepeatId("");
-		DataToJsonConverter dataToJsonConverter = dataToJsonConverterFactory.factorUsingConvertible(dataGroup);
+		DataToJsonConverter dataToJsonConverter = dataToJsonConverterFactory
+				.factorUsingConvertible(dataGroup);
 		String json = dataToJsonConverter.toJson();
 
 		String expectedJson = "{\"name\": \"groupNameInData\"}";
@@ -85,7 +85,8 @@ public class DataGroupToJsonConverterTest {
 	public void testToJsonGroupWithAttribute() {
 		dataGroup.addAttributeByIdWithValue("attributeNameInData", "attributeValue");
 
-		DataToJsonConverter dataToJsonConverter = dataToJsonConverterFactory.factorUsingConvertible(dataGroup);
+		DataToJsonConverter dataToJsonConverter = dataToJsonConverterFactory
+				.factorUsingConvertible(dataGroup);
 		String json = dataToJsonConverter.toJson();
 		String expectedJson = "{\n";
 		expectedJson += "    \"name\": \"groupNameInData\",\n";
@@ -99,7 +100,8 @@ public class DataGroupToJsonConverterTest {
 		dataGroup.addAttributeByIdWithValue("attributeNameInData", "attributeValue");
 		dataGroup.addAttributeByIdWithValue("attributeNameInData2", "attributeValue2");
 
-		DataToJsonConverter dataToJsonConverter = dataToJsonConverterFactory.factorUsingConvertible(dataGroup);
+		DataToJsonConverter dataToJsonConverter = dataToJsonConverterFactory
+				.factorUsingConvertible(dataGroup);
 		String json = dataToJsonConverter.toJson();
 		String expectedJson = "{\n";
 		expectedJson += "    \"name\": \"groupNameInData\",\n";
@@ -113,10 +115,11 @@ public class DataGroupToJsonConverterTest {
 
 	@Test
 	public void testToJsonGroupWithAtomicChild() {
-		dataGroup
-				.addChild(BasicClientDataAtomic.withNameInDataAndValue("atomicNameInData", "atomicValue"));
+		dataGroup.addChild(
+				BasicClientDataAtomic.withNameInDataAndValue("atomicNameInData", "atomicValue"));
 
-		DataToJsonConverter dataToJsonConverter = dataToJsonConverterFactory.factorUsingConvertible(dataGroup);
+		DataToJsonConverter dataToJsonConverter = dataToJsonConverterFactory
+				.factorUsingConvertible(dataGroup);
 		String json = dataToJsonConverter.toJson();
 		String expectedJson = "{\n";
 		expectedJson += "    \"children\": [{\n";
@@ -130,16 +133,17 @@ public class DataGroupToJsonConverterTest {
 
 	@Test
 	public void testToJsonGroupWithAtomicChildAndGroupChildWithAtomicChild() {
-		dataGroup
-				.addChild(BasicClientDataAtomic.withNameInDataAndValue("atomicNameInData", "atomicValue"));
+		dataGroup.addChild(
+				BasicClientDataAtomic.withNameInDataAndValue("atomicNameInData", "atomicValue"));
 
-		DataGroup dataGroup2 = BasicClientDataGroup.withNameInData("groupNameInData2");
+		ClientDataGroup dataGroup2 = BasicClientDataGroup.withNameInData("groupNameInData2");
 		dataGroup.addChild(dataGroup2);
 
 		dataGroup2.addChild(
 				BasicClientDataAtomic.withNameInDataAndValue("atomicNameInData2", "atomicValue2"));
 
-		DataToJsonConverter dataToJsonConverter = dataToJsonConverterFactory.factorUsingConvertible(dataGroup);
+		DataToJsonConverter dataToJsonConverter = dataToJsonConverterFactory
+				.factorUsingConvertible(dataGroup);
 		String json = dataToJsonConverter.toJson();
 
 		String expectedJson = "{\n";
@@ -167,23 +171,24 @@ public class DataGroupToJsonConverterTest {
 		dataGroup.addAttributeByIdWithValue("attributeNameInData", "attributeValue");
 		dataGroup.addAttributeByIdWithValue("attributeNameInData2", "attributeValue2");
 
-		DataGroup recordInfo = BasicClientDataGroup.withNameInData("recordInfo");
+		ClientDataGroup recordInfo = BasicClientDataGroup.withNameInData("recordInfo");
 		recordInfo.addChild(BasicClientDataAtomic.withNameInDataAndValue("id", "place:0001"));
 		recordInfo.addChild(BasicClientDataAtomic.withNameInDataAndValue("type", "place"));
 		recordInfo.addChild(BasicClientDataAtomic.withNameInDataAndValue("createdBy", "userId"));
 		dataGroup.addChild(recordInfo);
 
-		dataGroup
-				.addChild(BasicClientDataAtomic.withNameInDataAndValue("atomicNameInData", "atomicValue"));
+		dataGroup.addChild(
+				BasicClientDataAtomic.withNameInDataAndValue("atomicNameInData", "atomicValue"));
 
-		DataGroup dataGroup2 = BasicClientDataGroup.withNameInData("groupNameInData2");
+		ClientDataGroup dataGroup2 = BasicClientDataGroup.withNameInData("groupNameInData2");
 		dataGroup2.addAttributeByIdWithValue("g2AttributeNameInData", "g2AttributeValue");
 		dataGroup.addChild(dataGroup2);
 
 		dataGroup2.addChild(
 				BasicClientDataAtomic.withNameInDataAndValue("atomicNameInData2", "atomicValue2"));
 
-		DataToJsonConverter dataToJsonConverter = dataToJsonConverterFactory.factorUsingConvertible(dataGroup);
+		DataToJsonConverter dataToJsonConverter = dataToJsonConverterFactory
+				.factorUsingConvertible(dataGroup);
 		String json = dataToJsonConverter.toJson();
 		String expectedJson = "{\n";
 		expectedJson += "    \"children\": [\n";
@@ -228,16 +233,17 @@ public class DataGroupToJsonConverterTest {
 
 	@Test
 	public void testToJsonCompactFormatGroupWithAtomicChildAndGroupChildWithAtomicChild() {
-		dataGroup
-				.addChild(BasicClientDataAtomic.withNameInDataAndValue("atomicNameInData", "atomicValue"));
+		dataGroup.addChild(
+				BasicClientDataAtomic.withNameInDataAndValue("atomicNameInData", "atomicValue"));
 
-		DataGroup dataGroup2 = BasicClientDataGroup.withNameInData("groupNameInData2");
+		ClientDataGroup dataGroup2 = BasicClientDataGroup.withNameInData("groupNameInData2");
 		dataGroup.addChild(dataGroup2);
 
 		dataGroup2.addChild(
 				BasicClientDataAtomic.withNameInDataAndValue("atomicNameInData2", "atomicValue2"));
 
-		DataToJsonConverter dataToJsonConverter = dataToJsonConverterFactory.factorUsingConvertible(dataGroup);
+		DataToJsonConverter dataToJsonConverter = dataToJsonConverterFactory
+				.factorUsingConvertible(dataGroup);
 		String json = dataToJsonConverter.toJsonCompactFormat();
 
 		String expectedJson = "{\"children\":[";

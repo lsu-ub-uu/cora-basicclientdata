@@ -18,10 +18,10 @@
  */
 package se.uu.ub.cora.clientbasicdata.converter.datatojson;
 
+import se.uu.ub.cora.clientdata.ClientDataGroup;
+import se.uu.ub.cora.clientdata.ClientDataRecordLink;
 import se.uu.ub.cora.clientdata.converter.DataToJsonConverter;
 import se.uu.ub.cora.clientdata.converter.DataToJsonConverterFactory;
-import se.uu.ub.cora.data.DataGroup;
-import se.uu.ub.cora.data.DataRecordLink;
 import se.uu.ub.cora.json.builder.JsonBuilderFactory;
 import se.uu.ub.cora.json.builder.JsonObjectBuilder;
 
@@ -31,18 +31,19 @@ public class DataRecordLinkToJsonConverter extends DataGroupToJsonConverter
 	private static final String GET = "GET";
 
 	String baseURL;
-	DataRecordLink dataRecordLink;
+	ClientDataRecordLink dataRecordLink;
 
 	public static DataRecordLinkToJsonConverter usingConverterFactoryAndJsonBuilderFactoryAndDataRecordLinkAndBaseUrl(
 			DataToJsonConverterFactory converterFactory, JsonBuilderFactory jsonBuilderFactory,
-			DataRecordLink dataRecordLink, String baseURL) {
+			ClientDataRecordLink dataRecordLink, String baseURL) {
 		return new DataRecordLinkToJsonConverter(converterFactory, dataRecordLink, baseURL,
 				jsonBuilderFactory);
 	}
 
 	private DataRecordLinkToJsonConverter(DataToJsonConverterFactory converterFactory,
-			DataRecordLink dataRecordLink, String baseURL, JsonBuilderFactory jsonBuilderFactory) {
-		super(converterFactory, jsonBuilderFactory, (DataGroup) dataRecordLink);
+			ClientDataRecordLink dataRecordLink, String baseURL,
+			JsonBuilderFactory jsonBuilderFactory) {
+		super(converterFactory, jsonBuilderFactory, (ClientDataGroup) dataRecordLink);
 		this.dataRecordLink = dataRecordLink;
 		this.baseURL = baseURL;
 	}

@@ -30,31 +30,31 @@ import org.testng.annotations.Test;
 import se.uu.ub.cora.clientbasicdata.data.BasicClientDataList;
 import se.uu.ub.cora.clientdata.ClientData;
 import se.uu.ub.cora.clientdata.ClientDataRecord;
-import se.uu.ub.cora.clientdata.converter.ClientDataToJsonConverter;
+import se.uu.ub.cora.clientdata.converter.DataToJsonConverter;
+import se.uu.ub.cora.clientdata.spies.ClientDataRecordSpy;
 import se.uu.ub.cora.json.builder.JsonObjectBuilder;
-import se.uu.ub.cora.testspies.data.ClientDataRecordSpy;
 import se.uu.ub.cora.testutils.mcr.MethodCallRecorder;
 
-public class ClientDataListToJsonConverterTest {
+public class DataListToJsonConverterTest {
 
-	private ClientDataToJsonConverterFactorySpy converterFactory;
-	private ClientDataListToJsonConverter recordListToJsonConverter;
+	private DataToJsonConverterFactorySpy converterFactory;
+	private DataListToJsonConverter recordListToJsonConverter;
 	private JsonBuilderFactorySpy builderFactory;
 	private BasicClientDataList dataList;
 
 	@BeforeMethod
 	public void beforeMethod() throws Exception {
-		converterFactory = new ClientDataToJsonConverterFactorySpy();
+		converterFactory = new DataToJsonConverterFactorySpy();
 		builderFactory = new JsonBuilderFactorySpy();
 		dataList = createDataList();
-		recordListToJsonConverter = ClientDataListToJsonConverter
+		recordListToJsonConverter = DataListToJsonConverter
 				.usingJsonFactoryForDataList(converterFactory, builderFactory, dataList);
 
 	}
 
 	@Test
 	public void testRecordListConverterImplementsDataToJsonConverter() throws Exception {
-		assertTrue(recordListToJsonConverter instanceof ClientDataToJsonConverter);
+		assertTrue(recordListToJsonConverter instanceof DataToJsonConverter);
 	}
 
 	@Test
@@ -132,7 +132,7 @@ public class ClientDataListToJsonConverterTest {
 	private void assertCorrectFactoryAndConvertAndAddingToDataForDataNumberFromList(
 			int listNumber) {
 		JsonArrayBuilderSpy dataArrayBuilder = getDataArrayBuilderFromSpy();
-		ClientDataToJsonConverterSpy recordConverterSpy1 = (ClientDataToJsonConverterSpy) converterFactory.MCR
+		DataToJsonConverterSpy recordConverterSpy1 = (DataToJsonConverterSpy) converterFactory.MCR
 				.getReturnValue("factorUsingConvertible", listNumber);
 		recordConverterSpy1.MCR.assertMethodWasCalled("toJsonObjectBuilder");
 		var recordBuilder1 = recordConverterSpy1.MCR.getReturnValue("toJsonObjectBuilder", 0);
@@ -142,7 +142,7 @@ public class ClientDataListToJsonConverterTest {
 	@Test
 	public void testToJson() throws Exception {
 
-		ClientDataListToJsonConverterForTest recordListConverterForTest = new ClientDataListToJsonConverterForTest(
+		DataListToJsonConverterForTest recordListConverterForTest = new DataListToJsonConverterForTest(
 				converterFactory, builderFactory, dataList);
 
 		String json = recordListConverterForTest.toJson();
@@ -157,7 +157,7 @@ public class ClientDataListToJsonConverterTest {
 	@Test
 	public void testToJsonCompactFormat() throws Exception {
 
-		ClientDataListToJsonConverterForTest recordListConverterForTest = new ClientDataListToJsonConverterForTest(
+		DataListToJsonConverterForTest recordListConverterForTest = new DataListToJsonConverterForTest(
 				converterFactory, builderFactory, dataList);
 
 		String json = recordListConverterForTest.toJsonCompactFormat();
@@ -169,10 +169,10 @@ public class ClientDataListToJsonConverterTest {
 		jsonBuilder.MCR.assertReturn("toJsonFormattedString", 0, json);
 	}
 
-	class ClientDataListToJsonConverterForTest extends ClientDataListToJsonConverter {
+	class DataListToJsonConverterForTest extends DataListToJsonConverter {
 		MethodCallRecorder MCR = new MethodCallRecorder();
 
-		ClientDataListToJsonConverterForTest(ClientDataToJsonConverterFactorySpy converterFactory,
+		DataListToJsonConverterForTest(DataToJsonConverterFactorySpy converterFactory,
 				JsonBuilderFactorySpy builderFactory, BasicClientDataList dataList) {
 			super(converterFactory, builderFactory, dataList);
 		}

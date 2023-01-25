@@ -19,30 +19,30 @@
 
 package se.uu.ub.cora.clientbasicdata.converter.datatojson;
 
+import se.uu.ub.cora.clientdata.ClientConvertible;
 import se.uu.ub.cora.clientdata.ClientDataAttribute;
 import se.uu.ub.cora.clientdata.ClientDataChild;
 import se.uu.ub.cora.clientdata.ClientDataGroup;
-import se.uu.ub.cora.clientdata.converter.ClientDataToJsonConverter;
-import se.uu.ub.cora.clientdata.converter.ClientDataToJsonConverterFactory;
-import se.uu.ub.cora.data.Convertible;
+import se.uu.ub.cora.clientdata.converter.DataToJsonConverter;
+import se.uu.ub.cora.clientdata.converter.DataToJsonConverterFactory;
 import se.uu.ub.cora.json.builder.JsonArrayBuilder;
 import se.uu.ub.cora.json.builder.JsonBuilderFactory;
 import se.uu.ub.cora.json.builder.JsonObjectBuilder;
 
-public class ClientDataGroupToJsonConverter implements ClientDataToJsonConverter {
+public class DataGroupToJsonConverter implements DataToJsonConverter {
 
 	private ClientDataGroup dataGroup;
 	JsonObjectBuilder dataGroupJsonObjectBuilder;
 	JsonBuilderFactory jsonBuilderFactory;
-	ClientDataToJsonConverterFactory converterFactory;
+	DataToJsonConverterFactory converterFactory;
 
-	public static ClientDataToJsonConverter usingConverterFactoryAndBuilderFactoryAndDataGroup(
-			ClientDataToJsonConverterFactory converterFactory, JsonBuilderFactory builderFactory,
+	public static DataToJsonConverter usingConverterFactoryAndBuilderFactoryAndDataGroup(
+			DataToJsonConverterFactory converterFactory, JsonBuilderFactory builderFactory,
 			ClientDataGroup dataGroup) {
-		return new ClientDataGroupToJsonConverter(converterFactory, builderFactory, dataGroup);
+		return new DataGroupToJsonConverter(converterFactory, builderFactory, dataGroup);
 	}
 
-	ClientDataGroupToJsonConverter(ClientDataToJsonConverterFactory converterFactory,
+	DataGroupToJsonConverter(DataToJsonConverterFactory converterFactory,
 			JsonBuilderFactory builderFactory, ClientDataGroup dataGroup) {
 		this.converterFactory = converterFactory;
 		this.jsonBuilderFactory = builderFactory;
@@ -94,7 +94,7 @@ public class ClientDataGroupToJsonConverter implements ClientDataToJsonConverter
 	void addChildrenToGroup() {
 		JsonArrayBuilder childrenArray = jsonBuilderFactory.createArrayBuilder();
 		for (ClientDataChild dataElement : dataGroup.getChildren()) {
-			Convertible convertible = (Convertible) dataElement;
+			ClientConvertible convertible = (ClientConvertible) dataElement;
 			childrenArray.addJsonObjectBuilder(
 					converterFactory.factorUsingConvertible(convertible).toJsonObjectBuilder());
 		}

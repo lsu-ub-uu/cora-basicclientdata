@@ -19,6 +19,7 @@
 
 package se.uu.ub.cora.clientbasicdata.converter.datatojson;
 
+import se.uu.ub.cora.clientdata.ClientConvertible;
 import se.uu.ub.cora.clientdata.ClientDataAtomic;
 import se.uu.ub.cora.clientdata.ClientDataAttribute;
 import se.uu.ub.cora.clientdata.ClientDataGroup;
@@ -26,9 +27,8 @@ import se.uu.ub.cora.clientdata.ClientDataList;
 import se.uu.ub.cora.clientdata.ClientDataRecord;
 import se.uu.ub.cora.clientdata.ClientDataRecordLink;
 import se.uu.ub.cora.clientdata.ClientDataResourceLink;
-import se.uu.ub.cora.clientdata.converter.ClientDataToJsonConverter;
+import se.uu.ub.cora.clientdata.converter.DataToJsonConverter;
 import se.uu.ub.cora.clientdata.converter.DataToJsonConverterFactory;
-import se.uu.ub.cora.data.Convertible;
 import se.uu.ub.cora.json.builder.JsonBuilderFactory;
 
 public class BasicDataToJsonConverterFactory implements DataToJsonConverterFactory {
@@ -55,64 +55,63 @@ public class BasicDataToJsonConverterFactory implements DataToJsonConverterFacto
 	}
 
 	@Override
-	public ClientDataToJsonConverter factorUsingConvertible(Convertible convertible) {
+	public DataToJsonConverter factorUsingConvertible(ClientConvertible convertible) {
 		if (convertible instanceof ClientDataList) {
-			return ClientDataListToJsonConverter.usingJsonFactoryForDataList(this, builderFactory,
+			return DataListToJsonConverter.usingJsonFactoryForDataList(this, builderFactory,
 					(ClientDataList) convertible);
 		}
 		if (convertible instanceof ClientDataRecord) {
 			RecordActionsToJsonConverter actionsConverter = RecordActionsToJsonConverterImp
 					.usingConverterFactoryAndBuilderFactoryAndBaseUrl(this, builderFactory,
 							baseUrl);
-			return ClientDataRecordToJsonConverter
+			return DataRecordToJsonConverter
 					.usingConverterFactoryAndActionsConverterAndBuilderFactoryAndBaseUrlAndDataRecord(
 							this, actionsConverter, builderFactory, baseUrl,
 							(ClientDataRecord) convertible);
 		}
 
 		if (isDataRecordLinkAndHasBaseUrl(convertible)) {
-			return ClientDataRecordLinkToJsonConverter
+			return DataRecordLinkToJsonConverter
 					.usingConverterFactoryAndJsonBuilderFactoryAndDataRecordLinkAndBaseUrl(this,
 							builderFactory, (ClientDataRecordLink) convertible, baseUrl);
 		}
 		if (isDataResourceLinkAndHasRecordUrl(convertible)) {
-			return ClientDataResourceLinkToJsonConverter
+			return DataResourceLinkToJsonConverter
 					.usingConverterFactoryJsonBuilderFactoryAndDataResourceLinkAndRecordUrl(this,
 							builderFactory, (ClientDataResourceLink) convertible, recordUrl);
 
 		}
 		if (convertible instanceof ClientDataGroup) {
-			return ClientDataGroupToJsonConverter
-					.usingConverterFactoryAndBuilderFactoryAndDataGroup(this, builderFactory,
-							(ClientDataGroup) convertible);
+			return DataGroupToJsonConverter.usingConverterFactoryAndBuilderFactoryAndDataGroup(this,
+					builderFactory, (ClientDataGroup) convertible);
 		}
 		if (convertible instanceof ClientDataAtomic) {
-			return ClientDataAtomicToJsonConverter.usingJsonBuilderFactoryAndDataAtomic(
-					builderFactory, (ClientDataAtomic) convertible);
+			return DataAtomicToJsonConverter.usingJsonBuilderFactoryAndDataAtomic(builderFactory,
+					(ClientDataAtomic) convertible);
 		}
-		return ClientDataAttributeToJsonConverter.usingJsonBuilderFactoryAndDataAttribute(
-				builderFactory, (ClientDataAttribute) convertible);
+		return DataAttributeToJsonConverter.usingJsonBuilderFactoryAndDataAttribute(builderFactory,
+				(ClientDataAttribute) convertible);
 	}
 
-	private boolean isDataResourceLinkAndHasRecordUrl(Convertible convertible) {
+	private boolean isDataResourceLinkAndHasRecordUrl(ClientConvertible convertible) {
 		return (convertible instanceof ClientDataResourceLink) && (recordUrl != null);
 	}
 
-	private boolean isDataRecordLinkAndHasBaseUrl(Convertible convertible) {
+	private boolean isDataRecordLinkAndHasBaseUrl(ClientConvertible convertible) {
 		return baseUrl != null && (convertible instanceof ClientDataRecordLink);
 	}
 
 	@Override
-	public ClientDataToJsonConverter factorUsingBaseUrlAndConvertible(String baseUrl,
-			Convertible convertible) {
+	public DataToJsonConverter factorUsingBaseUrlAndConvertible(String baseUrl,
+			ClientConvertible convertible) {
 		this.baseUrl = baseUrl;
 
 		return factorUsingConvertible(convertible);
 	}
 
 	@Override
-	public ClientDataToJsonConverter factorUsingBaseUrlAndRecordUrlAndConvertible(String baseUrl,
-			String recordUrl, Convertible convertible) {
+	public DataToJsonConverter factorUsingBaseUrlAndRecordUrlAndConvertible(String baseUrl,
+			String recordUrl, ClientConvertible convertible) {
 		this.baseUrl = baseUrl;
 		this.recordUrl = recordUrl;
 

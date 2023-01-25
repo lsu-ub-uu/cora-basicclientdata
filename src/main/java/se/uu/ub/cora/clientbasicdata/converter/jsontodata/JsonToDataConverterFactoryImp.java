@@ -22,8 +22,8 @@ package se.uu.ub.cora.clientbasicdata.converter.jsontodata;
 import java.util.ArrayList;
 import java.util.List;
 
-import se.uu.ub.cora.data.converter.JsonToDataConverter;
-import se.uu.ub.cora.data.converter.JsonToDataConverterFactory;
+import se.uu.ub.cora.clientdata.converter.JsonToDataConverter;
+import se.uu.ub.cora.clientdata.converter.JsonToDataConverterFactory;
 import se.uu.ub.cora.json.parser.JsonArray;
 import se.uu.ub.cora.json.parser.JsonObject;
 import se.uu.ub.cora.json.parser.JsonParseException;

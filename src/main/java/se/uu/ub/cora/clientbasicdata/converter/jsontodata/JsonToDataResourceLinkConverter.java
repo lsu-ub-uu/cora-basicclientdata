@@ -19,9 +19,9 @@
 package se.uu.ub.cora.clientbasicdata.converter.jsontodata;
 
 import se.uu.ub.cora.clientbasicdata.data.BasicClientDataResourceLink;
-import se.uu.ub.cora.data.Convertible;
-import se.uu.ub.cora.data.DataGroup;
-import se.uu.ub.cora.data.converter.JsonToDataConverter;
+import se.uu.ub.cora.clientdata.ClientConvertible;
+import se.uu.ub.cora.clientdata.ClientDataGroup;
+import se.uu.ub.cora.clientdata.converter.JsonToDataConverter;
 import se.uu.ub.cora.json.parser.JsonObject;
 import se.uu.ub.cora.json.parser.JsonParseException;
 
@@ -35,13 +35,13 @@ public class JsonToDataResourceLinkConverter extends JsonToDataGroupConverter
 	}
 
 	@Override
-	public Convertible toInstance() {
+	public ClientConvertible toInstance() {
 		BasicClientDataResourceLink resourceLink = (BasicClientDataResourceLink) super.toInstance();
 		throwErrorIfLinkChildrenAreIncorrect(resourceLink);
 		return resourceLink;
 	}
 
-	private void throwErrorIfLinkChildrenAreIncorrect(DataGroup recordLink) {
+	private void throwErrorIfLinkChildrenAreIncorrect(ClientDataGroup recordLink) {
 		if (incorrectNumberOfChildren(recordLink) || incorrectChildren(recordLink)) {
 			throw new JsonParseException(
 					"ResourceLinkData must and can only contain children with name "
@@ -49,11 +49,11 @@ public class JsonToDataResourceLinkConverter extends JsonToDataGroupConverter
 		}
 	}
 
-	private boolean incorrectNumberOfChildren(DataGroup recordLink) {
+	private boolean incorrectNumberOfChildren(ClientDataGroup recordLink) {
 		return recordLink.getChildren().size() != NUM_OF_RESOURCELINK_CHILDREN;
 	}
 
-	private boolean incorrectChildren(DataGroup recordLink) {
+	private boolean incorrectChildren(ClientDataGroup recordLink) {
 		return !recordLink.containsChildWithNameInData("streamId")
 				|| !recordLink.containsChildWithNameInData("filename")
 				|| !recordLink.containsChildWithNameInData("filesize")

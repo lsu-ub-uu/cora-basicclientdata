@@ -19,21 +19,22 @@
 
 package se.uu.ub.cora.clientbasicdata.converter.datatojson;
 
+import se.uu.ub.cora.clientdata.ClientDataAttribute;
 import se.uu.ub.cora.clientdata.converter.DataToJsonConverter;
-import se.uu.ub.cora.data.DataAttribute;
 import se.uu.ub.cora.json.builder.JsonBuilderFactory;
 import se.uu.ub.cora.json.builder.JsonObjectBuilder;
 
 public final class DataAttributeToJsonConverter implements DataToJsonConverter {
-	private DataAttribute dataAttribute;
+	private ClientDataAttribute dataAttribute;
 	JsonBuilderFactory factory;
 
-	public static DataToJsonConverter usingJsonBuilderFactoryAndDataAttribute(JsonBuilderFactory factory,
-			DataAttribute dataAttribute) {
+	public static DataToJsonConverter usingJsonBuilderFactoryAndDataAttribute(
+			JsonBuilderFactory factory, ClientDataAttribute dataAttribute) {
 		return new DataAttributeToJsonConverter(factory, dataAttribute);
 	}
 
-	private DataAttributeToJsonConverter(JsonBuilderFactory factory, DataAttribute dataAttribute) {
+	private DataAttributeToJsonConverter(JsonBuilderFactory factory,
+			ClientDataAttribute dataAttribute) {
 		this.factory = factory;
 		this.dataAttribute = dataAttribute;
 	}

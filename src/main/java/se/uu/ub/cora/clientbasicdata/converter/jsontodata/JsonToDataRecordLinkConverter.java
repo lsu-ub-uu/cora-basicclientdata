@@ -19,9 +19,9 @@
 package se.uu.ub.cora.clientbasicdata.converter.jsontodata;
 
 import se.uu.ub.cora.clientbasicdata.data.BasicClientDataRecordLink;
-import se.uu.ub.cora.data.Convertible;
-import se.uu.ub.cora.data.DataGroup;
-import se.uu.ub.cora.data.converter.JsonToDataConverter;
+import se.uu.ub.cora.clientdata.ClientConvertible;
+import se.uu.ub.cora.clientdata.ClientDataGroup;
+import se.uu.ub.cora.clientdata.converter.JsonToDataConverter;
 import se.uu.ub.cora.json.parser.JsonObject;
 import se.uu.ub.cora.json.parser.JsonParseException;
 
@@ -41,7 +41,7 @@ public class JsonToDataRecordLinkConverter extends JsonToDataGroupConverter
 	}
 
 	@Override
-	public Convertible toInstance() {
+	public ClientConvertible toInstance() {
 		BasicClientDataRecordLink recordLink = (BasicClientDataRecordLink) super.toInstance();
 		throwErrorIfLinkChildrenAreIncorrect(recordLink);
 		return recordLink;
@@ -52,7 +52,7 @@ public class JsonToDataRecordLinkConverter extends JsonToDataGroupConverter
 		dataGroup = BasicClientDataRecordLink.withNameInData(nameInData);
 	}
 
-	private void throwErrorIfLinkChildrenAreIncorrect(DataGroup recordLink) {
+	private void throwErrorIfLinkChildrenAreIncorrect(ClientDataGroup recordLink) {
 		if (incorrectNumberOfChildren(recordLink) || missingMandatoryChildren(recordLink)
 				|| maxNumOfChildrenButOneOptionalChildIsMissing(recordLink)
 				|| okNumOfChildrenButOpitionChildrenMissing(recordLink)) {
@@ -62,27 +62,27 @@ public class JsonToDataRecordLinkConverter extends JsonToDataGroupConverter
 		}
 	}
 
-	private boolean incorrectNumberOfChildren(DataGroup recordLink) {
+	private boolean incorrectNumberOfChildren(ClientDataGroup recordLink) {
 		int numberOfChildren = recordLink.getChildren().size();
 		return numberOfChildren < MIN_NUM_OF_CHILDREN || numberOfChildren > MAX_NUM_OF_CHILDREN;
 	}
 
-	private boolean missingMandatoryChildren(DataGroup recordLink) {
+	private boolean missingMandatoryChildren(ClientDataGroup recordLink) {
 		return childIsMissing(recordLink, "linkedRecordType")
 				|| childIsMissing(recordLink, "linkedRecordId");
 	}
 
-	private boolean childIsMissing(DataGroup recordLink, String nameInData) {
+	private boolean childIsMissing(ClientDataGroup recordLink, String nameInData) {
 		return !recordLink.containsChildWithNameInData(nameInData);
 	}
 
-	private boolean maxNumOfChildrenButOneOptionalChildIsMissing(DataGroup recordLink) {
+	private boolean maxNumOfChildrenButOneOptionalChildIsMissing(ClientDataGroup recordLink) {
 		return recordLink.getChildren().size() == MAX_NUM_OF_CHILDREN
 				&& (childIsMissing(recordLink, "linkedRepeatId")
 						|| childIsMissing(recordLink, "linkedPath"));
 	}
 
-	private boolean okNumOfChildrenButOpitionChildrenMissing(DataGroup recordLink) {
+	private boolean okNumOfChildrenButOpitionChildrenMissing(ClientDataGroup recordLink) {
 		return recordLink.getChildren().size() == OPTIONAL_NUM_OF_CHILDREN
 				&& childIsMissing(recordLink, "linkedRepeatId")
 				&& childIsMissing(recordLink, "linkedPath");

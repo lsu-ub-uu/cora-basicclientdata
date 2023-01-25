@@ -23,10 +23,9 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import se.uu.ub.cora.clientbasicdata.converter.jsontodata.JsonToDataAttributeConverter;
 import se.uu.ub.cora.clientbasicdata.data.BasicClientDataAttribute;
-import se.uu.ub.cora.data.Convertible;
-import se.uu.ub.cora.data.converter.JsonToDataConverter;
+import se.uu.ub.cora.clientdata.ClientConvertible;
+import se.uu.ub.cora.clientdata.converter.JsonToDataConverter;
 import se.uu.ub.cora.json.parser.JsonObject;
 import se.uu.ub.cora.json.parser.JsonParseException;
 import se.uu.ub.cora.json.parser.JsonParser;
@@ -53,7 +52,7 @@ public class JsonToDataAttributeConverterTest {
 		JsonValue jsonValue = jsonParser.parseString(json);
 		JsonToDataConverter jsonToDataConverter = JsonToDataAttributeConverter
 				.forJsonObject((JsonObject) jsonValue);
-		Convertible dataPart = jsonToDataConverter.toInstance();
+		ClientConvertible dataPart = jsonToDataConverter.toInstance();
 		BasicClientDataAttribute dataAttribute = (BasicClientDataAttribute) dataPart;
 		return dataAttribute;
 	}

@@ -33,29 +33,27 @@ import java.util.function.Supplier;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import se.uu.ub.cora.clientbasicdata.converter.datatojson.ClientDataRecordToJsonConverter;
 import se.uu.ub.cora.clientdata.ClientAction;
 import se.uu.ub.cora.clientdata.ClientDataGroup;
-//import se.uu.ub.cora.basicdata.data.spy.ClientDataRecordSpy;
-import se.uu.ub.cora.data.converter.ClientDataToJsonConverter;
+import se.uu.ub.cora.clientdata.converter.DataToJsonConverter;
+import se.uu.ub.cora.clientdata.spies.ClientDataGroupSpy;
+import se.uu.ub.cora.clientdata.spies.ClientDataRecordSpy;
 import se.uu.ub.cora.json.builder.JsonObjectBuilder;
-import se.uu.ub.cora.testspies.data.ClientDataGroupSpy;
-import se.uu.ub.cora.testspies.data.ClientDataRecordSpy;
 import se.uu.ub.cora.testutils.mcr.MethodCallRecorder;
 
-public class ClientDataRecordToJsonConverterTest {
+public class DataRecordToJsonConverterTest {
 	private ClientDataRecordSpy dataRecord;
-	private ClientDataRecordToJsonConverter dataRecordToJsonConverter;
+	private DataRecordToJsonConverter dataRecordToJsonConverter;
 	private JsonBuilderFactorySpy builderFactory;
 
-	private ClientDataToJsonConverterFactorySpy converterFactory;
+	private DataToJsonConverterFactorySpy converterFactory;
 	private String baseUrl = "some/base/url/";
 	private ClientDataGroupSpy dataGroup;
 	private RecordActionsToJsonConverterSpy actionsConverterSpy;
 
 	@BeforeMethod
 	public void setUp() {
-		converterFactory = new ClientDataToJsonConverterFactorySpy();
+		converterFactory = new DataToJsonConverterFactorySpy();
 		actionsConverterSpy = new RecordActionsToJsonConverterSpy();
 		builderFactory = new JsonBuilderFactorySpy();
 		dataGroup = new ClientDataGroupSpy();
@@ -65,7 +63,7 @@ public class ClientDataRecordToJsonConverterTest {
 	}
 
 	private void createDataRecordToJsonConverter() {
-		dataRecordToJsonConverter = ClientDataRecordToJsonConverter
+		dataRecordToJsonConverter = DataRecordToJsonConverter
 				.usingConverterFactoryAndActionsConverterAndBuilderFactoryAndBaseUrlAndDataRecord(
 						converterFactory, actionsConverterSpy, builderFactory, baseUrl, dataRecord);
 	}
@@ -73,13 +71,13 @@ public class ClientDataRecordToJsonConverterTest {
 	@Test
 	public void testConverterImplementsDataToJsonConverter() throws Exception {
 		createDataRecordToJsonConverter();
-		assertTrue(dataRecordToJsonConverter instanceof ClientDataToJsonConverter);
+		assertTrue(dataRecordToJsonConverter instanceof DataToJsonConverter);
 	}
 
 	@Test
 	public void testConverterFactoryUsedToCreateConverterForMainDataGroupNoBaseUrl()
 			throws Exception {
-		dataRecordToJsonConverter = ClientDataRecordToJsonConverter
+		dataRecordToJsonConverter = DataRecordToJsonConverter
 				.usingConverterFactoryAndActionsConverterAndBuilderFactoryAndBaseUrlAndDataRecord(
 						converterFactory, actionsConverterSpy, builderFactory, null, dataRecord);
 
@@ -90,7 +88,7 @@ public class ClientDataRecordToJsonConverterTest {
 		converterFactory.MCR.assertParameters("factorUsingConvertible", 0,
 				dataRecord.getDataGroup());
 
-		ClientDataToJsonConverterSpy dataGroupConverter = (ClientDataToJsonConverterSpy) converterFactory.MCR
+		DataToJsonConverterSpy dataGroupConverter = (DataToJsonConverterSpy) converterFactory.MCR
 				.getReturnValue("factorUsingConvertible", 0);
 		assertKeyDataAddedToRecordBuilderIsBuilderFromDataGroupConverter(dataGroupConverter);
 
@@ -102,7 +100,7 @@ public class ClientDataRecordToJsonConverterTest {
 	}
 
 	private void assertKeyDataAddedToRecordBuilderIsBuilderFromDataGroupConverter(
-			ClientDataToJsonConverterSpy dataGroupConverter) {
+			DataToJsonConverterSpy dataGroupConverter) {
 		JsonObjectBuilderSpy dataGroupBuilder = (JsonObjectBuilderSpy) dataGroupConverter.MCR
 				.getReturnValue("toJsonObjectBuilder", 0);
 
@@ -132,7 +130,7 @@ public class ClientDataRecordToJsonConverterTest {
 		converterFactory.MCR.assertParameters("factorUsingBaseUrlAndRecordUrlAndConvertible", 0,
 				baseUrl, recordUrl, dataRecord.getDataGroup());
 
-		ClientDataToJsonConverterSpy dataGroupConverter = (ClientDataToJsonConverterSpy) converterFactory.MCR
+		DataToJsonConverterSpy dataGroupConverter = (DataToJsonConverterSpy) converterFactory.MCR
 				.getReturnValue("factorUsingBaseUrlAndRecordUrlAndConvertible", 0);
 		assertKeyDataAddedToRecordBuilderIsBuilderFromDataGroupConverter(dataGroupConverter);
 
@@ -261,7 +259,7 @@ public class ClientDataRecordToJsonConverterTest {
 		builderSpy.MCR.assertMethodWasCalled("toJsonFormattedPrettyString");
 	}
 
-	private class ClientDataRecordToJsonConverterForTest extends ClientDataRecordToJsonConverter {
+	private class ClientDataRecordToJsonConverterForTest extends DataRecordToJsonConverter {
 		MethodCallRecorder MCR = new MethodCallRecorder();
 
 		ClientDataRecordToJsonConverterForTest(JsonBuilderFactorySpy builderFactory) {
@@ -302,7 +300,7 @@ public class ClientDataRecordToJsonConverterTest {
 
 	private ClientDataRecordSpy createDataRecordToJsonConverterUsingDataRecordSpy() {
 		ClientDataRecordSpy dataRecordSpy = new ClientDataRecordSpy();
-		dataRecordToJsonConverter = ClientDataRecordToJsonConverter
+		dataRecordToJsonConverter = DataRecordToJsonConverter
 				.usingConverterFactoryAndActionsConverterAndBuilderFactoryAndBaseUrlAndDataRecord(
 						converterFactory, actionsConverterSpy, builderFactory, baseUrl,
 						dataRecordSpy);
@@ -336,7 +334,7 @@ public class ClientDataRecordToJsonConverterTest {
 	}
 
 	private void assertActionConverterData(ClientDataRecordSpy dataRecordSpy) {
-		ClientActionsConverterData actionConverter = (ClientActionsConverterData) actionsConverterSpy.MCR
+		ActionsConverterData actionConverter = (ActionsConverterData) actionsConverterSpy.MCR
 				.getValueForMethodNameAndCallNumberAndParameterName("toJsonObjectBuilder", 0,
 						"actionsConverterData");
 		assertEquals(actionConverter.recordType, dataRecordSpy.getType());
@@ -385,7 +383,7 @@ public class ClientDataRecordToJsonConverterTest {
 		String searchId = (String) searchGroup.MCR
 				.getReturnValue("getFirstAtomicValueWithNameInData", 0);
 
-		ClientActionsConverterData actionConverter = (ClientActionsConverterData) actionsConverterSpy.MCR
+		ActionsConverterData actionConverter = (ActionsConverterData) actionsConverterSpy.MCR
 				.getValueForMethodNameAndCallNumberAndParameterName("toJsonObjectBuilder", 0,
 						"actionsConverterData");
 		assertSame(actionConverter.searchRecordId, searchId);
@@ -406,7 +404,7 @@ public class ClientDataRecordToJsonConverterTest {
 	}
 
 	private void assertSearchRecordIdNotSet() {
-		ClientActionsConverterData actionConverter = (ClientActionsConverterData) actionsConverterSpy.MCR
+		ActionsConverterData actionConverter = (ActionsConverterData) actionsConverterSpy.MCR
 				.getValueForMethodNameAndCallNumberAndParameterName("toJsonObjectBuilder", 0,
 						"actionsConverterData");
 		assertSame(actionConverter.searchRecordId, null);

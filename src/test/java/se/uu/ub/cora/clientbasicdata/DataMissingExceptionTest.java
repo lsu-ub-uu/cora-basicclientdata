@@ -23,10 +23,12 @@ import static org.testng.Assert.assertEquals;
 
 import org.testng.annotations.Test;
 
+import se.uu.ub.cora.clientdata.ClientDataMissingException;
+
 public class DataMissingExceptionTest {
 	@Test
 	public void testInitWithMessage() {
-		DataMissingException dataMissingException = new DataMissingException("Message");
+		ClientDataMissingException dataMissingException = new ClientDataMissingException("Message");
 		assertEquals(dataMissingException.getMessage(), "Message");
 	}
 }
