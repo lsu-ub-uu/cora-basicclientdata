@@ -27,7 +27,9 @@ import se.uu.ub.cora.clientdata.converter.JsonToClientDataConverterFactory;
 import se.uu.ub.cora.json.parser.JsonArray;
 import se.uu.ub.cora.json.parser.JsonObject;
 import se.uu.ub.cora.json.parser.JsonParseException;
+import se.uu.ub.cora.json.parser.JsonParser;
 import se.uu.ub.cora.json.parser.JsonValue;
+import se.uu.ub.cora.json.parser.org.OrgJsonParser;
 
 public class JsonToBasicClientDataConverterFactoryImp implements JsonToClientDataConverterFactory {
 
@@ -37,11 +39,18 @@ public class JsonToBasicClientDataConverterFactoryImp implements JsonToClientDat
 	private static final int NUM_OF_RESOURCELINK_CHILDREN = 4;
 
 	@Override
-	public JsonToClientDataConverter createForJsonObject(JsonValue jsonValue) {
-		if (!(jsonValue instanceof JsonObject)) {
+	public JsonToClientDataConverter factor(String jsonString) {
+		JsonParser jsonParser = new OrgJsonParser();
+		JsonValue json = jsonParser.parseString(jsonString);
+
+		return createConvertedForJsonValue(json);
+	}
+
+	JsonToClientDataConverter createConvertedForJsonValue(JsonValue json) {
+		if (!(json instanceof JsonObject)) {
 			throw new JsonParseException("Json value is not an object, can not convert");
 		}
-		JsonObject jsonObject = (JsonObject) jsonValue;
+		JsonObject jsonObject = (JsonObject) json;
 
 		if (isGroup(jsonObject)) {
 			return createConverterForGroupOrLink(jsonObject);
