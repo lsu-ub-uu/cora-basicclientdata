@@ -27,7 +27,9 @@ import se.uu.ub.cora.clientdata.converter.JsonToClientDataConverterFactory;
 import se.uu.ub.cora.json.parser.JsonArray;
 import se.uu.ub.cora.json.parser.JsonObject;
 import se.uu.ub.cora.json.parser.JsonParseException;
+import se.uu.ub.cora.json.parser.JsonParser;
 import se.uu.ub.cora.json.parser.JsonValue;
+import se.uu.ub.cora.json.parser.org.OrgJsonParser;
 
 public class JsonToBasicClientDataConverterFactoryImp implements JsonToClientDataConverterFactory {
 
@@ -37,11 +39,19 @@ public class JsonToBasicClientDataConverterFactoryImp implements JsonToClientDat
 	private static final int NUM_OF_RESOURCELINK_CHILDREN = 4;
 
 	@Override
-	public JsonToClientDataConverter createForJsonObject(JsonValue jsonValue) {
-		if (!(jsonValue instanceof JsonObject)) {
+	public JsonToClientDataConverter factorUsingString(String jsonString) {
+		JsonParser jsonParser = new OrgJsonParser();
+		JsonObject json = jsonParser.parseStringAsObject(jsonString);
+
+		return factorUsingJsonObject(json);
+	}
+
+	@Override
+	public JsonToClientDataConverter factorUsingJsonObject(JsonObject json) {
+		if (!(json instanceof JsonObject)) {
 			throw new JsonParseException("Json value is not an object, can not convert");
 		}
-		JsonObject jsonObject = (JsonObject) jsonValue;
+		JsonObject jsonObject = json;
 
 		if (isGroup(jsonObject)) {
 			return createConverterForGroupOrLink(jsonObject);
@@ -51,6 +61,21 @@ public class JsonToBasicClientDataConverterFactoryImp implements JsonToClientDat
 		}
 		return JsonToBasicClientDataAttributeConverter.forJsonObject(jsonObject);
 	}
+
+	// JsonToClientDataConverter createConvertedForJsonValue(JsonValue json) {
+	// if (!(json instanceof JsonObject)) {
+	// throw new JsonParseException("Json value is not an object, can not convert");
+	// }
+	// JsonObject jsonObject = (JsonObject) json;
+	//
+	// if (isGroup(jsonObject)) {
+	// return createConverterForGroupOrLink(jsonObject);
+	// }
+	// if (isAtomicData(jsonObject)) {
+	// return JsonToBasicClientDataAtomicConverter.forJsonObject(jsonObject);
+	// }
+	// return JsonToBasicClientDataAttributeConverter.forJsonObject(jsonObject);
+	// }
 
 	private JsonToClientDataConverter createConverterForGroupOrLink(JsonObject jsonObject) {
 		List<String> foundNames = extractChildNames(jsonObject);
@@ -113,5 +138,4 @@ public class JsonToBasicClientDataConverterFactoryImp implements JsonToClientDat
 	private boolean isGroup(JsonObject jsonObject) {
 		return jsonObject.containsKey("children");
 	}
-
 }
