@@ -21,9 +21,11 @@ package se.uu.ub.cora.clientbasicdata.data;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -31,9 +33,11 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import se.uu.ub.cora.clientdata.ClientAction;
+import se.uu.ub.cora.clientdata.ClientActionLink;
 import se.uu.ub.cora.clientdata.ClientData;
 import se.uu.ub.cora.clientdata.ClientDataGroup;
 import se.uu.ub.cora.clientdata.ClientDataMissingException;
+import se.uu.ub.cora.clientdata.spies.ClientActionLinkSpy;
 import se.uu.ub.cora.clientdata.spies.ClientDataGroupSpy;
 
 public class BasicClientDataRecordTest {
@@ -73,10 +77,14 @@ public class BasicClientDataRecordTest {
 
 	@Test
 	public void testAddData() {
-		dataRecord.addAction(ClientAction.READ);
 
-		assertTrue(dataRecord.getActions().contains(ClientAction.READ));
-		assertFalse(dataRecord.getActions().contains(ClientAction.DELETE));
+		ClientActionLink actionLink = new ClientActionLinkSpy();
+		dataRecord.addActionLink(actionLink);
+
+		Optional<ClientActionLink> actionLink2 = dataRecord.getActionLink(actionLink.getAction());
+
+		assertSame(actionLink2.get(), actionLink);
+
 		// small hack to get 100% coverage on enum
 		ClientAction.valueOf(ClientAction.READ.toString());
 	}
@@ -258,14 +266,20 @@ public class BasicClientDataRecordTest {
 	}
 
 	@Test
-	public void testHasDatasNoDatas() throws Exception {
-		assertFalse(dataRecord.hasActions());
+	public void testRequestedActionLinkNotPresent() throws Exception {
+		Optional<ClientActionLink> actionLink = dataRecord.getActionLink(ClientAction.DELETE);
+
+		assertTrue(actionLink.isEmpty());
 	}
 
 	@Test
-	public void testHasDatasRecordHasDatas() throws Exception {
-		dataRecord.addAction(ClientAction.CREATE);
-		assertTrue(dataRecord.hasActions());
+	public void testRequestedActionLinkIsPresent() throws Exception {
+		ClientActionLinkSpy link = new ClientActionLinkSpy();
+		dataRecord.addActionLink(link);
+
+		Optional<ClientActionLink> oActionLink = dataRecord.getActionLink(ClientAction.READ);
+
+		assertTrue(oActionLink.isPresent());
 	}
 
 	@Test

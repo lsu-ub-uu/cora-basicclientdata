@@ -16,16 +16,17 @@
  *     You should have received a copy of the GNU General Public License
  *     along with Cora.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package se.uu.ub.cora.clientbasicdata.data;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import se.uu.ub.cora.clientdata.ClientAction;
+import se.uu.ub.cora.clientdata.ClientActionLink;
 import se.uu.ub.cora.clientdata.ClientDataGroup;
 import se.uu.ub.cora.clientdata.ClientDataMissingException;
 import se.uu.ub.cora.clientdata.ClientDataRecord;
@@ -33,7 +34,7 @@ import se.uu.ub.cora.clientdata.ClientDataRecord;
 public final class BasicClientDataRecord implements ClientDataRecord {
 	private static final String SEARCH = "search";
 	private ClientDataGroup dataGroup;
-	private List<ClientAction> actions = new ArrayList<>();
+	private Map<ClientAction, ClientActionLink> actions = new HashMap<>();
 	private Set<String> readPermissions = new LinkedHashSet<>();
 	private Set<String> writePermissions = new LinkedHashSet<>();
 
@@ -57,13 +58,16 @@ public final class BasicClientDataRecord implements ClientDataRecord {
 	}
 
 	@Override
-	public void addAction(ClientAction action) {
-		actions.add(action);
+	public void addActionLink(ClientActionLink action) {
+		actions.put(action.getAction(), action);
 	}
 
 	@Override
-	public List<ClientAction> getActions() {
-		return actions;
+	public Optional<ClientActionLink> getActionLink(ClientAction action) {
+		if (actions.containsKey(action)) {
+			return Optional.of(actions.get(action));
+		}
+		return Optional.empty();
 	}
 
 	@Override
@@ -135,11 +139,6 @@ public final class BasicClientDataRecord implements ClientDataRecord {
 	private String getIdFromGroup() {
 		ClientDataGroup recordInfo = dataGroup.getFirstGroupWithNameInData("recordInfo");
 		return recordInfo.getFirstAtomicValueWithNameInData("id");
-	}
-
-	@Override
-	public boolean hasActions() {
-		return !actions.isEmpty();
 	}
 
 	@Override

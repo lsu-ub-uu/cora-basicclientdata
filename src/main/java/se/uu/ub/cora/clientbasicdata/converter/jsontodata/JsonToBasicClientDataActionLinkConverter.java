@@ -18,26 +18,31 @@
  */
 package se.uu.ub.cora.clientbasicdata.converter.jsontodata;
 
+import se.uu.ub.cora.clientbasicdata.data.BasicClientActionLink;
+import se.uu.ub.cora.clientdata.ClientAction;
+import se.uu.ub.cora.clientdata.ClientActionLink;
 import se.uu.ub.cora.clientdata.ClientData;
 import se.uu.ub.cora.clientdata.ClientDataGroup;
 import se.uu.ub.cora.clientdata.converter.JsonToClientDataConverter;
+import se.uu.ub.cora.clientdata.converter.JsonToClientDataConverterFactory;
 import se.uu.ub.cora.json.parser.JsonObject;
 import se.uu.ub.cora.json.parser.JsonParseException;
 
 public class JsonToBasicClientDataActionLinkConverter implements JsonToClientDataConverter {
 
 	private JsonObject jsonObject;
-	protected JsonToDataConverterFactory factory;
-	private ActionLink actionLink;
+	protected JsonToClientDataConverterFactory factory;
+	private ClientActionLink actionLink;
 
-	public JsonToDataActionLinkConverterImp(JsonObject jsonObject, JsonToDataConverterFactory factory) {
-	        this.jsonObject = jsonObject;
-	        this.factory = factory;
-	    }
+	public JsonToBasicClientDataActionLinkConverter(JsonObject jsonObject,
+			JsonToClientDataConverterFactory factory) {
+		this.jsonObject = jsonObject;
+		this.factory = factory;
+	}
 
-	public static JsonToDataActionLinkConverter forJsonObjectUsingFactory(JsonObject jsonObject,
-			JsonToDataConverterFactory factory) {
-		return new JsonToDataActionLinkConverterImp(jsonObject, factory);
+	public static JsonToBasicClientDataActionLinkConverter forJsonObjectUsingFactory(
+			JsonObject jsonObject, JsonToClientDataConverterFactory factory) {
+		return new JsonToBasicClientDataActionLinkConverter(jsonObject, factory);
 	}
 
 	@Override
@@ -67,9 +72,9 @@ public class JsonToBasicClientDataActionLinkConverter implements JsonToClientDat
 		setRequestMethod();
 	}
 
-	private ActionLink createActionLinkUsingRelInJsonObject() {
+	private ClientActionLink createActionLinkUsingRelInJsonObject() {
 		String rel = getStringValueFromJsonObjectUsingKey("rel");
-		return ActionLink.withAction(Action.valueOf(rel.toUpperCase()));
+		return BasicClientActionLink.withAction(ClientAction.valueOf(rel.toUpperCase()));
 	}
 
 	private String getStringValueFromJsonObjectUsingKey(String key) {

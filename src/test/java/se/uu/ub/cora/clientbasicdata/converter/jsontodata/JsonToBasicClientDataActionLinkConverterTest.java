@@ -23,6 +23,7 @@ import static org.testng.Assert.assertEquals;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import se.uu.ub.cora.clientdata.ClientActionLink;
 import se.uu.ub.cora.clientdata.ClientData;
 import se.uu.ub.cora.clientdata.spies.JsonToClientDataConverterFactorySpy;
 import se.uu.ub.cora.json.parser.JsonObject;
@@ -35,35 +36,39 @@ public class JsonToBasicClientDataActionLinkConverterTest {
 
 	private JsonParser jsonParser;
 	private JsonToClientDataConverterFactorySpy factory;
+	JsonToBasicClientDataActionLinkConverter jsonToDataConverter;
 
 	@BeforeMethod
 	public void beforeMethod() {
 		jsonParser = new OrgJsonParser();
+		factory = new JsonToClientDataConverterFactorySpy();
 	}
 
-	@Test(expectedExceptions = JsonParseException.class, expectedExceptionsMessageRegExp = "Action link data must contain key: rel")
+	@Test(expectedExceptions = JsonParseException.class, expectedExceptionsMessageRegExp = ""
+			+ "Action link data must contain key: rel")
 	public void testToClassWithNoAction() {
 		String json = "{}";
 		createClientDataActionLinkForJsonString(json);
 	}
 
-	private ActionLink createClientDataActionLinkForJsonString(String json) {
-		factory = new JsonToDataConverterFactorySpy();
+	private ClientActionLink createClientDataActionLinkForJsonString(String json) {
 		JsonValue jsonValue = jsonParser.parseString(json);
 
-		JsonToDataActionLinkConverter jsonToDataConverter = JsonToDataActionLinkConverterImp
+		jsonToDataConverter = JsonToBasicClientDataActionLinkConverter
 				.forJsonObjectUsingFactory((JsonObject) jsonValue, factory);
 		ClientData clientData = jsonToDataConverter.toInstance();
-		return (ActionLink) clientData;
+		return (ClientActionLink) clientData;
 	}
 
-	@Test(expectedExceptions = JsonParseException.class, expectedExceptionsMessageRegExp = "Action link data must contain key: url")
+	@Test(expectedExceptions = JsonParseException.class, expectedExceptionsMessageRegExp = ""
+			+ "Action link data must contain key: url")
 	public void testToClassWithNoURL() {
 		String json = "{\"requestMethod\":\"GET\",\"rel\":\"read\"}";
 		createClientDataActionLinkForJsonString(json);
 	}
 
-	@Test(expectedExceptions = JsonParseException.class, expectedExceptionsMessageRegExp = "Action link data must contain key: requestMethod")
+	@Test(expectedExceptions = JsonParseException.class, expectedExceptionsMessageRegExp = ""
+			+ "Action link data must contain key: requestMethod")
 	public void testToClassWithNoRequestMethod() {
 		String json = "{\"rel\":\"read\",\"url\":\"https://cora.epc.ub.uu.se/systemone/rest/record/presentationGroup/loginFormNewPGroup\"}";
 		createClientDataActionLinkForJsonString(json);
@@ -72,7 +77,7 @@ public class JsonToBasicClientDataActionLinkConverterTest {
 	@Test
 	public void testToClassWithNecessaryContent() {
 		String json = "{\"requestMethod\":\"GET\",\"rel\":\"read\",\"url\":\"https://cora.epc.ub.uu.se/systemone/rest/record/presentationGroup/loginFormNewPGroup\"}";
-		ActionLink clientDataActionLink = createClientDataActionLinkForJsonString(json);
+		ClientActionLink clientDataActionLink = createClientDataActionLinkForJsonString(json);
 		assertEquals(clientDataActionLink.getAction(), Action.READ);
 		assertEquals(clientDataActionLink.getURL(),
 				"https://cora.epc.ub.uu.se/systemone/rest/record/presentationGroup/loginFormNewPGroup");
@@ -83,7 +88,7 @@ public class JsonToBasicClientDataActionLinkConverterTest {
 	@Test
 	public void testToClassWithExtraContent() {
 		String json = "{\"requestMethod\":\"POST\",\"rel\":\"index\",\"body\":{\"children\":[{\"children\":[{\"name\":\"linkedRecordType\",\"value\":\"recordType\"},{\"name\":\"linkedRecordId\",\"value\":\"book\"}],\"name\":\"recordType\"},{\"name\":\"recordId\",\"value\":\"book:39921376484193\"},{\"name\":\"type\",\"value\":\"index\"}],\"name\":\"workOrder\"},\"contentType\":\"application/vnd.uub.record+json\",\"url\":\"https://cora.epc.ub.uu.se/systemone/rest/record/workOrder/\",\"accept\":\"application/vnd.uub.record+json\"}";
-		ActionLink clientDataActionLink = createClientDataActionLinkForJsonString(json);
+		ClientActionLink clientDataActionLink = createClientDataActionLinkForJsonString(json);
 		assertEquals(clientDataActionLink.getAction(), Action.INDEX);
 		assertEquals(clientDataActionLink.getURL(),
 				"https://cora.epc.ub.uu.se/systemone/rest/record/workOrder/");
