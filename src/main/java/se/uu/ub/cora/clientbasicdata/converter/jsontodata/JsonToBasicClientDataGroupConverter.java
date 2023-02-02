@@ -166,7 +166,7 @@ public class JsonToBasicClientDataGroupConverter implements JsonToClientDataConv
 	private void addChildToGroup(JsonObject child) {
 		JsonToBasicClientDataConverterFactoryImp jsonToDataConverterFactoryImp = new JsonToBasicClientDataConverterFactoryImp();
 		JsonToClientDataConverter childJsonToDataConverter = jsonToDataConverterFactoryImp
-				.createConvertedForJsonValue(child);
+				.factorUsingJsonObject(child);
 		dataGroup.addChild((ClientDataChild) childJsonToDataConverter.toInstance());
 	}
 }

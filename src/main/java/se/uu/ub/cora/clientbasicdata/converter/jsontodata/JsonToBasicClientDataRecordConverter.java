@@ -150,8 +150,7 @@ public class JsonToBasicClientDataRecordConverter implements JsonToClientDataCon
 
 	private ClientDataGroup convertDataGroup() {
 		JsonObject jsonDataObject = jsonObjectRecord.getValueAsJsonObject("data");
-		JsonToClientDataConverter converter = ((JsonToBasicClientDataConverterFactoryImp) factory)
-				.createConvertedForJsonValue(jsonDataObject);
+		JsonToClientDataConverter converter = factory.factorUsingJsonObject(jsonDataObject);
 		return (ClientDataGroup) converter.toInstance();
 	}
 

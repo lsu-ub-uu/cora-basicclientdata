@@ -12,7 +12,9 @@ import org.testng.annotations.Test;
 import se.uu.ub.cora.clientdata.ClientConvertible;
 import se.uu.ub.cora.clientdata.ClientDataGroup;
 import se.uu.ub.cora.clientdata.ClientDataRecord;
+import se.uu.ub.cora.clientdata.spies.ClientDataGroupSpy;
 import se.uu.ub.cora.clientdata.spies.JsonToClientDataConverterFactorySpy;
+import se.uu.ub.cora.clientdata.spies.JsonToClientDataConverterSpy;
 import se.uu.ub.cora.json.parser.JsonObject;
 import se.uu.ub.cora.json.parser.JsonParseException;
 import se.uu.ub.cora.json.parser.JsonValue;
@@ -117,6 +119,13 @@ public class JsonToBasicClientDataRecordConverterTest {
 
 	@Test
 	public void providedFactoryIsUsedForDataGroup() throws Exception {
+		ClientDataGroupSpy clientDataGroup = new ClientDataGroupSpy();
+
+		JsonToClientDataConverterSpy jsonToDataConverter = new JsonToClientDataConverterSpy();
+		jsonToDataConverter.MRV.setDefaultReturnValuesSupplier("toInstance", () -> clientDataGroup);
+		factory.MRV.setDefaultReturnValuesSupplier("factorUsingJsonObject",
+				() -> jsonToDataConverter);
+
 		String json = "{\"record\":{\"data\":{";
 		json += "\"name\":\"groupNameInData\", \"children\":[]";
 		json += "}";
@@ -134,7 +143,7 @@ public class JsonToBasicClientDataRecordConverterTest {
 		// JsonToClientDataConverterFactoryForDataRecordSpy factorySpy =
 		// (JsonToClientDataConverterFactoryForDataRecordSpy) factory;
 		// assertEquals(factorySpy.numOfTimesFactoryCalled, 2);
-		factory.MCR.assertNumberOfCallsToMethod("factor", 2);
+		factory.MCR.assertNumberOfCallsToMethod("factorUsingJsonObject", 2);
 
 		// JsonToClientDataConverterSpy groupConverterSpy = factorySpy.factoredConverters.get(0);
 		// JsonObject jsonValueSentToConverter = groupConverterSpy.jsonValue;

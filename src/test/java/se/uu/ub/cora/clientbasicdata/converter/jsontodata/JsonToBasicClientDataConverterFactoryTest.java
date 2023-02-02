@@ -44,7 +44,7 @@ public class JsonToBasicClientDataConverterFactoryTest {
 	public void testFactorOnJsonStringDataGroupEmptyChildren() {
 		json = "{\"name\":\"groupNameInData\", \"children\":[]}";
 		JsonToClientDataConverter jsonToDataConverter = jsonToDataConverterFactory
-				.factor(json);
+				.factorUsingString(json);
 		assertTrue(jsonToDataConverter instanceof JsonToBasicClientDataGroupConverter);
 	}
 
@@ -52,7 +52,7 @@ public class JsonToBasicClientDataConverterFactoryTest {
 	public void testFactorOnJsonStringDataGroupAtomicChild() {
 		String json = "{\"name\":\"id\",\"children\":[{\"name\":\"someNameInData\",\"value\":\"id2\"}]}";
 		JsonToClientDataConverter jsonToDataConverter = jsonToDataConverterFactory
-				.factor(json);
+				.factorUsingString(json);
 		assertTrue(jsonToDataConverter instanceof JsonToBasicClientDataGroupConverter);
 	}
 
@@ -61,7 +61,7 @@ public class JsonToBasicClientDataConverterFactoryTest {
 		String json = "{\"children\":[{\"name\":\"linkedRecordType\",\"value\":\"recordType\"}"
 				+ ",{\"name\":\"NOTlinkedRecordId\",\"value\":\"place\"}],\"name\":\"type\"}";
 		JsonToClientDataConverter jsonToDataConverter = jsonToDataConverterFactory
-				.factor(json);
+				.factorUsingString(json);
 		assertTrue(jsonToDataConverter instanceof JsonToBasicClientDataGroupConverter);
 	}
 
@@ -70,7 +70,7 @@ public class JsonToBasicClientDataConverterFactoryTest {
 		String json = "{\"children\":[{\"name\":\"NOTlinkedRecordType\",\"value\":\"recordType\"}"
 				+ ",{\"name\":\"linkedRecordId\",\"value\":\"place\"}],\"name\":\"type\"}";
 		JsonToClientDataConverter jsonToDataConverter = jsonToDataConverterFactory
-				.factor(json);
+				.factorUsingString(json);
 		assertTrue(jsonToDataConverter instanceof JsonToBasicClientDataGroupConverter);
 	}
 
@@ -79,7 +79,7 @@ public class JsonToBasicClientDataConverterFactoryTest {
 		String json = "{\"children\":[{\"name\":\"linkedRecordType\",\"value\":\"recordType\"}"
 				+ ",{\"name\":\"linkedRecordId\",\"value\":\"place\"}],\"name\":\"type\"}";
 		JsonToClientDataConverter jsonToDataConverter = jsonToDataConverterFactory
-				.factor(json);
+				.factorUsingString(json);
 		assertTrue(jsonToDataConverter instanceof JsonToBasicClientDataRecordLinkConverter);
 	}
 
@@ -91,7 +91,7 @@ public class JsonToBasicClientDataConverterFactoryTest {
 				+ ",{\"children\":[{\"name\":\"nameInData\",\"value\":\"type\"}],\"name\":\"linkedPath\"}]"
 				+ ",\"name\":\"linkedPath\"}],\"name\":\"from\"}";
 		JsonToClientDataConverter jsonToDataConverter = jsonToDataConverterFactory
-				.factor(json);
+				.factorUsingString(json);
 		assertTrue(jsonToDataConverter instanceof JsonToBasicClientDataRecordLinkConverter);
 	}
 
@@ -101,7 +101,7 @@ public class JsonToBasicClientDataConverterFactoryTest {
 				+ ",{\"name\":\"linkedRecordId\",\"value\":\"exampleGroupText\"}"
 				+ ",{\"name\":\"linkedRepeatId\",\"value\":\"one\"}],\"name\":\"from\"}";
 		JsonToClientDataConverter jsonToDataConverter = jsonToDataConverterFactory
-				.factor(json);
+				.factorUsingString(json);
 		assertTrue(jsonToDataConverter instanceof JsonToBasicClientDataRecordLinkConverter);
 	}
 
@@ -114,7 +114,7 @@ public class JsonToBasicClientDataConverterFactoryTest {
 				+ ",{\"children\":[{\"name\":\"nameInData\",\"value\":\"type\"}],\"name\":\"linkedPath\"}]"
 				+ ",\"name\":\"linkedPath\"}],\"name\":\"from\"}";
 		JsonToClientDataConverter jsonToDataConverter = jsonToDataConverterFactory
-				.factor(json);
+				.factorUsingString(json);
 		assertTrue(jsonToDataConverter instanceof JsonToBasicClientDataRecordLinkConverter);
 	}
 
@@ -126,7 +126,7 @@ public class JsonToBasicClientDataConverterFactoryTest {
 				+ ",{\"children\":[{\"name\":\"nameInData\",\"value\":\"type\"}],\"name\":\"linkedPath\"}]"
 				+ ",\"name\":\"linkedPath\"}],\"name\":\"from\"}";
 		JsonToClientDataConverter jsonToDataConverter = jsonToDataConverterFactory
-				.factor(json);
+				.factorUsingString(json);
 		assertTrue(jsonToDataConverter instanceof JsonToBasicClientDataGroupConverter);
 		assertFalse(jsonToDataConverter instanceof JsonToBasicClientDataRecordLinkConverter);
 	}
@@ -135,7 +135,7 @@ public class JsonToBasicClientDataConverterFactoryTest {
 	public void testFactorOnJsonStringWithLinkedPathButNotLinkedRecordIdFactorsDataGroup() {
 		String json = "{\"children\":[{\"name\":\"linkedRecordType\",\"value\":\"coraText\"},{\"name\":\"NOTlinkedRecordId\",\"value\":\"exampleGroupText\"},{\"children\":[{\"name\":\"nameInData\",\"value\":\"recordInfo\"},{\"children\":[{\"name\":\"nameInData\",\"value\":\"type\"}],\"name\":\"linkedPath\"}],\"name\":\"linkedPath\"}],\"name\":\"from\"}";
 		JsonToClientDataConverter jsonToDataConverter = jsonToDataConverterFactory
-				.factor(json);
+				.factorUsingString(json);
 		assertTrue(jsonToDataConverter instanceof JsonToBasicClientDataGroupConverter);
 		assertFalse(jsonToDataConverter instanceof JsonToBasicClientDataRecordLinkConverter);
 	}
@@ -144,7 +144,7 @@ public class JsonToBasicClientDataConverterFactoryTest {
 	public void testFactorOnJsonStringWithThreeChildrenButNoLinkedRepatIdAndNoLinkedPathFactorsDataGroup() {
 		String json = "{\"children\":[{\"name\":\"linkedRecordType\",\"value\":\"coraText\"},{\"name\":\"linkedRecordId\",\"value\":\"exampleGroupText\"},{\"children\":[{\"name\":\"nameInData\",\"value\":\"recordInfo\"},{\"children\":[{\"name\":\"nameInData\",\"value\":\"type\"}],\"name\":\"linkedPath\"}],\"name\":\"NOTlinkedPath\"}],\"name\":\"from\"}";
 		JsonToClientDataConverter jsonToDataConverter = jsonToDataConverterFactory
-				.factor(json);
+				.factorUsingString(json);
 		assertTrue(jsonToDataConverter instanceof JsonToBasicClientDataGroupConverter);
 		assertFalse(jsonToDataConverter instanceof JsonToBasicClientDataRecordLinkConverter);
 	}
@@ -153,7 +153,7 @@ public class JsonToBasicClientDataConverterFactoryTest {
 	public void testFactorOnJsonStringWithMaxNumOfChildrenBUtNOLinkedRepeatIdFactorsDataGroup() {
 		String json = "{\"children\":[{\"name\":\"linkedRecordType\",\"value\":\"coraText\"},{\"name\":\"linkedRecordId\",\"value\":\"exampleGroupText\"},{\"name\":\"NOTlinkedRepeatId\",\"value\":\"one\"},{\"children\":[{\"name\":\"nameInData\",\"value\":\"recordInfo\"},{\"children\":[{\"name\":\"nameInData\",\"value\":\"type\"}],\"name\":\"linkedPath\"}],\"name\":\"linkedPath\"}],\"name\":\"from\"}";
 		JsonToClientDataConverter jsonToDataConverter = jsonToDataConverterFactory
-				.factor(json);
+				.factorUsingString(json);
 		assertTrue(jsonToDataConverter instanceof JsonToBasicClientDataGroupConverter);
 		assertFalse(jsonToDataConverter instanceof JsonToBasicClientDataRecordLinkConverter);
 	}
@@ -162,7 +162,7 @@ public class JsonToBasicClientDataConverterFactoryTest {
 	public void testFactorOnJsonStringWithMaxNumOfChildrenBUtNOLinkedPathIdFactorsDataGroup() {
 		String json = "{\"children\":[{\"name\":\"linkedRecordType\",\"value\":\"coraText\"},{\"name\":\"linkedRecordId\",\"value\":\"exampleGroupText\"},{\"name\":\"linkedRepeatId\",\"value\":\"one\"},{\"children\":[{\"name\":\"nameInData\",\"value\":\"recordInfo\"},{\"children\":[{\"name\":\"nameInData\",\"value\":\"type\"}],\"name\":\"linkedPath\"}],\"name\":\"NOTlinkedPath\"}],\"name\":\"from\"}";
 		JsonToClientDataConverter jsonToDataConverter = jsonToDataConverterFactory
-				.factor(json);
+				.factorUsingString(json);
 		assertTrue(jsonToDataConverter instanceof JsonToBasicClientDataGroupConverter);
 		assertFalse(jsonToDataConverter instanceof JsonToBasicClientDataRecordLinkConverter);
 	}
@@ -171,7 +171,7 @@ public class JsonToBasicClientDataConverterFactoryTest {
 	public void testFactorOnJsonStringOnlyStreamIdFactorsGroupConverter() {
 		String json = "{\"children\":[{\"name\":\"streamId\",\"value\":\"soundBinary:18269669168741\"},{\"name\":\"NOTfilename\",\"value\":\"adele.png\"},{\"name\":\"NOTfilesize\",\"value\":\"8\"},{\"name\":\"NOTmimeType\",\"value\":\"application/octet-stream\"}],\"name\":\"master\"}";
 		JsonToClientDataConverter jsonToDataConverter = jsonToDataConverterFactory
-				.factor(json);
+				.factorUsingString(json);
 		assertTrue(jsonToDataConverter instanceof JsonToBasicClientDataGroupConverter);
 		assertFalse(jsonToDataConverter instanceof JsonToBasicClientDataResourceLinkConverter);
 	}
@@ -180,7 +180,7 @@ public class JsonToBasicClientDataConverterFactoryTest {
 	public void testFactorOnJsonStringNOTStreamIdFactorsGroupConverter() {
 		String json = "{\"children\":[{\"name\":\"NOTstreamId\",\"value\":\"soundBinary:18269669168741\"},{\"name\":\"NOTfilename\",\"value\":\"adele.png\"},{\"name\":\"NOTfilesize\",\"value\":\"8\"},{\"name\":\"NOTmimeType\",\"value\":\"application/octet-stream\"}],\"name\":\"master\"}";
 		JsonToClientDataConverter jsonToDataConverter = jsonToDataConverterFactory
-				.factor(json);
+				.factorUsingString(json);
 		assertTrue(jsonToDataConverter instanceof JsonToBasicClientDataGroupConverter);
 		assertFalse(jsonToDataConverter instanceof JsonToBasicClientDataResourceLinkConverter);
 	}
@@ -189,7 +189,7 @@ public class JsonToBasicClientDataConverterFactoryTest {
 	public void testFactorOnlyStreamIdAndFileNameFactorsGroupConverter() {
 		String json = "{\"children\":[{\"name\":\"streamId\",\"value\":\"soundBinary:18269669168741\"},{\"name\":\"filename\",\"value\":\"adele.png\"},{\"name\":\"NOTfilesize\",\"value\":\"8\"},{\"name\":\"NOTmimeType\",\"value\":\"application/octet-stream\"}],\"name\":\"master\"}";
 		JsonToClientDataConverter jsonToDataConverter = jsonToDataConverterFactory
-				.factor(json);
+				.factorUsingString(json);
 		assertTrue(jsonToDataConverter instanceof JsonToBasicClientDataGroupConverter);
 		assertFalse(jsonToDataConverter instanceof JsonToBasicClientDataResourceLinkConverter);
 	}
@@ -198,7 +198,7 @@ public class JsonToBasicClientDataConverterFactoryTest {
 	public void testFactorOnlyStreamIdAndFileNameAndFileSizeFactorsGroupConverter() {
 		String json = "{\"children\":[{\"name\":\"streamId\",\"value\":\"soundBinary:18269669168741\"},{\"name\":\"filename\",\"value\":\"adele.png\"},{\"name\":\"filesize\",\"value\":\"8\"},{\"name\":\"NOTmimeType\",\"value\":\"application/octet-stream\"}],\"name\":\"master\"}";
 		JsonToClientDataConverter jsonToDataConverter = jsonToDataConverterFactory
-				.factor(json);
+				.factorUsingString(json);
 		assertTrue(jsonToDataConverter instanceof JsonToBasicClientDataGroupConverter);
 		assertFalse(jsonToDataConverter instanceof JsonToBasicClientDataResourceLinkConverter);
 	}
@@ -207,7 +207,7 @@ public class JsonToBasicClientDataConverterFactoryTest {
 	public void testFactorOnJsonStringCompleteSetupFactorsDataResourceLink() {
 		String json = "{\"children\":[{\"name\":\"streamId\",\"value\":\"soundBinary:18269669168741\"},{\"name\":\"filename\",\"value\":\"adele.png\"},{\"name\":\"filesize\",\"value\":\"8\"},{\"name\":\"mimeType\",\"value\":\"application/octet-stream\"}],\"name\":\"master\"}";
 		JsonToClientDataConverter jsonToDataConverter = jsonToDataConverterFactory
-				.factor(json);
+				.factorUsingString(json);
 		assertTrue(jsonToDataConverter instanceof JsonToBasicClientDataResourceLinkConverter);
 	}
 
@@ -215,7 +215,7 @@ public class JsonToBasicClientDataConverterFactoryTest {
 	public void testFactorOnJsonStringDataAtomic() {
 		String json = "{\"name\":\"atomicNameInData\",\"value\":\"atomicValue\"}";
 		JsonToClientDataConverter jsonToDataConverter = jsonToDataConverterFactory
-				.factor(json);
+				.factorUsingString(json);
 		assertTrue(jsonToDataConverter instanceof JsonToBasicClientDataAtomicConverter);
 	}
 
@@ -223,19 +223,19 @@ public class JsonToBasicClientDataConverterFactoryTest {
 	public void testFactorOnJsonStringDataAttribute() {
 		String json = "{\"attributeNameInData\":\"attributeValue\"}";
 		JsonToClientDataConverter jsonToDataConverter = jsonToDataConverterFactory
-				.factor(json);
+				.factorUsingString(json);
 		assertTrue(jsonToDataConverter instanceof JsonToBasicClientDataAttributeConverter);
 	}
 
 	@Test(expectedExceptions = JsonParseException.class)
 	public void testFactorOnJsonObjectNullJson() {
-		jsonToDataConverterFactory.factor(null);
+		jsonToDataConverterFactory.factorUsingString(null);
 	}
 
 	@Test(expectedExceptions = JsonParseException.class)
 	public void testClassCreatorGroupNotAGroup() {
 		String json = "[{\"id\":{\"id2\":\"value\"}}]";
-		jsonToDataConverterFactory.factor(json);
+		jsonToDataConverterFactory.factorUsingString(json);
 	}
 
 }
