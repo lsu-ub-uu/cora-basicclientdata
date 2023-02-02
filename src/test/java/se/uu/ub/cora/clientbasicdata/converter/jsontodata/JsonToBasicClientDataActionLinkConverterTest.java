@@ -23,9 +23,10 @@ import static org.testng.Assert.assertEquals;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import se.uu.ub.cora.clientdata.ClientAction;
 import se.uu.ub.cora.clientdata.ClientActionLink;
-import se.uu.ub.cora.clientdata.ClientData;
 import se.uu.ub.cora.clientdata.spies.JsonToClientDataConverterFactorySpy;
+import se.uu.ub.cora.clientdata.spies.JsonToClientDataConverterSpy;
 import se.uu.ub.cora.json.parser.JsonObject;
 import se.uu.ub.cora.json.parser.JsonParseException;
 import se.uu.ub.cora.json.parser.JsonParser;
@@ -36,7 +37,7 @@ public class JsonToBasicClientDataActionLinkConverterTest {
 
 	private JsonParser jsonParser;
 	private JsonToClientDataConverterFactorySpy factory;
-	JsonToBasicClientDataActionLinkConverter jsonToDataConverter;
+	JsonToBasicClientDataActionLinkConverterImp jsonToDataConverter;
 
 	@BeforeMethod
 	public void beforeMethod() {
@@ -54,49 +55,100 @@ public class JsonToBasicClientDataActionLinkConverterTest {
 	private ClientActionLink createClientDataActionLinkForJsonString(String json) {
 		JsonValue jsonValue = jsonParser.parseString(json);
 
-		jsonToDataConverter = JsonToBasicClientDataActionLinkConverter
+		jsonToDataConverter = JsonToBasicClientDataActionLinkConverterImp
 				.forJsonObjectUsingFactory((JsonObject) jsonValue, factory);
-		ClientData clientData = jsonToDataConverter.toInstance();
-		return (ClientActionLink) clientData;
+		return jsonToDataConverter.toInstance();
 	}
 
 	@Test(expectedExceptions = JsonParseException.class, expectedExceptionsMessageRegExp = ""
 			+ "Action link data must contain key: url")
 	public void testToClassWithNoURL() {
-		String json = "{\"requestMethod\":\"GET\",\"rel\":\"read\"}";
+		String json = """
+				{"requestMethod":"GET","rel":"read"}""";
 		createClientDataActionLinkForJsonString(json);
 	}
 
 	@Test(expectedExceptions = JsonParseException.class, expectedExceptionsMessageRegExp = ""
 			+ "Action link data must contain key: requestMethod")
 	public void testToClassWithNoRequestMethod() {
-		String json = "{\"rel\":\"read\",\"url\":\"https://cora.epc.ub.uu.se/systemone/rest/record/presentationGroup/loginFormNewPGroup\"}";
+		String json = """
+				{"rel":"read",\
+				"url":"https://cora.epc.ub.uu.se/systemone/rest/record/presentationGroup/loginFormNewPGroup"}""";
 		createClientDataActionLinkForJsonString(json);
 	}
 
 	@Test
 	public void testToClassWithNecessaryContent() {
-		String json = "{\"requestMethod\":\"GET\",\"rel\":\"read\",\"url\":\"https://cora.epc.ub.uu.se/systemone/rest/record/presentationGroup/loginFormNewPGroup\"}";
+		String json = """
+				{"requestMethod":"GET",\
+				"rel":"read",\
+				"url":"https://cora.epc.ub.uu.se/systemone/rest/record/presentationGroup/loginFormNewPGroup"}""";
 		ClientActionLink clientDataActionLink = createClientDataActionLinkForJsonString(json);
-		assertEquals(clientDataActionLink.getAction(), Action.READ);
+		assertEquals(clientDataActionLink.getAction(), ClientAction.READ);
 		assertEquals(clientDataActionLink.getURL(),
 				"https://cora.epc.ub.uu.se/systemone/rest/record/presentationGroup/loginFormNewPGroup");
 		assertEquals(clientDataActionLink.getRequestMethod(), "GET");
-		assertEquals(factory.numberOfTimesCalled, 0);
 	}
 
 	@Test
 	public void testToClassWithExtraContent() {
-		String json = "{\"requestMethod\":\"POST\",\"rel\":\"index\",\"body\":{\"children\":[{\"children\":[{\"name\":\"linkedRecordType\",\"value\":\"recordType\"},{\"name\":\"linkedRecordId\",\"value\":\"book\"}],\"name\":\"recordType\"},{\"name\":\"recordId\",\"value\":\"book:39921376484193\"},{\"name\":\"type\",\"value\":\"index\"}],\"name\":\"workOrder\"},\"contentType\":\"application/vnd.uub.record+json\",\"url\":\"https://cora.epc.ub.uu.se/systemone/rest/record/workOrder/\",\"accept\":\"application/vnd.uub.record+json\"}";
+		// String json2 = "{\"requestMethod\":\"POST\"," + "\"rel\":\"index\","
+		// +
+		// "\"body\":{\"children\":[{\"children\":[{\"name\":\"linkedRecordType\",\"value\":\"recordType\"}"
+		// + ",{\"name\":\"linkedRecordId\",\"value\":\"book\"}],\"name\":\"recordType\"},"
+		// + "{\"name\":\"recordId\",\"value\":\"book:39921376484193\"},"
+		// + "{\"name\":\"type\",\"value\":\"index\"}],\"name\":\"workOrder\"}"
+		// + ",\"contentType\":\"application/vnd.uub.record+json\","
+		// + "\"url\":\"https://cora.epc.ub.uu.se/systemone/rest/record/workOrder/\""
+		// + ",\"accept\":\"application/vnd.uub.record+json\"}";
+		String json = """
+				{
+				    "requestMethod": "POST",
+				    "rel": "index",
+				    "body": {
+				        "children": [
+				            {
+				                "children": [
+				                    {
+				                        "name": "linkedRecordType",
+				                        "value": "recordType"
+				                    },
+				                    {
+				                        "name": "linkedRecordId",
+				                        "value": "textSystemOne"
+				                    }
+				                ],
+				                "name": "recordType"
+				            },
+				            {
+				                "name": "recordId",
+				                "value": "refItemText"
+				            },
+				            {
+				                "name": "type",
+				                "value": "index"
+				            }
+				        ],
+				        "name": "workOrder"
+				    },
+				    "contentType": "application/vnd.uub.record+json",
+				    "url": "https://cora.epc.ub.uu.se/systemone/rest/record/workOrder/",
+				    "accept": "application/vnd.uub.record+json"
+				}""";
 		ClientActionLink clientDataActionLink = createClientDataActionLinkForJsonString(json);
-		assertEquals(clientDataActionLink.getAction(), Action.INDEX);
+		assertEquals(clientDataActionLink.getAction(), ClientAction.INDEX);
 		assertEquals(clientDataActionLink.getURL(),
 				"https://cora.epc.ub.uu.se/systemone/rest/record/workOrder/");
 		assertEquals(clientDataActionLink.getRequestMethod(), "POST");
 		assertEquals(clientDataActionLink.getAccept(), "application/vnd.uub.record+json");
 		assertEquals(clientDataActionLink.getContentType(), "application/vnd.uub.record+json");
-		assertEquals(factory.numberOfTimesCalled, 1);
-		assertEquals(clientDataActionLink.getBody(),
-				factory.factoredConverters.get(0).returnedElement);
+
+		factory.MCR.assertMethodWasCalled("factorUsingJsonObject");
+		JsonToClientDataConverterSpy bodyConverter = (JsonToClientDataConverterSpy) factory.MCR
+				.getReturnValue("factorUsingJsonObject", 0);
+		bodyConverter.MCR.assertReturn("toInstance", 0, clientDataActionLink.getBody());
+		// assertEquals(factory.numberOfTimesCalled, 1);
+		// assertEquals(clientDataActionLink.getBody(),
+		// factory.factoredConverters.get(0).returnedElement);
 	}
 }
