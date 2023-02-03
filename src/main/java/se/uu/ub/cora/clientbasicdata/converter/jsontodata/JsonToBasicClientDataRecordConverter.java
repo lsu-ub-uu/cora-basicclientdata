@@ -22,6 +22,7 @@ package se.uu.ub.cora.clientbasicdata.converter.jsontodata;
 import java.util.Map;
 
 import se.uu.ub.cora.clientbasicdata.data.BasicClientDataRecord;
+import se.uu.ub.cora.clientdata.ClientActionLink;
 import se.uu.ub.cora.clientdata.ClientConvertible;
 import se.uu.ub.cora.clientdata.ClientDataGroup;
 import se.uu.ub.cora.clientdata.ClientDataRecord;
@@ -42,16 +43,22 @@ public class JsonToBasicClientDataRecordConverter implements JsonToClientDataCon
 	private JsonObject jsonObjectRecord;
 	private JsonToClientDataConverterFactory factory;
 	private ClientDataRecord clientDataRecord;
+	private JsonToBasicClientDataActionLinkConverterFactory actionLinkConverterFactory;
 
 	private JsonToBasicClientDataRecordConverter(JsonToClientDataConverterFactory factory,
+			JsonToBasicClientDataActionLinkConverterFactory actionLinkConverterFactory,
 			JsonObject jsonObject) {
 		this.factory = factory;
+		this.actionLinkConverterFactory = actionLinkConverterFactory;
 		this.jsonObject = jsonObject;
 	}
 
 	public static JsonToBasicClientDataRecordConverter usingConverterFactoryAndJsonObject(
-			JsonToClientDataConverterFactory factory, JsonObject jsonObject) {
-		return new JsonToBasicClientDataRecordConverter(factory, jsonObject);
+			JsonToClientDataConverterFactory factory,
+			JsonToBasicClientDataActionLinkConverterFactory actionLinkConverterFactory,
+			JsonObject jsonObject) {
+		return new JsonToBasicClientDataRecordConverter(factory, actionLinkConverterFactory,
+				jsonObject);
 	}
 
 	@Override
@@ -162,10 +169,10 @@ public class JsonToBasicClientDataRecordConverter implements JsonToClientDataCon
 	}
 
 	private void convertAndAddActionLink(Map.Entry<String, JsonValue> actionLinkEntry) {
-		JsonToDataActionLinkConverter actionLinkConverter = factory
-				.createJsonToDataActionLinkConverterForJsonObject(actionLinkEntry.getValue());
-		ActionLink actionLink = (ActionLink) actionLinkConverter.toInstance();
-		clientDataRecord.addActionLink(actionLinkEntry.getKey(), actionLink);
+		JsonToBasicClientDataActionLinkConverter actionLinkConverter = actionLinkConverterFactory
+				.factor((JsonObject) actionLinkEntry.getValue());
+		ClientActionLink actionLink = actionLinkConverter.toInstance();
+		clientDataRecord.addActionLink(actionLink);
 	}
 
 	public JsonToClientDataConverterFactory onlyForTestGetConverterFactory() {

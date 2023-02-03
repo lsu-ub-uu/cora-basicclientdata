@@ -24,7 +24,6 @@ import se.uu.ub.cora.clientdata.ClientDataAtomic;
 import se.uu.ub.cora.clientdata.ClientDataAttribute;
 import se.uu.ub.cora.clientdata.ClientDataGroup;
 import se.uu.ub.cora.clientdata.ClientDataList;
-import se.uu.ub.cora.clientdata.ClientDataRecord;
 import se.uu.ub.cora.clientdata.ClientDataRecordLink;
 import se.uu.ub.cora.clientdata.ClientDataResourceLink;
 import se.uu.ub.cora.clientdata.converter.ClientDataToJsonConverter;
@@ -46,7 +45,8 @@ public class BasicClientDataToJsonConverterFactory implements ClientDataToJsonCo
 	 * @return A ClientDataToJsonConverterFactoryImp that does not generates actionLinks for linked
 	 *         data
 	 */
-	public static BasicClientDataToJsonConverterFactory usingBuilderFactory(JsonBuilderFactory factory) {
+	public static BasicClientDataToJsonConverterFactory usingBuilderFactory(
+			JsonBuilderFactory factory) {
 		return new BasicClientDataToJsonConverterFactory(factory);
 	}
 
@@ -57,17 +57,8 @@ public class BasicClientDataToJsonConverterFactory implements ClientDataToJsonCo
 	@Override
 	public ClientDataToJsonConverter factorUsingConvertible(ClientConvertible convertible) {
 		if (convertible instanceof ClientDataList) {
-			return BasicClientDataListToJsonConverter.usingJsonFactoryForDataList(this, builderFactory,
-					(ClientDataList) convertible);
-		}
-		if (convertible instanceof ClientDataRecord) {
-			BasicClientRecordActionsToJsonConverter actionsConverter = BasicClientRecordActionsToJsonConverterImp
-					.usingConverterFactoryAndBuilderFactoryAndBaseUrl(this, builderFactory,
-							baseUrl);
-			return BasicClientDataRecordToJsonConverter
-					.usingConverterFactoryAndActionsConverterAndBuilderFactoryAndBaseUrlAndDataRecord(
-							this, actionsConverter, builderFactory, baseUrl,
-							(ClientDataRecord) convertible);
+			return BasicClientDataListToJsonConverter.usingJsonFactoryForDataList(this,
+					builderFactory, (ClientDataList) convertible);
 		}
 
 		if (isDataRecordLinkAndHasBaseUrl(convertible)) {
@@ -82,15 +73,16 @@ public class BasicClientDataToJsonConverterFactory implements ClientDataToJsonCo
 
 		}
 		if (convertible instanceof ClientDataGroup) {
-			return BasicClientDataGroupToJsonConverter.usingConverterFactoryAndBuilderFactoryAndDataGroup(this,
-					builderFactory, (ClientDataGroup) convertible);
+			return BasicClientDataGroupToJsonConverter
+					.usingConverterFactoryAndBuilderFactoryAndDataGroup(this, builderFactory,
+							(ClientDataGroup) convertible);
 		}
 		if (convertible instanceof ClientDataAtomic) {
-			return BasicClientDataAtomicToJsonConverter.usingJsonBuilderFactoryAndDataAtomic(builderFactory,
-					(ClientDataAtomic) convertible);
+			return BasicClientDataAtomicToJsonConverter.usingJsonBuilderFactoryAndDataAtomic(
+					builderFactory, (ClientDataAtomic) convertible);
 		}
-		return BasicClientDataAttributeToJsonConverter.usingJsonBuilderFactoryAndDataAttribute(builderFactory,
-				(ClientDataAttribute) convertible);
+		return BasicClientDataAttributeToJsonConverter.usingJsonBuilderFactoryAndDataAttribute(
+				builderFactory, (ClientDataAttribute) convertible);
 	}
 
 	private boolean isDataResourceLinkAndHasRecordUrl(ClientConvertible convertible) {

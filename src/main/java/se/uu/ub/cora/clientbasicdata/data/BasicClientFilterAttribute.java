@@ -35,10 +35,10 @@ record BasicClientFilterAttribute(String attributeName, Set<String> possibleValu
 	}
 
 	private boolean isAttributeValueInPossibleValues(String attributeValue) {
-		return possibleValues.contains(attributeValue);
+		return possibleValues().contains(attributeValue);
 	}
 
 	private boolean hasSameAttributeName(ClientDataAttribute dataAttribute) {
-		return attributeName.equals(dataAttribute.getNameInData());
+		return attributeName().equals(dataAttribute.getNameInData());
 	}
 }

@@ -229,6 +229,11 @@ public class JsonToBasicClientDataConverterFactoryTest {
 
 	@Test(expectedExceptions = JsonParseException.class)
 	public void testFactorOnJsonObjectNullJson() {
+		jsonToDataConverterFactory.factorUsingJsonObject(null);
+	}
+
+	@Test(expectedExceptions = JsonParseException.class)
+	public void testFactorOnStringNullJson() {
 		jsonToDataConverterFactory.factorUsingString(null);
 	}
 

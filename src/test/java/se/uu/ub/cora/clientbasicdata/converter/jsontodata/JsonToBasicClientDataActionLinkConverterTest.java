@@ -1,5 +1,5 @@
 /*
- * Copyright 2015, 2018 Uppsala University Library
+ * Copyright 2015, 2018, 2023 Uppsala University Library
  *
  * This file is part of Cora.
  *
@@ -25,6 +25,7 @@ import org.testng.annotations.Test;
 
 import se.uu.ub.cora.clientdata.ClientAction;
 import se.uu.ub.cora.clientdata.ClientActionLink;
+import se.uu.ub.cora.clientdata.spies.ClientDataGroupSpy;
 import se.uu.ub.cora.clientdata.spies.JsonToClientDataConverterFactorySpy;
 import se.uu.ub.cora.clientdata.spies.JsonToClientDataConverterSpy;
 import se.uu.ub.cora.json.parser.JsonObject;
@@ -92,20 +93,13 @@ public class JsonToBasicClientDataActionLinkConverterTest {
 
 	@Test
 	public void testToClassWithExtraContent() {
-		// String json2 = "{\"requestMethod\":\"POST\"," + "\"rel\":\"index\","
-		// +
-		// "\"body\":{\"children\":[{\"children\":[{\"name\":\"linkedRecordType\",\"value\":\"recordType\"}"
-		// + ",{\"name\":\"linkedRecordId\",\"value\":\"book\"}],\"name\":\"recordType\"},"
-		// + "{\"name\":\"recordId\",\"value\":\"book:39921376484193\"},"
-		// + "{\"name\":\"type\",\"value\":\"index\"}],\"name\":\"workOrder\"}"
-		// + ",\"contentType\":\"application/vnd.uub.record+json\","
-		// + "\"url\":\"https://cora.epc.ub.uu.se/systemone/rest/record/workOrder/\""
-		// + ",\"accept\":\"application/vnd.uub.record+json\"}";
+		setJsonToClientDataConverterFactorySpyToReturnAClientDataGroupSpy();
+
 		String json = """
 				{
-				    "requestMethod": "POST",
+					"requestMethod": "POST",
 				    "rel": "index",
-				    "body": {
+					"body": {
 				        "children": [
 				            {
 				                "children": [
@@ -147,8 +141,12 @@ public class JsonToBasicClientDataActionLinkConverterTest {
 		JsonToClientDataConverterSpy bodyConverter = (JsonToClientDataConverterSpy) factory.MCR
 				.getReturnValue("factorUsingJsonObject", 0);
 		bodyConverter.MCR.assertReturn("toInstance", 0, clientDataActionLink.getBody());
-		// assertEquals(factory.numberOfTimesCalled, 1);
-		// assertEquals(clientDataActionLink.getBody(),
-		// factory.factoredConverters.get(0).returnedElement);
+	}
+
+	private void setJsonToClientDataConverterFactorySpyToReturnAClientDataGroupSpy() {
+		ClientDataGroupSpy clientDataGroupSpy = new ClientDataGroupSpy();
+		JsonToClientDataConverterSpy converter = new JsonToClientDataConverterSpy();
+		converter.MRV.setDefaultReturnValuesSupplier("toInstance", () -> clientDataGroupSpy);
+		factory.MRV.setDefaultReturnValuesSupplier("factorUsingJsonObject", () -> converter);
 	}
 }

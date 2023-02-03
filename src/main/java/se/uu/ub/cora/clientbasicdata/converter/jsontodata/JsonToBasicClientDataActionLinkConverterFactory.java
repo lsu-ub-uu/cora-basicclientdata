@@ -18,18 +18,10 @@
  */
 package se.uu.ub.cora.clientbasicdata.converter.jsontodata;
 
-import se.uu.ub.cora.clientdata.ClientActionLink;
+import se.uu.ub.cora.json.parser.JsonObject;
 
-/**
- * JsonToBasicClientDataActionLinkConverter converts a Json object to a ClientActionLink
- */
-public interface JsonToBasicClientDataActionLinkConverter {
+public interface JsonToBasicClientDataActionLinkConverterFactory {
 
-	/**
-	 * toInstance method converts a Json object to a ClientActionLink
-	 * 
-	 * @return A representation of data as ClientActionLink
-	 */
-	ClientActionLink toInstance();
+	JsonToBasicClientDataActionLinkConverter factor(JsonObject jsonObject);
 
 }

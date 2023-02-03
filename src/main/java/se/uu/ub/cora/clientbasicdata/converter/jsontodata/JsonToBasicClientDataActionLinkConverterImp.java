@@ -45,6 +45,7 @@ public class JsonToBasicClientDataActionLinkConverterImp
 		return new JsonToBasicClientDataActionLinkConverterImp(jsonObject, factory);
 	}
 
+	@Override
 	public ClientActionLink toInstance() {
 		validateRequiredKeys();
 		createActionLinkAndAddRequiredValues();
@@ -117,6 +118,14 @@ public class JsonToBasicClientDataActionLinkConverterImp
 			ClientDataGroup bodyAsClientDataGroup = (ClientDataGroup) converter.toInstance();
 			actionLink.setBody(bodyAsClientDataGroup);
 		}
+	}
+
+	public JsonObject onlyForTestGetJsonObject() {
+		return jsonObject;
+	}
+
+	public JsonToClientDataConverterFactory onlyForTestGetJsonToClientDataConverterFactory() {
+		return factory;
 	}
 
 }

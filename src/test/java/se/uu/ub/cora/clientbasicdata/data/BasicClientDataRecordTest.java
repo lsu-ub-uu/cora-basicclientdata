@@ -360,4 +360,15 @@ public class BasicClientDataRecordTest {
 		assertSearchIdFetchedFromIdInSearchGroup(searchId);
 	}
 
+	@Test(expectedExceptions = ClientDataMissingException.class, expectedExceptionsMessageRegExp = ""
+			+ "No searchId exists")
+	public void testGetSearchIdForRecordTypeNoSearch() {
+		dataRecordGroup.MRV.setSpecificReturnValuesSupplier("containsChildWithNameInData",
+				(Supplier<Boolean>) () -> false, "search");
+		typeLinkedGroup.MRV.setSpecificReturnValuesSupplier("getFirstAtomicValueWithNameInData",
+				(Supplier<String>) () -> "recordType", "linkedRecordId");
+
+		dataRecord.getSearchId();
+	}
+
 }

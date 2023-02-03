@@ -19,17 +19,23 @@
 package se.uu.ub.cora.clientbasicdata.converter.jsontodata;
 
 import se.uu.ub.cora.clientdata.ClientActionLink;
+import se.uu.ub.cora.clientdata.spies.ClientActionLinkSpy;
+import se.uu.ub.cora.testutils.mcr.MethodCallRecorder;
+import se.uu.ub.cora.testutils.mrv.MethodReturnValues;
 
-/**
- * JsonToBasicClientDataActionLinkConverter converts a Json object to a ClientActionLink
- */
-public interface JsonToBasicClientDataActionLinkConverter {
+public class JsonToBasicClientDataActionLinkConverterSpy
+		implements JsonToBasicClientDataActionLinkConverter {
+	public MethodCallRecorder MCR = new MethodCallRecorder();
+	public MethodReturnValues MRV = new MethodReturnValues();
 
-	/**
-	 * toInstance method converts a Json object to a ClientActionLink
-	 * 
-	 * @return A representation of data as ClientActionLink
-	 */
-	ClientActionLink toInstance();
+	public JsonToBasicClientDataActionLinkConverterSpy() {
+		MCR.useMRV(MRV);
+		MRV.setDefaultReturnValuesSupplier("toInstance", ClientActionLinkSpy::new);
+	}
+
+	@Override
+	public ClientActionLink toInstance() {
+		return (ClientActionLink) MCR.addCallAndReturnFromMRV();
+	}
 
 }

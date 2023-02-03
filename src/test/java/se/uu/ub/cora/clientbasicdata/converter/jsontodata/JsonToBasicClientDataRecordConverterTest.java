@@ -1,3 +1,21 @@
+/*
+ * Copyright 2023 Uppsala University Library
+ *
+ * This file is part of Cora.
+ *
+ *     Cora is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     Cora is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with Cora.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package se.uu.ub.cora.clientbasicdata.converter.jsontodata;
 
 import static org.testng.Assert.assertEquals;
@@ -9,8 +27,8 @@ import java.util.Set;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import se.uu.ub.cora.clientdata.ClientAction;
 import se.uu.ub.cora.clientdata.ClientConvertible;
-import se.uu.ub.cora.clientdata.ClientDataGroup;
 import se.uu.ub.cora.clientdata.ClientDataRecord;
 import se.uu.ub.cora.clientdata.spies.ClientDataGroupSpy;
 import se.uu.ub.cora.clientdata.spies.JsonToClientDataConverterFactorySpy;
@@ -24,17 +42,19 @@ public class JsonToBasicClientDataRecordConverterTest {
 
 	private JsonToClientDataConverterFactorySpy factory;
 	private JsonToBasicClientDataRecordConverter jsonToDataConverter;
+	private JsonToBasicClientDataActionLinkConverterFactorySpy actionLinkConverterFactory;
 	private OrgJsonParser jsonParser = new OrgJsonParser();
 
 	@BeforeMethod
 	private void beforeMethod() {
 		factory = new JsonToClientDataConverterFactorySpy();
+		actionLinkConverterFactory = new JsonToBasicClientDataActionLinkConverterFactorySpy();
 	}
 
 	@Test
 	public void testFactoryIsSentAlong() throws Exception {
 		jsonToDataConverter = JsonToBasicClientDataRecordConverter
-				.usingConverterFactoryAndJsonObject(factory, null);
+				.usingConverterFactoryAndJsonObject(factory, null, null);
 
 		assertSame(jsonToDataConverter.onlyForTestGetConverterFactory(), factory);
 	}
@@ -48,7 +68,8 @@ public class JsonToBasicClientDataRecordConverterTest {
 	private ClientConvertible parseStringAndCreateConverter(String json) {
 		JsonValue jsonValue = jsonParser.parseString(json);
 		jsonToDataConverter = JsonToBasicClientDataRecordConverter
-				.usingConverterFactoryAndJsonObject(factory, (JsonObject) jsonValue);
+				.usingConverterFactoryAndJsonObject(factory, actionLinkConverterFactory,
+						(JsonObject) jsonValue);
 
 		return jsonToDataConverter.toInstance();
 	}
@@ -95,7 +116,6 @@ public class JsonToBasicClientDataRecordConverterTest {
 	@Test(expectedExceptions = JsonParseException.class, expectedExceptionsMessageRegExp = ""
 			+ "Error parsing jsonRecord: Record data must contain child with key: actionLinks")
 	public void testRecordNoActionLinks() throws Exception {
-		// String json = "{\"record\":{\"data\":{\"name\":\"groupNameInData\", \"children\":[]}}}";
 		String json = "{\"record\":{\"data\":{\"name\":\"groupNameInData\",\"children\":[]},\"permissions\":{\"read\":[\"librisId\"],\"write\":[\"librisId\",\"rootOrganisation\"]}}}";
 
 		parseStringAndCreateConverter(json);
@@ -118,106 +138,65 @@ public class JsonToBasicClientDataRecordConverterTest {
 	}
 
 	@Test
-	public void providedFactoryIsUsedForDataGroup() throws Exception {
+	public void providedFactoryIsUsedForActionLinks() throws Exception {
+		setActionLinkConvereterToreturnClientDataGroup();
+
+		String json = """
+				{"record":{
+					"data":{
+						"name":"groupNameInData"
+						, "children":[]
+					},
+					"actionLinks":{
+				 		"read":{
+				 			"requestMethod":"GET",
+				 			"rel":"read",
+				 			"url":"https://cora.example.org/somesystem/rest/record/somerecordtype/somerecordid",
+				 			"accept":"application/vnd.uub.record+json"
+						}
+					}
+				}
+				}""";
+
+		ClientDataRecord clientDataRecord = (ClientDataRecord) parseStringAndCreateConverter(json);
+
+		JsonObject actionLinkAsJsonObject = (JsonObject) actionLinkConverterFactory.MCR
+				.getValueForMethodNameAndCallNumberAndParameterName("factor", 0, "jsonObject");
+		String expectedJson = """
+				{\
+				"requestMethod":"GET",\
+				"rel":"read",\
+				"url":"https://cora.example.org/somesystem/rest/record/somerecordtype/somerecordid",\
+				"accept":"application/vnd.uub.record+json"\
+				}""";
+		assertEquals(actionLinkAsJsonObject.toJsonFormattedString(), expectedJson);
+
+		JsonToBasicClientDataActionLinkConverterSpy actionLinkConverter = (JsonToBasicClientDataActionLinkConverterSpy) actionLinkConverterFactory.MCR
+				.getReturnValue("factor", 0);
+		actionLinkConverter.MCR.assertParameters("toInstance", 0);
+
+		actionLinkConverter.MCR.assertReturn("toInstance", 0,
+				clientDataRecord.getActionLink(ClientAction.READ).get());
+	}
+
+	private void setActionLinkConvereterToreturnClientDataGroup() {
 		ClientDataGroupSpy clientDataGroup = new ClientDataGroupSpy();
 
 		JsonToClientDataConverterSpy jsonToDataConverter = new JsonToClientDataConverterSpy();
 		jsonToDataConverter.MRV.setDefaultReturnValuesSupplier("toInstance", () -> clientDataGroup);
 		factory.MRV.setDefaultReturnValuesSupplier("factorUsingJsonObject",
 				() -> jsonToDataConverter);
-
-		String json = "{\"record\":{\"data\":{";
-		json += "\"name\":\"groupNameInData\", \"children\":[]";
-		json += "}";
-		json += ", \"actionLinks\":{";
-		json += " \"read\":{";
-		json += " \"requestMethod\":\"GET\",";
-		json += " \"rel\":\"read\",";
-		json += " \"url\":\"https://cora.example.org/somesystem/rest/record/somerecordtype/somerecordid\",";
-		json += " \"accept\":\"application/vnd.uub.record+json\"";
-		json += "}";
-		json += "}";
-		json += "}";
-		json += "}";
-		parseStringAndCreateConverter(json);
-		// JsonToClientDataConverterFactoryForDataRecordSpy factorySpy =
-		// (JsonToClientDataConverterFactoryForDataRecordSpy) factory;
-		// assertEquals(factorySpy.numOfTimesFactoryCalled, 2);
-		factory.MCR.assertNumberOfCallsToMethod("factorUsingJsonObject", 2);
-
-		// JsonToClientDataConverterSpy groupConverterSpy = factorySpy.factoredConverters.get(0);
-		// JsonObject jsonValueSentToConverter = groupConverterSpy.jsonValue;
-		//
-		// assertEquals(jsonValueSentToConverter.getValueAsJsonString("name").getStringValue(),
-		// "groupNameInData");
-	}
-
-	@Test
-	public void providedFactoryIsUsedForActionLinks() throws Exception {
-		String json = "{\"record\":{\"data\":{";
-		json += "\"name\":\"groupNameInData\", \"children\":[]";
-		json += "}";
-		json += ", \"actionLinks\":{";
-		json += " \"read\":{";
-		json += " \"requestMethod\":\"GET\",";
-		json += " \"rel\":\"read\",";
-		json += " \"url\":\"https://cora.example.org/somesystem/rest/record/somerecordtype/somerecordid\",";
-		json += " \"accept\":\"application/vnd.uub.record+json\"";
-		json += "}";
-		json += "}";
-		json += "}";
-		json += "}";
-		parseStringAndCreateConverter(json);
-		JsonToClientDataConverterFactoryForDataRecordSpy factorySpy = (JsonToClientDataConverterFactoryForDataRecordSpy) factory;
-		assertEquals(factorySpy.numOfTimesFactoryCalled, 2);
-
-		JsonToClientDataActionLinkConverterSpy actionLinksConverterSpy = factorySpy.factoredActionLinksConverters
-				.get(0);
-		JsonObject readLink = actionLinksConverterSpy.jsonValue;
-
-		assertEquals(readLink.getValueAsJsonString("requestMethod").getStringValue(), "GET");
-		assertEquals(readLink.getValueAsJsonString("rel").getStringValue(), "read");
-		assertEquals(readLink.getValueAsJsonString("url").getStringValue(),
-				"https://cora.example.org/somesystem/rest/record/somerecordtype/somerecordid");
-		assertEquals(readLink.getValueAsJsonString("accept").getStringValue(),
-				"application/vnd.uub.record+json");
-	}
-
-	@Test
-	public void testToClass() {
-		String json = "{\"record\":{\"data\":{";
-		json += "\"name\":\"groupNameInData\", \"children\":[]";
-		json += "}";
-		json += ", \"actionLinks\":{";
-		json += " \"read\":{";
-		json += " \"requestMethod\":\"GET\",";
-		json += " \"rel\":\"read\",";
-		json += "\"url\":\"https://cora.example.org/somesystem/rest/record/somerecordtype/somerecordid\",";
-		json += " \"accept\":\"application/vnd.uub.record+json\"";
-		json += "}";
-		json += "}";
-		json += ", \"permissions\":{}";
-		json += "}";
-		json += "}";
-		ClientDataRecord clientDataRecord = parseStringAndCreateConverter(json);
-
-		JsonToClientDataConverterFactoryForDataRecordSpy factorySpy = (JsonToClientDataConverterFactoryForDataRecordSpy) factory;
-		JsonToClientDataConverterSpy groupConverterSpy = factorySpy.factoredConverters.get(0);
-		JsonToClientDataActionLinkConverterSpy actionLinksConverterSpy = factorySpy.factoredActionLinksConverters
-				.get(0);
-
-		ClientDataGroup clientDataGroup = clientDataRecord.getClientDataGroup();
-		assertEquals(groupConverterSpy.returnedElement, clientDataGroup);
-
-		ActionLink actionLink = clientDataRecord.getActionLinks().get("read");
-		assertEquals(actionLinksConverterSpy.returnedElement, actionLink);
-
 	}
 
 	@Test
 	public void testCheckReadPermissions() {
-		String json = "{\"record\":{\"data\":{\"name\":\"groupNameInData\",\"children\":[]},\"actionLinks\":{\"read\":{\"requestMethod\":\"GET\",\"rel\":\"read\"}},\"permissions\":{\"read\":[\"librisId\", \"topLevel\"]}}}";
-		ClientDataRecord clientDataRecord = parseStringAndCreateConverter(json);
+		setActionLinkConvereterToreturnClientDataGroup();
+
+		String json = """
+				{"record":{"data":{"name":"groupNameInData","children":[]},
+				"actionLinks":{"read":{"requestMethod":"GET","rel":"read"}},
+				"permissions":{"read":["librisId", "topLevel"]}}}""";
+		ClientDataRecord clientDataRecord = (ClientDataRecord) parseStringAndCreateConverter(json);
 
 		Set<String> readPermissions = clientDataRecord.getReadPermissions();
 		assertEquals(readPermissions.size(), 2);
@@ -228,8 +207,13 @@ public class JsonToBasicClientDataRecordConverterTest {
 
 	@Test
 	public void testCheckWritePermissions() {
-		String json = "{\"record\":{\"data\":{\"name\":\"groupNameInData\",\"children\":[]},\"actionLinks\":{\"read\":{\"requestMethod\":\"GET\",\"rel\":\"read\"}},\"permissions\":{\"write\":[\"rating\",\"parentId\"]}}}";
-		ClientDataRecord clientDataRecord = parseStringAndCreateConverter(json);
+		setActionLinkConvereterToreturnClientDataGroup();
+
+		String json = """
+				{"record":{"data":{"name":"groupNameInData","children":[]},
+				"actionLinks":{"read":{"requestMethod":"GET","rel":"read"}},
+				"permissions":{"write":["rating","parentId"]}}}""";
+		ClientDataRecord clientDataRecord = (ClientDataRecord) parseStringAndCreateConverter(json);
 
 		Set<String> writePermissions = clientDataRecord.getWritePermissions();
 		assertEquals(writePermissions.size(), 2);
