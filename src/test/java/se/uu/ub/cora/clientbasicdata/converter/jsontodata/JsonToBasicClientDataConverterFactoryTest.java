@@ -31,13 +31,23 @@ import se.uu.ub.cora.json.parser.JsonParseException;
 
 public class JsonToBasicClientDataConverterFactoryTest {
 	private JsonToClientDataConverterFactory jsonToDataConverterFactory;
-	// private JsonParser jsonParser;
 	private String json;
 
 	@BeforeMethod
 	public void beforeMethod() {
 		jsonToDataConverterFactory = new JsonToBasicClientDataConverterFactoryImp();
-		// jsonParser = new OrgJsonParser();
+	}
+
+	@Test
+	public void testFactorOnJsonStringDataRecordGroup() {
+		String json = """
+				{"name":"id","children":[
+					{"name":"recordInfo","children":[
+						{"name":"id","value":"id2"}]}]
+					}""";
+		JsonToClientDataConverter jsonToDataConverter = jsonToDataConverterFactory
+				.factorUsingString(json);
+		assertTrue(jsonToDataConverter instanceof JsonToBasicClientDataRecordGroupConverter);
 	}
 
 	@Test
@@ -212,6 +222,7 @@ public class JsonToBasicClientDataConverterFactoryTest {
 	}
 
 	@Test
+
 	public void testFactorOnJsonStringDataAtomic() {
 		String json = "{\"name\":\"atomicNameInData\",\"value\":\"atomicValue\"}";
 		JsonToClientDataConverter jsonToDataConverter = jsonToDataConverterFactory

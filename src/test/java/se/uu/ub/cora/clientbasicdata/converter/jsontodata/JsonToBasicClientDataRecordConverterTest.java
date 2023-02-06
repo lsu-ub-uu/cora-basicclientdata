@@ -30,7 +30,7 @@ import org.testng.annotations.Test;
 import se.uu.ub.cora.clientdata.ClientAction;
 import se.uu.ub.cora.clientdata.ClientConvertible;
 import se.uu.ub.cora.clientdata.ClientDataRecord;
-import se.uu.ub.cora.clientdata.spies.ClientDataGroupSpy;
+import se.uu.ub.cora.clientdata.spies.ClientDataRecordGroupSpy;
 import se.uu.ub.cora.clientdata.spies.JsonToClientDataConverterFactorySpy;
 import se.uu.ub.cora.clientdata.spies.JsonToClientDataConverterSpy;
 import se.uu.ub.cora.json.parser.JsonObject;
@@ -180,10 +180,11 @@ public class JsonToBasicClientDataRecordConverterTest {
 	}
 
 	private void setActionLinkConvereterToreturnClientDataGroup() {
-		ClientDataGroupSpy clientDataGroup = new ClientDataGroupSpy();
+		ClientDataRecordGroupSpy clientDataRecordGroup = new ClientDataRecordGroupSpy();
 
 		JsonToClientDataConverterSpy jsonToDataConverter = new JsonToClientDataConverterSpy();
-		jsonToDataConverter.MRV.setDefaultReturnValuesSupplier("toInstance", () -> clientDataGroup);
+		jsonToDataConverter.MRV.setDefaultReturnValuesSupplier("toInstance",
+				() -> clientDataRecordGroup);
 		factory.MRV.setDefaultReturnValuesSupplier("factorUsingJsonObject",
 				() -> jsonToDataConverter);
 	}

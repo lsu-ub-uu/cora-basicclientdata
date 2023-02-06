@@ -26,7 +26,7 @@ import java.util.List;
 import org.testng.annotations.Test;
 
 import se.uu.ub.cora.clientdata.ClientData;
-import se.uu.ub.cora.clientdata.ClientDataGroup;
+import se.uu.ub.cora.clientdata.ClientDataRecordGroup;
 
 public class BasicClientDataListTest {
 	@Test
@@ -39,8 +39,8 @@ public class BasicClientDataListTest {
 	@Test
 	public void testAddRecord() {
 		BasicClientDataList dataList = BasicClientDataList.withContainDataOfType("metadata");
-		ClientDataGroup dataGroup = BasicClientDataGroup.withNameInData("dataGroupId");
-		BasicClientDataRecord record = BasicClientDataRecord.withDataGroup(dataGroup);
+		ClientDataRecordGroup dataGroup = BasicClientDataRecordGroup.withNameInData("dataGroupId");
+		BasicClientDataRecord record = BasicClientDataRecord.withDataRecordGroup(dataGroup);
 		dataList.addData(record);
 		List<ClientData> records = dataList.getDataList();
 		assertEquals(records.get(0), record);

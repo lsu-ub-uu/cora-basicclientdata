@@ -24,8 +24,8 @@ import java.util.Map;
 import se.uu.ub.cora.clientbasicdata.data.BasicClientDataRecord;
 import se.uu.ub.cora.clientdata.ClientActionLink;
 import se.uu.ub.cora.clientdata.ClientConvertible;
-import se.uu.ub.cora.clientdata.ClientDataGroup;
 import se.uu.ub.cora.clientdata.ClientDataRecord;
+import se.uu.ub.cora.clientdata.ClientDataRecordGroup;
 import se.uu.ub.cora.clientdata.converter.JsonToClientDataConverter;
 import se.uu.ub.cora.clientdata.converter.JsonToClientDataConverterFactory;
 import se.uu.ub.cora.json.parser.JsonArray;
@@ -75,9 +75,9 @@ public class JsonToBasicClientDataRecordConverter implements JsonToClientDataCon
 		jsonObjectRecord = jsonObject.getValueAsJsonObject("record");
 		validateOnlyCorrectKeysAtSecondLevel();
 
-		ClientDataGroup clientDataGroup = convertDataGroup();
+		ClientDataRecordGroup clientDataRecordGroup = convertDataRecordGroup();
 
-		clientDataRecord = BasicClientDataRecord.withDataGroup(clientDataGroup);
+		clientDataRecord = BasicClientDataRecord.withDataRecordGroup(clientDataRecordGroup);
 		possiblyAddActionLinks();
 		possiblyAddPermissions();
 		return clientDataRecord;
@@ -155,10 +155,10 @@ public class JsonToBasicClientDataRecordConverter implements JsonToClientDataCon
 				&& !jsonObjectRecord.containsKey(PERMISSIONS);
 	}
 
-	private ClientDataGroup convertDataGroup() {
+	private ClientDataRecordGroup convertDataRecordGroup() {
 		JsonObject jsonDataObject = jsonObjectRecord.getValueAsJsonObject("data");
 		JsonToClientDataConverter converter = factory.factorUsingJsonObject(jsonDataObject);
-		return (ClientDataGroup) converter.toInstance();
+		return (ClientDataRecordGroup) converter.toInstance();
 	}
 
 	private void possiblyAddActionLinks() {

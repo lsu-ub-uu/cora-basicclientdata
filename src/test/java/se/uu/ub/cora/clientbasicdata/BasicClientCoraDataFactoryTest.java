@@ -72,10 +72,12 @@ public class BasicClientCoraDataFactoryTest {
 
 	@Test
 	public void testFactorRecordUsingDataGroup() {
-		ClientDataGroup dataGroup = BasicClientDataGroup.withNameInData("someNameInData");
-		ClientDataRecord factoredDataRecord = dataFactory.factorRecordUsingDataGroup(dataGroup);
+		ClientDataRecordGroup dataRecordGroup = BasicClientDataRecordGroup
+				.withNameInData("someNameInData");
+		ClientDataRecord factoredDataRecord = dataFactory
+				.factorRecordUsingDataRecordGroup(dataRecordGroup);
 		assertTrue(factoredDataRecord instanceof BasicClientDataRecord);
-		assertSame(factoredDataRecord.getDataGroup(), dataGroup);
+		assertSame(factoredDataRecord.getDataRecordGroup(), dataRecordGroup);
 	}
 
 	@Test

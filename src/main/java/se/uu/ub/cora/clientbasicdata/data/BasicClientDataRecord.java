@@ -19,7 +19,7 @@
 package se.uu.ub.cora.clientbasicdata.data;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
@@ -27,34 +27,35 @@ import java.util.Set;
 
 import se.uu.ub.cora.clientdata.ClientAction;
 import se.uu.ub.cora.clientdata.ClientActionLink;
-import se.uu.ub.cora.clientdata.ClientDataGroup;
 import se.uu.ub.cora.clientdata.ClientDataMissingException;
 import se.uu.ub.cora.clientdata.ClientDataRecord;
+import se.uu.ub.cora.clientdata.ClientDataRecordGroup;
+import se.uu.ub.cora.clientdata.ClientDataRecordLink;
 
 public final class BasicClientDataRecord implements ClientDataRecord {
 	private static final String SEARCH = "search";
-	private ClientDataGroup dataGroup;
-	private Map<ClientAction, ClientActionLink> actions = new HashMap<>();
+	private ClientDataRecordGroup dataRecordGroup;
+	private Map<ClientAction, ClientActionLink> actions = new EnumMap<>(ClientAction.class);
 	private Set<String> readPermissions = new LinkedHashSet<>();
 	private Set<String> writePermissions = new LinkedHashSet<>();
 
-	public static BasicClientDataRecord withDataGroup(ClientDataGroup dataGroup) {
-		return new BasicClientDataRecord(dataGroup);
+	public static BasicClientDataRecord withDataRecordGroup(ClientDataRecordGroup dataRecordGroup) {
+		return new BasicClientDataRecord(dataRecordGroup);
 	}
 
-	private BasicClientDataRecord(ClientDataGroup dataGroup) {
-		this.dataGroup = dataGroup;
-	}
-
-	@Override
-	public void setDataGroup(ClientDataGroup dataGroup) {
-		this.dataGroup = dataGroup;
-
+	private BasicClientDataRecord(ClientDataRecordGroup dataRecordGroup) {
+		this.dataRecordGroup = dataRecordGroup;
 	}
 
 	@Override
-	public ClientDataGroup getDataGroup() {
-		return dataGroup;
+	public void setDataRecordGroup(ClientDataRecordGroup dataRecordGroup) {
+		this.dataRecordGroup = dataRecordGroup;
+
+	}
+
+	@Override
+	public ClientDataRecordGroup getDataRecordGroup() {
+		return dataRecordGroup;
 	}
 
 	@Override
@@ -122,9 +123,7 @@ public final class BasicClientDataRecord implements ClientDataRecord {
 	}
 
 	private String getTypeFromGroup() {
-		ClientDataGroup recordInfo = dataGroup.getFirstGroupWithNameInData("recordInfo");
-		ClientDataGroup linkedTypeGroup = recordInfo.getFirstGroupWithNameInData("type");
-		return linkedTypeGroup.getFirstAtomicValueWithNameInData("linkedRecordId");
+		return dataRecordGroup.getType();
 	}
 
 	@Override
@@ -137,8 +136,7 @@ public final class BasicClientDataRecord implements ClientDataRecord {
 	}
 
 	private String getIdFromGroup() {
-		ClientDataGroup recordInfo = dataGroup.getFirstGroupWithNameInData("recordInfo");
-		return recordInfo.getFirstAtomicValueWithNameInData("id");
+		return dataRecordGroup.getId();
 	}
 
 	@Override
@@ -153,12 +151,14 @@ public final class BasicClientDataRecord implements ClientDataRecord {
 	}
 
 	private boolean isRecordTypeAndHasSearch(String type) {
-		return "recordType".equals(type) && dataGroup.containsChildWithNameInData(SEARCH);
+		return "recordType".equals(type) && dataRecordGroup.containsChildWithNameInData(SEARCH);
 	}
 
 	private String extractSearchId() {
-		ClientDataGroup search = dataGroup.getFirstGroupWithNameInData(SEARCH);
-		return search.getFirstAtomicValueWithNameInData("linkedRecordId");
+		ClientDataRecordLink search = (ClientDataRecordLink) dataRecordGroup
+				.getFirstChildWithNameInData(SEARCH);
+		return search.getLinkedRecordId();
+
 	}
 
 }

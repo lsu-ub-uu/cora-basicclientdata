@@ -35,38 +35,41 @@ import org.testng.annotations.Test;
 import se.uu.ub.cora.clientdata.ClientAction;
 import se.uu.ub.cora.clientdata.ClientActionLink;
 import se.uu.ub.cora.clientdata.ClientData;
-import se.uu.ub.cora.clientdata.ClientDataGroup;
 import se.uu.ub.cora.clientdata.ClientDataMissingException;
+import se.uu.ub.cora.clientdata.ClientDataRecordLink;
 import se.uu.ub.cora.clientdata.spies.ClientActionLinkSpy;
-import se.uu.ub.cora.clientdata.spies.ClientDataGroupSpy;
+import se.uu.ub.cora.clientdata.spies.ClientDataRecordGroupSpy;
+import se.uu.ub.cora.clientdata.spies.ClientDataRecordLinkSpy;
 
 public class BasicClientDataRecordTest {
 	private BasicClientDataRecord dataRecord;
-	private ClientDataGroupSpy dataRecordGroup;
-	private ClientDataGroupSpy recordInfoGroup;
-	private ClientDataGroupSpy typeLinkedGroup;
-	private ClientDataGroupSpy searchLinkedGroup;
+	private ClientDataRecordGroupSpy dataRecordGroup;
+	// private ClientDataGroupSpy recordInfoGroup;
+	// private ClientDataRecordLinkSpy typeLink;
+	private ClientDataRecordLinkSpy searchLink;
 
 	@BeforeMethod
 	public void beforeMethod() {
+		searchLink = new ClientDataRecordLinkSpy();
 
-		searchLinkedGroup = new ClientDataGroupSpy();
+		// typeLink = new ClientDataRecordLinkSpy();
+		// recordInfoGroup = new ClientDataGroupSpy();
+		// recordInfoGroup.MRV.setSpecificReturnValuesSupplier("getFirstChildWithNameInData",
+		// (Supplier<ClientDataRecordLink>) () -> typeLink, "type");
 
-		typeLinkedGroup = new ClientDataGroupSpy();
-		recordInfoGroup = new ClientDataGroupSpy();
-		recordInfoGroup.MRV.setSpecificReturnValuesSupplier("getFirstGroupWithNameInData",
-				(Supplier<ClientDataGroup>) () -> typeLinkedGroup, "type");
+		dataRecordGroup = new ClientDataRecordGroupSpy();
+		dataRecordGroup.MRV.setDefaultReturnValuesSupplier("getType", () -> "someType");
+		dataRecordGroup.MRV.setDefaultReturnValuesSupplier("getId", () -> "someId");
 
-		dataRecordGroup = new ClientDataGroupSpy();
-		dataRecordGroup.MRV.setSpecificReturnValuesSupplier("getFirstGroupWithNameInData",
-				(Supplier<ClientDataGroup>) () -> recordInfoGroup, "recordInfo");
+		// dataRecordGroup.MRV.setSpecificReturnValuesSupplier("getFirstGroupWithNameInData",
+		// (Supplier<ClientDataGroup>) () -> recordInfoGroup, "recordInfo");
 
-		dataRecordGroup.MRV.setSpecificReturnValuesSupplier("getFirstGroupWithNameInData",
-				(Supplier<ClientDataGroup>) () -> searchLinkedGroup, "search");
+		dataRecordGroup.MRV.setSpecificReturnValuesSupplier("getFirstChildWithNameInData",
+				(Supplier<ClientDataRecordLink>) () -> searchLink, "search");
 		dataRecordGroup.MRV.setSpecificReturnValuesSupplier("containsChildWithNameInData",
 				(Supplier<Boolean>) () -> true, "search");
 
-		dataRecord = BasicClientDataRecord.withDataGroup(dataRecordGroup);
+		dataRecord = BasicClientDataRecord.withDataRecordGroup(dataRecordGroup);
 
 	}
 
@@ -77,7 +80,6 @@ public class BasicClientDataRecordTest {
 
 	@Test
 	public void testAddData() {
-
 		ClientActionLink actionLink = new ClientActionLinkSpy();
 		dataRecord.addActionLink(actionLink);
 
@@ -91,16 +93,18 @@ public class BasicClientDataRecordTest {
 
 	@Test
 	public void testGetDataGroup() {
-		assertEquals(dataRecord.getDataGroup(), dataRecordGroup);
+		assertEquals(dataRecord.getDataRecordGroup(), dataRecordGroup);
 	}
 
 	@Test
 	public void testSetDataGroup() {
-		ClientDataGroup dataGroup = BasicClientDataGroup.withNameInData("nameInData");
+		// ClientDataGroup dataGroup = BasicClientDataGroup.withNameInData("nameInData");
 
-		dataRecord.setDataGroup(dataGroup);
+		ClientDataRecordGroupSpy dataRecordGroup = new ClientDataRecordGroupSpy();
 
-		assertEquals(dataRecord.getDataGroup(), dataGroup);
+		dataRecord.setDataRecordGroup(dataRecordGroup);
+
+		assertEquals(dataRecord.getDataRecordGroup(), dataRecordGroup);
 	}
 
 	@Test
@@ -178,89 +182,49 @@ public class BasicClientDataRecordTest {
 
 	@Test(expectedExceptions = ClientDataMissingException.class, expectedExceptionsMessageRegExp = ""
 			+ "Record id not known")
-	public void testGetIdNoDataGroup() throws Exception {
-		dataRecord.setDataGroup(null);
+	public void testGetIdNoDataRecordGroupInRecord() throws Exception {
+		dataRecord.setDataRecordGroup(null);
 		dataRecord.getId();
 	}
 
 	@Test(expectedExceptions = ClientDataMissingException.class, expectedExceptionsMessageRegExp = ""
 			+ "Record id not known")
-	public void testGetIdNoRecordInfoDataGroup() throws Exception {
-		dataRecordGroup.MRV.setThrowException("getFirstGroupWithNameInData",
-				new ClientDataMissingException("DME from Spy"), "recordInfo");
+	public void testGetId_DataRecordGroupReturnsError() throws Exception {
+		dataRecordGroup.MRV.setThrowException("getId",
+				new ClientDataMissingException("DME from Spy"));
 
 		dataRecord.getId();
-	}
 
-	@Test(expectedExceptions = ClientDataMissingException.class, expectedExceptionsMessageRegExp = ""
-			+ "Record id not known")
-	public void testGetIdNoIdDataGroup() throws Exception {
-		recordInfoGroup.MRV.setThrowException("getFirstAtomicValueWithNameInData",
-				new ClientDataMissingException("DME from Spy"), "id");
-
-		dataRecord.getId();
+		dataRecordGroup.MCR.assertMethodWasCalled("getId");
 	}
 
 	@Test
 	public void testGetId() throws Exception {
 		String recordId = dataRecord.getId();
 
-		assertIdFetchedFromIdInRecordInfo(recordId);
-	}
-
-	private void assertIdFetchedFromIdInRecordInfo(String recordId) {
-		dataRecordGroup.MCR.assertParameters("getFirstGroupWithNameInData", 0, "recordInfo");
-		recordInfoGroup.MCR.assertParameters("getFirstAtomicValueWithNameInData", 0, "id");
-		recordInfoGroup.MCR.assertReturn("getFirstAtomicValueWithNameInData", 0, recordId);
+		dataRecordGroup.MCR.assertReturn("getId", 0, recordId);
 	}
 
 	@Test
 	public void testGetType() throws Exception {
 
-		String returnType = dataRecord.getType();
+		String type = dataRecord.getType();
 
-		dataRecordGroup.MCR.assertParameters("getFirstGroupWithNameInData", 0, "recordInfo");
-		recordInfoGroup.MCR.assertParameters("getFirstGroupWithNameInData", 0, "type");
-
-		ClientDataGroupSpy typeGroup = (ClientDataGroupSpy) recordInfoGroup.MCR
-				.getReturnValue("getFirstGroupWithNameInData", 0);
-		typeGroup.MCR.assertParameters("getFirstAtomicValueWithNameInData", 0, "linkedRecordId");
-		typeGroup.MCR.assertReturn("getFirstAtomicValueWithNameInData", 0, returnType);
-
+		dataRecordGroup.MCR.assertReturn("getType", 0, type);
 	}
 
 	@Test(expectedExceptions = ClientDataMissingException.class, expectedExceptionsMessageRegExp = ""
 			+ "Record type not known")
 	public void testGetTypeNoDataGroup() throws Exception {
-		dataRecord.setDataGroup(null);
+		dataRecord.setDataRecordGroup(null);
 		dataRecord.getType();
 	}
 
 	@Test(expectedExceptions = ClientDataMissingException.class, expectedExceptionsMessageRegExp = ""
 			+ "Record type not known")
-	public void testGetTypeNoRecordInfoDataGroup() throws Exception {
-		dataRecordGroup.MRV.setThrowException("getFirstGroupWithNameInData",
-				new ClientDataMissingException("DME from Spy"), "recordInfo");
-
-		dataRecord.getType();
-	}
-
-	@Test(expectedExceptions = ClientDataMissingException.class, expectedExceptionsMessageRegExp = ""
-			+ "Record type not known")
-
 	public void testGetTypeNoLinkedTypeDataGroup() throws Exception {
-		recordInfoGroup.MRV.setThrowException("getFirstGroupWithNameInData",
-				new ClientDataMissingException("DME from Spy"), "type");
-
-		dataRecord.getType();
-	}
-
-	@Test(expectedExceptions = ClientDataMissingException.class, expectedExceptionsMessageRegExp = ""
-			+ "Record type not known")
-
-	public void testGetTypeNoLinkedRecordIdAtomicGroup() throws Exception {
-		typeLinkedGroup.MRV.setThrowException("getFirstAtomicValueWithNameInData",
-				new ClientDataMissingException("DME from Spy"), "linkedRecordId");
+		dataRecordGroup.MRV.setThrowException("getType",
+				new ClientDataMissingException("DME from Spy"));
 
 		dataRecord.getType();
 	}
@@ -306,69 +270,53 @@ public class BasicClientDataRecordTest {
 
 	@Test(expectedExceptions = ClientDataMissingException.class, expectedExceptionsMessageRegExp = ""
 			+ "No searchId exists")
-	public void testGetSearchIdNotSearchOrRecordType() {
-		dataRecordGroup.MRV.setThrowException("getFirstGroupWithNameInData",
-				new ClientDataMissingException("DME from Spy"), "linkedRecordId");
-
+	public void testGetSearchId_TypeIsNotSearchOrRecordType() {
 		dataRecord.getSearchId();
 	}
 
 	@Test(expectedExceptions = ClientDataMissingException.class, expectedExceptionsMessageRegExp = ""
 			+ "Record id not known")
-	public void testGetIdForSearchButNoId() {
-		typeLinkedGroup.MRV.setSpecificReturnValuesSupplier("getFirstAtomicValueWithNameInData",
-				(Supplier<String>) () -> "search", "linkedRecordId");
-		recordInfoGroup.MRV.setThrowException("getFirstAtomicValueWithNameInData",
-				new ClientDataMissingException("DME from Spy"), "id");
+	public void testGetSearchId_ForTypeSearchButNoId() {
+		dataRecordGroup.MRV.setDefaultReturnValuesSupplier("getType", () -> "search");
+		dataRecordGroup.MRV.setThrowException("getId",
+				new ClientDataMissingException("DME from Spy"));
 
 		dataRecord.getSearchId();
 	}
 
 	@Test(expectedExceptions = ClientDataMissingException.class, expectedExceptionsMessageRegExp = ""
 			+ "No searchId exists")
-	public void testGetSearchIdForRecordTypeButNoSearchId() {
-		recordInfoGroup.MRV.setThrowException("getFirstAtomicValueWithNameInData",
-				new ClientDataMissingException("DME from Spy"), "id");
+	public void testGetSearchId_ForRecordTypeButNoSearchId() {
+		dataRecordGroup.MRV.setDefaultReturnValuesSupplier("getType", () -> "recordType");
+		dataRecordGroup.MRV.setSpecificReturnValuesSupplier("containsChildWithNameInData",
+				() -> false, "search");
 
 		dataRecord.getSearchId();
 	}
 
 	@Test
 	public void testGetSearchIdForSearch() {
-		typeLinkedGroup.MRV.setSpecificReturnValuesSupplier("getFirstAtomicValueWithNameInData",
-				(Supplier<String>) () -> "search", "linkedRecordId");
+		dataRecordGroup.MRV.setDefaultReturnValuesSupplier("getType", () -> "search");
 
 		String searchId = dataRecord.getSearchId();
 
-		assertIdFetchedFromIdInRecordInfo(searchId);
-	}
-
-	private void assertSearchIdFetchedFromIdInSearchGroup(String searchId) {
-		dataRecordGroup.MCR.assertParameters("containsChildWithNameInData", 0, "search");
-		dataRecordGroup.MCR.assertParameters("getFirstGroupWithNameInData", 1, "search");
-		searchLinkedGroup.MCR.assertParameters("getFirstAtomicValueWithNameInData", 0,
-				"linkedRecordId");
-		searchLinkedGroup.MCR.assertReturn("getFirstAtomicValueWithNameInData", 0, searchId);
+		dataRecordGroup.MCR.assertReturn("getId", 0, searchId);
 	}
 
 	@Test
 	public void testGetSearchIdForRecordType() {
-		typeLinkedGroup.MRV.setSpecificReturnValuesSupplier("getFirstAtomicValueWithNameInData",
-				(Supplier<String>) () -> "recordType", "linkedRecordId");
+		dataRecordGroup.MRV.setDefaultReturnValuesSupplier("getType", () -> "recordType");
 
 		String searchId = dataRecord.getSearchId();
+
 		assertSearchIdFetchedFromIdInSearchGroup(searchId);
 	}
 
-	@Test(expectedExceptions = ClientDataMissingException.class, expectedExceptionsMessageRegExp = ""
-			+ "No searchId exists")
-	public void testGetSearchIdForRecordTypeNoSearch() {
-		dataRecordGroup.MRV.setSpecificReturnValuesSupplier("containsChildWithNameInData",
-				(Supplier<Boolean>) () -> false, "search");
-		typeLinkedGroup.MRV.setSpecificReturnValuesSupplier("getFirstAtomicValueWithNameInData",
-				(Supplier<String>) () -> "recordType", "linkedRecordId");
-
-		dataRecord.getSearchId();
+	private void assertSearchIdFetchedFromIdInSearchGroup(String searchId) {
+		dataRecordGroup.MCR.assertParameters("containsChildWithNameInData", 0, "search");
+		dataRecordGroup.MCR.assertParameters("getFirstChildWithNameInData", 0, "search");
+		searchLink.MCR.assertParameters("getLinkedRecordId", 0);
+		searchLink.MCR.assertReturn("getLinkedRecordId", 0, searchId);
 	}
 
 }

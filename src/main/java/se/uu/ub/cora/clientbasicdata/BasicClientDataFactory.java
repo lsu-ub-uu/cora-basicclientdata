@@ -47,8 +47,8 @@ public class BasicClientDataFactory implements ClientDataFactory {
 	}
 
 	@Override
-	public ClientDataRecord factorRecordUsingDataGroup(ClientDataGroup dataGroup) {
-		return BasicClientDataRecord.withDataGroup(dataGroup);
+	public ClientDataRecord factorRecordUsingDataRecordGroup(ClientDataRecordGroup dataGroup) {
+		return BasicClientDataRecord.withDataRecordGroup(dataGroup);
 	}
 
 	@Override

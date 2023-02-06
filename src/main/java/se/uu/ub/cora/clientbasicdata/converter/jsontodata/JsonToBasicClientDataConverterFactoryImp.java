@@ -53,6 +53,10 @@ public class JsonToBasicClientDataConverterFactoryImp implements JsonToClientDat
 		}
 		JsonObject jsonObject = json;
 
+		if (isRecordGroup(jsonObject)) {
+			return JsonToBasicClientDataRecordGroupConverter.forJsonObject(jsonObject);
+		}
+
 		if (isGroup(jsonObject)) {
 			return createConverterForGroupOrLink(jsonObject);
 		}
@@ -62,20 +66,17 @@ public class JsonToBasicClientDataConverterFactoryImp implements JsonToClientDat
 		return JsonToBasicClientDataAttributeConverter.forJsonObject(jsonObject);
 	}
 
-	// JsonToClientDataConverter createConvertedForJsonValue(JsonValue json) {
-	// if (!(json instanceof JsonObject)) {
-	// throw new JsonParseException("Json value is not an object, can not convert");
-	// }
-	// JsonObject jsonObject = (JsonObject) json;
-	//
-	// if (isGroup(jsonObject)) {
-	// return createConverterForGroupOrLink(jsonObject);
-	// }
-	// if (isAtomicData(jsonObject)) {
-	// return JsonToBasicClientDataAtomicConverter.forJsonObject(jsonObject);
-	// }
-	// return JsonToBasicClientDataAttributeConverter.forJsonObject(jsonObject);
-	// }
+	private boolean isRecordGroup(JsonObject jsonObject) {
+		if (isGroup(jsonObject)) {
+			return recordInfoExists(jsonObject);
+		}
+		return false;
+	}
+
+	private boolean recordInfoExists(JsonObject jsonObject) {
+		List<String> foundNames = extractChildNames(jsonObject);
+		return foundNames.contains("recordInfo");
+	}
 
 	private JsonToClientDataConverter createConverterForGroupOrLink(JsonObject jsonObject) {
 		List<String> foundNames = extractChildNames(jsonObject);
