@@ -52,6 +52,13 @@ public class JsonToBasicClientDataConverterFactoryImp implements JsonToClientDat
 			throw new JsonParseException("Json value is not an object, can not convert");
 		}
 		JsonObject jsonObject = json;
+		// TODO: test this if and all inside it.
+		if (isRecord(jsonObject)) {
+			return JsonToBasicClientDataRecordConverter.usingConverterFactoryAndJsonObject(this,
+					JsonToBasicClientDataActionLinkConverterFactoryImp
+							.usingJsonToClientDataConverterFactory(this),
+					jsonObject);
+		}
 
 		if (isRecordGroup(jsonObject)) {
 			return JsonToBasicClientDataRecordGroupConverter.forJsonObject(jsonObject);

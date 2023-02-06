@@ -39,6 +39,30 @@ public class JsonToBasicClientDataConverterFactoryTest {
 	}
 
 	@Test
+	public void testFactorOnJsonStringDataRecord() {
+		thisTestIsIntentionallyBrokenToBeFoundAndImplemented...
+		String json = """
+				{"record":{
+					"data":{
+						"name":"groupNameInData"
+						, "children":[]
+					},
+					"actionLinks":{
+				 		"read":{
+				 			"requestMethod":"GET",
+				 			"rel":"read",
+				 			"url":"https://cora.example.org/somesystem/rest/record/somerecordtype/somerecordid",
+				 			"accept":"application/vnd.uub.record+json"
+						}
+					}
+				}
+				}""";
+		JsonToClientDataConverter jsonToDataConverter = jsonToDataConverterFactory
+				.factorUsingString(json);
+		assertTrue(jsonToDataConverter instanceof JsonToBasicClientDataRecordConverter);
+	}
+
+	@Test
 	public void testFactorOnJsonStringDataRecordGroup() {
 		String json = """
 				{"name":"id","children":[
