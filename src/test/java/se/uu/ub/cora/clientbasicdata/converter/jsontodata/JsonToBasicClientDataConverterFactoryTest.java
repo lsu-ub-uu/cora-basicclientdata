@@ -19,7 +19,9 @@
 
 package se.uu.ub.cora.clientbasicdata.converter.jsontodata;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
 
 import org.testng.annotations.BeforeMethod;
@@ -27,7 +29,10 @@ import org.testng.annotations.Test;
 
 import se.uu.ub.cora.clientdata.converter.JsonToClientDataConverter;
 import se.uu.ub.cora.clientdata.converter.JsonToClientDataConverterFactory;
+import se.uu.ub.cora.json.parser.JsonObject;
 import se.uu.ub.cora.json.parser.JsonParseException;
+import se.uu.ub.cora.json.parser.JsonParser;
+import se.uu.ub.cora.json.parser.org.OrgJsonParser;
 
 public class JsonToBasicClientDataConverterFactoryTest {
 	private JsonToClientDataConverterFactory jsonToDataConverterFactory;
@@ -40,7 +45,7 @@ public class JsonToBasicClientDataConverterFactoryTest {
 
 	@Test
 	public void testFactorOnJsonStringDataRecord() {
-		thisTestIsIntentionallyBrokenToBeFoundAndImplemented...
+
 		String json = """
 				{"record":{
 					"data":{
@@ -57,9 +62,28 @@ public class JsonToBasicClientDataConverterFactoryTest {
 					}
 				}
 				}""";
-		JsonToClientDataConverter jsonToDataConverter = jsonToDataConverterFactory
+
+		JsonToBasicClientDataRecordConverter jsonToDataConverter = (JsonToBasicClientDataRecordConverter) jsonToDataConverterFactory
 				.factorUsingString(json);
 		assertTrue(jsonToDataConverter instanceof JsonToBasicClientDataRecordConverter);
+
+		assertSame(jsonToDataConverter.onlyForTestGetConverterFactory(),
+				jsonToDataConverterFactory);
+		assertTrue(jsonToDataConverter
+				.onlyForTestGetActionLinkConverterFactory() instanceof JsonToBasicClientDataActionLinkConverterFactoryImp);
+
+		assertEqualJson(jsonToDataConverter.onlyForTestGetJsonObject(), parseToJsonObject(json));
+
+	}
+
+	private void assertEqualJson(JsonObject actual, JsonObject expected) {
+		assertEquals(actual.toJsonFormattedString(), expected.toJsonFormattedString());
+	}
+
+	private JsonObject parseToJsonObject(String json) {
+		JsonParser jsonParser = new OrgJsonParser();
+		JsonObject jsonObject = jsonParser.parseStringAsObject(json);
+		return jsonObject;
 	}
 
 	@Test

@@ -48,29 +48,42 @@ public class JsonToBasicClientDataConverterFactoryImp implements JsonToClientDat
 
 	@Override
 	public JsonToClientDataConverter factorUsingJsonObject(JsonObject json) {
+		verifyJsonObject(json);
+		return createJsonToClientDataConverter(json);
+	}
+
+	private JsonToClientDataConverter createJsonToClientDataConverter(JsonObject json) {
+		if (isRecord(json)) {
+			return createJsonToClientDataRecordConverter(json);
+		}
+		if (isRecordGroup(json)) {
+			return JsonToBasicClientDataRecordGroupConverter.forJsonObject(json);
+		}
+		if (isGroup(json)) {
+			return createConverterForGroupOrLink(json);
+		}
+		if (isAtomicData(json)) {
+			return JsonToBasicClientDataAtomicConverter.forJsonObject(json);
+		}
+		return JsonToBasicClientDataAttributeConverter.forJsonObject(json);
+	}
+
+	private JsonToClientDataConverter createJsonToClientDataRecordConverter(JsonObject json) {
+		JsonToBasicClientDataActionLinkConverterFactory converterFactory = JsonToBasicClientDataActionLinkConverterFactoryImp
+				.usingJsonToClientDataConverterFactory(this);
+		JsonToClientDataFactories factories = new JsonToClientDataFactories(this, converterFactory);
+		return JsonToBasicClientDataRecordConverter.usingConverterFactoriesAndJsonObject(factories,
+				json);
+	}
+
+	private void verifyJsonObject(JsonObject json) {
 		if (!(json instanceof JsonObject)) {
 			throw new JsonParseException("Json value is not an object, can not convert");
 		}
-		JsonObject jsonObject = json;
-		// TODO: test this if and all inside it.
-		if (isRecord(jsonObject)) {
-			return JsonToBasicClientDataRecordConverter.usingConverterFactoryAndJsonObject(this,
-					JsonToBasicClientDataActionLinkConverterFactoryImp
-							.usingJsonToClientDataConverterFactory(this),
-					jsonObject);
-		}
+	}
 
-		if (isRecordGroup(jsonObject)) {
-			return JsonToBasicClientDataRecordGroupConverter.forJsonObject(jsonObject);
-		}
-
-		if (isGroup(jsonObject)) {
-			return createConverterForGroupOrLink(jsonObject);
-		}
-		if (isAtomicData(jsonObject)) {
-			return JsonToBasicClientDataAtomicConverter.forJsonObject(jsonObject);
-		}
-		return JsonToBasicClientDataAttributeConverter.forJsonObject(jsonObject);
+	private boolean isRecord(JsonObject jsonObject) {
+		return jsonObject.containsKey("record");
 	}
 
 	private boolean isRecordGroup(JsonObject jsonObject) {

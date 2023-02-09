@@ -44,17 +44,21 @@ public class JsonToBasicClientDataRecordConverterTest {
 	private JsonToBasicClientDataRecordConverter jsonToDataConverter;
 	private JsonToBasicClientDataActionLinkConverterFactorySpy actionLinkConverterFactory;
 	private OrgJsonParser jsonParser = new OrgJsonParser();
+	private JsonToClientDataFactories factoriesRecord;
 
 	@BeforeMethod
 	private void beforeMethod() {
 		factory = new JsonToClientDataConverterFactorySpy();
 		actionLinkConverterFactory = new JsonToBasicClientDataActionLinkConverterFactorySpy();
+		factoriesRecord = new JsonToClientDataFactories(factory, actionLinkConverterFactory);
+
 	}
 
 	@Test
 	public void testFactoryIsSentAlong() throws Exception {
+
 		jsonToDataConverter = JsonToBasicClientDataRecordConverter
-				.usingConverterFactoryAndJsonObject(factory, null, null);
+				.usingConverterFactoriesAndJsonObject(factoriesRecord, null);
 
 		assertSame(jsonToDataConverter.onlyForTestGetConverterFactory(), factory);
 	}
@@ -68,8 +72,7 @@ public class JsonToBasicClientDataRecordConverterTest {
 	private ClientConvertible parseStringAndCreateConverter(String json) {
 		JsonValue jsonValue = jsonParser.parseString(json);
 		jsonToDataConverter = JsonToBasicClientDataRecordConverter
-				.usingConverterFactoryAndJsonObject(factory, actionLinkConverterFactory,
-						(JsonObject) jsonValue);
+				.usingConverterFactoriesAndJsonObject(factoriesRecord, (JsonObject) jsonValue);
 
 		return jsonToDataConverter.toInstance();
 	}
