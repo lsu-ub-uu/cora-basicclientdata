@@ -51,14 +51,15 @@ public class JsonToBasicClientDataRecordConverterTest {
 		factory = new JsonToClientDataConverterFactorySpy();
 		actionLinkConverterFactory = new JsonToBasicClientDataActionLinkConverterFactorySpy();
 		factoriesRecord = new JsonToClientDataFactories(factory, actionLinkConverterFactory);
-
 	}
 
 	@Test
 	public void testFactoryIsSentAlong() throws Exception {
 
+		JsonObject jsonObject = (JsonObject) jsonParser.parseString("{\"record\":\"record\"}");
+
 		jsonToDataConverter = JsonToBasicClientDataRecordConverter
-				.usingConverterFactoriesAndJsonObject(factoriesRecord, null);
+				.usingConverterFactoriesAndJsonObject(factoriesRecord, jsonObject);
 
 		assertSame(jsonToDataConverter.onlyForTestGetConverterFactory(), factory);
 	}

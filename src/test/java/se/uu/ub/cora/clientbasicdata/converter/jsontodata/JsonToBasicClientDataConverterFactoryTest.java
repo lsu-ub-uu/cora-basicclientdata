@@ -87,6 +87,64 @@ public class JsonToBasicClientDataConverterFactoryTest {
 	}
 
 	@Test
+	public void testFactorDataListConverter() throws Exception {
+		String json = """
+				{
+				  "dataList": {
+				    "fromNo": "0",
+				    "data": [
+				      {
+				        "record": {
+				          "data": {
+				            "name": "groupNameInData",
+				            "children": [
+				            ]
+				          },
+				          "actionLinks": {
+				            "read": {
+				              "requestMethod": "GET",
+				              "rel": "read",
+				              "url": "https://cora.example.org/somesystem/rest/record/somerecordtype/somerecordid",
+				              "accept": "application/vnd.uub.record+json"
+				            }
+				          }
+				        }
+				      },
+				      {
+				        "record": {
+				          "data": {
+				            "name": "groupNameInData",
+				            "children": [
+				            ]
+				          },
+				          "actionLinks": {
+				            "read": {
+				              "requestMethod": "GET",
+				              "rel": "read",
+				              "url": "https://cora.example.org/somesystem/rest/record/somerecordtype/somerecordid",
+				              "accept": "application/vnd.uub.record+json"
+				            }
+				          }
+
+				        }
+				      }
+				    ],
+				    "totalNo": "2",
+				    "containDataOfType": "demo",
+				    "toNo": "2"
+				  }
+				}""";
+		JsonToBasicClientDataListConverter jsonToDataListConverter = (JsonToBasicClientDataListConverter) jsonToDataConverterFactory
+				.factorUsingString(json);
+
+		assertTrue(jsonToDataListConverter instanceof JsonToBasicClientDataListConverter);
+		assertSame(jsonToDataListConverter.onlyForTestGetConverterFactory(),
+				jsonToDataConverterFactory);
+		assertEqualJson(jsonToDataListConverter.onlyForTestGetJsonObject(),
+				parseToJsonObject(json));
+	}
+
+	@Test
 	public void testFactorOnJsonStringDataRecordGroup() {
 		String json = """
 				{"name":"id","children":[

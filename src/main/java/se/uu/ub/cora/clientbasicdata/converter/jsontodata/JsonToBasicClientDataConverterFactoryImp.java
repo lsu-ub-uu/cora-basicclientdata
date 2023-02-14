@@ -53,6 +53,10 @@ public class JsonToBasicClientDataConverterFactoryImp implements JsonToClientDat
 	}
 
 	private JsonToClientDataConverter createJsonToClientDataConverter(JsonObject json) {
+		if (isDataList(json)) {
+			return JsonToBasicClientDataListConverter.usingDataConverterAndJsonObject(this,
+					json);
+		}
 		if (isRecord(json)) {
 			return createJsonToClientDataRecordConverter(json);
 		}
@@ -68,6 +72,14 @@ public class JsonToBasicClientDataConverterFactoryImp implements JsonToClientDat
 		return JsonToBasicClientDataAttributeConverter.forJsonObject(json);
 	}
 
+	private boolean isDataList(JsonObject json) {
+		return json.containsKey("dataList");
+	}
+
+	private boolean isRecord(JsonObject jsonObject) {
+		return jsonObject.containsKey("record");
+	}
+
 	private JsonToClientDataConverter createJsonToClientDataRecordConverter(JsonObject json) {
 		JsonToBasicClientDataActionLinkConverterFactory converterFactory = JsonToBasicClientDataActionLinkConverterFactoryImp
 				.usingJsonToClientDataConverterFactory(this);
@@ -80,10 +92,6 @@ public class JsonToBasicClientDataConverterFactoryImp implements JsonToClientDat
 		if (!(json instanceof JsonObject)) {
 			throw new JsonParseException("Json value is not an object, can not convert");
 		}
-	}
-
-	private boolean isRecord(JsonObject jsonObject) {
-		return jsonObject.containsKey("record");
 	}
 
 	private boolean isRecordGroup(JsonObject jsonObject) {
@@ -148,15 +156,15 @@ public class JsonToBasicClientDataConverterFactoryImp implements JsonToClientDat
 		return foundNames;
 	}
 
-	private String getNameInDataFromChild(JsonObject child) {
-		return child.getValueAsJsonString("name").getStringValue();
-	}
-
 	private boolean isAtomicData(JsonObject jsonObject) {
 		return jsonObject.containsKey("value");
 	}
 
 	private boolean isGroup(JsonObject jsonObject) {
 		return jsonObject.containsKey("children");
+	}
+
+	private String getNameInDataFromChild(JsonObject child) {
+		return child.getValueAsJsonString("name").getStringValue();
 	}
 }
