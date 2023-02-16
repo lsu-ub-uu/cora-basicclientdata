@@ -36,7 +36,18 @@ public class JsonToBasicClientDataRecordLinkConverterTest {
 
 	@Test
 	public void testToInstance() {
-		String json = "{\"children\":[{\"name\":\"linkedRecordType\",\"value\":\"recordType\"},{\"name\":\"linkedRecordId\",\"value\":\"place\"}],\"name\":\"someLink\"}";
+		String json = """
+				{"children": [
+				  {
+				    "name": "linkedRecordType",
+				    "value": "recordType"
+				  },
+				  {
+				    "name": "linkedRecordId",
+				    "value": "place"
+				  }
+				],
+				"name": "someLink"}""";
 		BasicClientDataRecordLink dataLink = (BasicClientDataRecordLink) getConverterdLink(json);
 		assertEquals(dataLink.getNameInData(), "someLink");
 		assertEquals(dataLink.getFirstAtomicValueWithNameInData("linkedRecordType"), "recordType");
@@ -46,7 +57,23 @@ public class JsonToBasicClientDataRecordLinkConverterTest {
 
 	@Test
 	public void testToInstanceWithLinkedRepeatId() {
-		String json = "{\"children\":[{\"name\":\"linkedRecordType\",\"value\":\"recordType\"},{\"name\":\"linkedRecordId\",\"value\":\"place\"},{\"name\":\"linkedRepeatId\",\"value\":\"one\"}],\"name\":\"someLink\"}";
+		String json = """
+				{"children": [
+				    {
+				      "name": "linkedRecordType",
+				      "value": "recordType"
+				    },
+				    {
+				      "name": "linkedRecordId",
+				      "value": "place"
+				    },
+				    {
+				      "name": "linkedRepeatId",
+				      "value": "one"
+				    }
+				  ],
+				  "name": "someLink"
+				}""";
 		BasicClientDataRecordLink dataLink = (BasicClientDataRecordLink) getConverterdLink(json);
 		assertEquals(dataLink.getNameInData(), "someLink");
 		assertEquals(dataLink.getFirstAtomicValueWithNameInData("linkedRecordType"), "recordType");
@@ -57,7 +84,37 @@ public class JsonToBasicClientDataRecordLinkConverterTest {
 
 	@Test
 	public void testToInstanceWithLinkedPath() {
-		String json = "{\"children\":[{\"name\":\"linkedRecordType\",\"value\":\"coraText\"},{\"name\":\"linkedRecordId\",\"value\":\"exampleGroupText\"},{\"children\":[{\"name\":\"nameInData\",\"value\":\"recordInfo\"},{\"children\":[{\"name\":\"nameInData\",\"value\":\"type\"}],\"name\":\"linkedPath\"}],\"name\":\"linkedPath\"}],\"name\":\"from\"}";
+		String json = """
+				{"children": [
+				    {
+				      "name": "linkedRecordType",
+				      "value": "coraText"
+				    },
+				    {
+				      "name": "linkedRecordId",
+				      "value": "exampleGroupText"
+				    },
+				    {
+				      "children": [
+				        {
+				          "name": "nameInData",
+				          "value": "recordInfo"
+				        },
+				        {
+				          "children": [
+				            {
+				              "name": "nameInData",
+				              "value": "type"
+				            }
+				          ],
+				          "name": "linkedPath"
+				        }
+				      ],
+				      "name": "linkedPath"
+				    }
+				  ],
+				  "name": "from"
+				}""";
 		BasicClientDataRecordLink dataLink = (BasicClientDataRecordLink) getConverterdLink(json);
 		assertEquals(dataLink.getNameInData(), "from");
 		assertEquals(dataLink.getFirstAtomicValueWithNameInData("linkedRecordType"), "coraText");
@@ -70,7 +127,41 @@ public class JsonToBasicClientDataRecordLinkConverterTest {
 
 	@Test
 	public void testToInstanceWithLinkedRepeatIdAndLinkedPath() {
-		String json = "{\"children\":[{\"name\":\"linkedRecordType\",\"value\":\"coraText\"},{\"name\":\"linkedRecordId\",\"value\":\"exampleGroupText\"},{\"name\":\"linkedRepeatId\",\"value\":\"one\"},{\"children\":[{\"name\":\"nameInData\",\"value\":\"recordInfo\"},{\"children\":[{\"name\":\"nameInData\",\"value\":\"type\"}],\"name\":\"linkedPath\"}],\"name\":\"linkedPath\"}],\"name\":\"from\"}";
+		String json = """
+				{"children": [
+				    {
+				      "name": "linkedRecordType",
+				      "value": "coraText"
+				    },
+				    {
+				      "name": "linkedRecordId",
+				      "value": "exampleGroupText"
+				    },
+				    {
+				      "name": "linkedRepeatId",
+				      "value": "one"
+				    },
+				    {
+				      "children": [
+				        {
+				          "name": "nameInData",
+				          "value": "recordInfo"
+				        },
+				        {
+				          "children": [
+				            {
+				              "name": "nameInData",
+				              "value": "type"
+				            }
+				          ],
+				          "name": "linkedPath"
+				        }
+				      ],
+				      "name": "linkedPath"
+				    }
+				  ],
+				  "name": "from"
+				}""";
 		BasicClientDataRecordLink dataLink = (BasicClientDataRecordLink) getConverterdLink(json);
 		assertEquals(dataLink.getNameInData(), "from");
 		assertEquals(dataLink.getFirstAtomicValueWithNameInData("linkedRecordType"), "coraText");
@@ -101,7 +192,19 @@ public class JsonToBasicClientDataRecordLinkConverterTest {
 
 	@Test
 	public void testToClassWithRepeatId() {
-		String json = "{\"children\":[{\"name\":\"linkedRecordType\",\"value\":\"recordType\"},{\"name\":\"linkedRecordId\",\"value\":\"place\"}],\"repeatId\":\"0\",\"name\":\"someLink\"}";
+		String json = """
+				{"children": [
+				  {
+				    "name": "linkedRecordType",
+				    "value": "recordType"
+				  },
+				  {
+				    "name": "linkedRecordId",
+				    "value": "place"
+				  }
+				],
+				"repeatId": "0",
+				"name": "someLink"}""";
 		ClientDataLink dataLink = getConverterdLink(json);
 		assertEquals(dataLink.getNameInData(), "someLink");
 		assertEquals(dataLink.getRepeatId(), "0");
@@ -109,7 +212,21 @@ public class JsonToBasicClientDataRecordLinkConverterTest {
 
 	@Test
 	public void testToClassWithAttribute() {
-		String json = "{\"children\":[{\"name\":\"linkedRecordType\",\"value\":\"recordType\"},{\"name\":\"linkedRecordId\",\"value\":\"place\"}],\"attributes\":{\"type\":\"someType\"},\"name\":\"someLink\"}";
+		String json = """
+				{"children": [
+				  {
+				    "name": "linkedRecordType",
+				    "value": "recordType"
+				  },
+				  {
+				    "name": "linkedRecordId",
+				    "value": "place"
+				  }
+				],
+				"attributes": {
+				  "type": "someType"
+				},
+				"name": "someLink"}""";
 		ClientDataLink dataLink = getConverterdLink(json);
 
 		assertEquals(dataLink.getNameInData(), "someLink");
@@ -119,7 +236,22 @@ public class JsonToBasicClientDataRecordLinkConverterTest {
 
 	@Test
 	public void testToClassWithRepeatIdAndAttribute() {
-		String json = "{\"children\":[{\"name\":\"linkedRecordType\",\"value\":\"recordType\"},{\"name\":\"linkedRecordId\",\"value\":\"place\"}],\"repeatId\":\"0\",\"attributes\":{\"type\":\"someType\"},\"name\":\"someLink\"}";
+		String json = """
+				{"children": [
+				  {
+				    "name": "linkedRecordType",
+				    "value": "recordType"
+				  },
+				  {
+				    "name": "linkedRecordId",
+				    "value": "place"
+				  }
+				],
+				"repeatId": "0",
+				"attributes": {
+				  "type": "someType"
+				},
+				"name": "someLink"}""";
 		ClientDataLink dataLink = getConverterdLink(json);
 
 		assertEquals(dataLink.getNameInData(), "someLink");
@@ -128,10 +260,56 @@ public class JsonToBasicClientDataRecordLinkConverterTest {
 		assertEquals(dataLink.getRepeatId(), "0");
 	}
 
+	@Test
+	public void testToRecordLinkWithActions() {
+		String json = """
+				{"children": [
+				    {
+				      "name": "linkedRecordType",
+				      "value": "recordType"
+				    },
+				    {
+				      "name": "linkedRecordId",
+				      "value": "demo"
+				    }
+				  ],
+				  "actionLinks": {
+				    "read": {
+				      "requestMethod": "GET",
+				      "rel": "read",
+				      "url": "https://cora.epc.ub.uu.se/systemone/rest/record/recordType/demo",
+				      "accept": "application/vnd.uub.record+json"
+				    }
+				  },
+				  "name": "type"
+				}""";
+		ClientDataLink dataLink = getConverterdLink(json);
+
+		assertEquals(dataLink.getNameInData(), "type");
+		assertTrue(dataLink.hasReadAction());
+
+	}
+
 	@Test(expectedExceptions = JsonParseException.class, expectedExceptionsMessageRegExp = ""
 			+ "Error parsing jsonObject: Group data can only contain keys: name, children and attributes")
 	public void testToClassWithRepeatIdAndAttributeAndExtra() {
-		String json = "{\"children\":[{\"name\":\"linkedRecordType\",\"value\":\"recordType\"},{\"name\":\"linkedRecordId\",\"value\":\"place\"}],\"repeatId\":\"0\",\"attributes\":{\"type\":\"someType\"},\"name\":\"someLink\", \"extra\":\"extraValue\"}";
+		String json = """
+				{"children": [
+				  {
+				    "name": "linkedRecordType",
+				    "value": "recordType"
+				  },
+				  {
+				    "name": "linkedRecordId",
+				    "value": "place"
+				  }
+				],
+				"repeatId": "0",
+				"attributes": {
+				  "type": "someType"
+				},
+				"name": "someLink",
+				"extra": "extraValue"}""";
 		getConverterdLink(json);
 	}
 

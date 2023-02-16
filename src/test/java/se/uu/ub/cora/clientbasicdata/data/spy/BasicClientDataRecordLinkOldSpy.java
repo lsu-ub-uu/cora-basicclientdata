@@ -18,22 +18,20 @@
  */
 package se.uu.ub.cora.clientbasicdata.data.spy;
 
+import java.util.Optional;
+
 import se.uu.ub.cora.clientdata.ClientAction;
+import se.uu.ub.cora.clientdata.ClientActionLink;
 import se.uu.ub.cora.clientdata.ClientDataRecordLink;
 import se.uu.ub.cora.testutils.mcr.MethodCallRecorder;
 
-public class BasicClientDataRecordLinkOldSpy extends BasicClientDataGroupOldSpy implements ClientDataRecordLink {
+public class BasicClientDataRecordLinkOldSpy extends BasicClientDataGroupOldSpy
+		implements ClientDataRecordLink {
 	public MethodCallRecorder MCR = new MethodCallRecorder();
 	public boolean hasReadAction = false;
 
 	public BasicClientDataRecordLinkOldSpy(String nameInData) {
 		super(nameInData);
-	}
-
-	@Override
-	public void addAction(ClientAction action) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -57,6 +55,18 @@ public class BasicClientDataRecordLinkOldSpy extends BasicClientDataGroupOldSpy 
 		String linkedRecordType = "someRecordType";
 		MCR.addReturned(linkedRecordType);
 		return linkedRecordType;
+	}
+
+	@Override
+	public void addActionLink(ClientActionLink actionLink) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public Optional<ClientActionLink> getActionLink(ClientAction action) {
+		// TODO Auto-generated method stub
+		return Optional.empty();
 	}
 
 }

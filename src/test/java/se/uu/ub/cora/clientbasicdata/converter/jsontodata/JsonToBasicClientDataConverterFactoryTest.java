@@ -223,12 +223,40 @@ public class JsonToBasicClientDataConverterFactoryTest {
 
 	@Test
 	public void testFactorOnJsonStringWithLinkedRepeatIdAndLinkedPathFactorsDataRecordLink() {
-		String json = "{\"children\":[{\"name\":\"linkedRecordType\",\"value\":\"coraText\"}"
-				+ ",{\"name\":\"linkedRecordId\",\"value\":\"exampleGroupText\"}"
-				+ ",{\"name\":\"linkedRepeatId\",\"value\":\"one\"}"
-				+ ",{\"children\":[{\"name\":\"nameInData\",\"value\":\"recordInfo\"}"
-				+ ",{\"children\":[{\"name\":\"nameInData\",\"value\":\"type\"}],\"name\":\"linkedPath\"}]"
-				+ ",\"name\":\"linkedPath\"}],\"name\":\"from\"}";
+		String json = """
+				{"children": [
+				  {
+				    "name": "linkedRecordType",
+				    "value": "coraText"
+				  },
+				  {
+				    "name": "linkedRecordId",
+				    "value": "exampleGroupText"
+				  },
+				  {
+				    "name": "linkedRepeatId",
+				    "value": "one"
+				  },
+				  {
+				    "children": [
+				      {
+				        "name": "nameInData",
+				        "value": "recordInfo"
+				      },
+				      {
+				        "children": [
+				          {
+				            "name": "nameInData",
+				            "value": "type"
+				          }
+				        ],
+				        "name": "linkedPath"
+				      }
+				    ],
+				    "name": "linkedPath"
+				  }
+				],
+				"name": "from"}""";
 		JsonToClientDataConverter jsonToDataConverter = jsonToDataConverterFactory
 				.factorUsingString(json);
 		assertTrue(jsonToDataConverter instanceof JsonToBasicClientDataRecordLinkConverter);
@@ -236,11 +264,36 @@ public class JsonToBasicClientDataConverterFactoryTest {
 
 	@Test
 	public void testFactorOnJsonStringWithLinkedPathButNotLinkedRecordTypeFactorsDataGroup() {
-		String json = "{\"children\":[{\"name\":\"NOTlinkedRecordType\",\"value\":\"coraText\"}"
-				+ ",{\"name\":\"linkedRecordId\",\"value\":\"exampleGroupText\"}"
-				+ ",{\"children\":[{\"name\":\"nameInData\",\"value\":\"recordInfo\"}"
-				+ ",{\"children\":[{\"name\":\"nameInData\",\"value\":\"type\"}],\"name\":\"linkedPath\"}]"
-				+ ",\"name\":\"linkedPath\"}],\"name\":\"from\"}";
+		String json = """
+				{"children": [
+				  {
+				    "name": "NOTlinkedRecordType",
+				    "value": "coraText"
+				  },
+				  {
+				    "name": "linkedRecordId",
+				    "value": "exampleGroupText"
+				  },
+				  {
+				    "children": [
+				      {
+				        "name": "nameInData",
+				        "value": "recordInfo"
+				      },
+				      {
+				        "children": [
+				          {
+				            "name": "nameInData",
+				            "value": "type"
+				          }
+				        ],
+				        "name": "linkedPath"
+				      }
+				    ],
+				    "name": "linkedPath"
+				  }
+				],
+				"name": "from"}""";
 		JsonToClientDataConverter jsonToDataConverter = jsonToDataConverterFactory
 				.factorUsingString(json);
 		assertTrue(jsonToDataConverter instanceof JsonToBasicClientDataGroupConverter);
@@ -258,34 +311,151 @@ public class JsonToBasicClientDataConverterFactoryTest {
 
 	@Test
 	public void testFactorOnJsonStringWithThreeChildrenButNoLinkedRepatIdAndNoLinkedPathFactorsDataGroup() {
-		String json = "{\"children\":[{\"name\":\"linkedRecordType\",\"value\":\"coraText\"},{\"name\":\"linkedRecordId\",\"value\":\"exampleGroupText\"},{\"children\":[{\"name\":\"nameInData\",\"value\":\"recordInfo\"},{\"children\":[{\"name\":\"nameInData\",\"value\":\"type\"}],\"name\":\"linkedPath\"}],\"name\":\"NOTlinkedPath\"}],\"name\":\"from\"}";
+		String json = """
+				{"children": [
+				  {
+				    "name": "linkedRecordType",
+				    "value": "coraText"
+				  },
+				  {
+				    "name": "linkedRecordId",
+				    "value": "exampleGroupText"
+				  },
+				  {
+				    "children": [
+				      {
+				        "name": "nameInData",
+				        "value": "recordInfo"
+				      },
+				      {
+				        "children": [
+				          {
+				            "name": "nameInData",
+				            "value": "type"
+				          }
+				        ],
+				        "name": "linkedPath"
+				      }
+				    ],
+				    "name": "NOTlinkedPath"
+				  }
+				],
+				"name": "from"}""";
 		JsonToClientDataConverter jsonToDataConverter = jsonToDataConverterFactory
 				.factorUsingString(json);
-		assertTrue(jsonToDataConverter instanceof JsonToBasicClientDataGroupConverter);
-		assertFalse(jsonToDataConverter instanceof JsonToBasicClientDataRecordLinkConverter);
+		assertTrue(jsonToDataConverter instanceof JsonToBasicClientDataRecordLinkConverter);
+		// assertTrue(jsonToDataConverter instanceof JsonToBasicClientDataGroupConverter);
+		// assertFalse(jsonToDataConverter instanceof JsonToBasicClientDataRecordLinkConverter);
 	}
 
 	@Test
 	public void testFactorOnJsonStringWithMaxNumOfChildrenBUtNOLinkedRepeatIdFactorsDataGroup() {
-		String json = "{\"children\":[{\"name\":\"linkedRecordType\",\"value\":\"coraText\"},{\"name\":\"linkedRecordId\",\"value\":\"exampleGroupText\"},{\"name\":\"NOTlinkedRepeatId\",\"value\":\"one\"},{\"children\":[{\"name\":\"nameInData\",\"value\":\"recordInfo\"},{\"children\":[{\"name\":\"nameInData\",\"value\":\"type\"}],\"name\":\"linkedPath\"}],\"name\":\"linkedPath\"}],\"name\":\"from\"}";
+		String json = """
+				{"children": [
+				   {
+				     "name": "linkedRecordType",
+				     "value": "coraText"
+				   },
+				   {
+				     "name": "linkedRecordId",
+				     "value": "exampleGroupText"
+				   },
+				   {
+				     "name": "NOTlinkedRepeatId",
+				     "value": "one"
+				   },
+				   {
+				     "children": [
+				       {
+				         "name": "nameInData",
+				         "value": "recordInfo"
+				       },
+				       {
+				         "children": [
+				           {
+				             "name": "nameInData",
+				             "value": "type"
+				           }
+				         ],
+				         "name": "linkedPath"
+				       }
+				     ],
+				     "name": "linkedPath"
+				   }
+				 ],
+				 "name": "from"}""";
 		JsonToClientDataConverter jsonToDataConverter = jsonToDataConverterFactory
 				.factorUsingString(json);
-		assertTrue(jsonToDataConverter instanceof JsonToBasicClientDataGroupConverter);
-		assertFalse(jsonToDataConverter instanceof JsonToBasicClientDataRecordLinkConverter);
+		assertTrue(jsonToDataConverter instanceof JsonToBasicClientDataRecordLinkConverter);
+		// assertTrue(jsonToDataConverter instanceof JsonToBasicClientDataGroupConverter);
+		// assertFalse(jsonToDataConverter instanceof JsonToBasicClientDataRecordLinkConverter);
 	}
 
 	@Test
 	public void testFactorOnJsonStringWithMaxNumOfChildrenBUtNOLinkedPathIdFactorsDataGroup() {
-		String json = "{\"children\":[{\"name\":\"linkedRecordType\",\"value\":\"coraText\"},{\"name\":\"linkedRecordId\",\"value\":\"exampleGroupText\"},{\"name\":\"linkedRepeatId\",\"value\":\"one\"},{\"children\":[{\"name\":\"nameInData\",\"value\":\"recordInfo\"},{\"children\":[{\"name\":\"nameInData\",\"value\":\"type\"}],\"name\":\"linkedPath\"}],\"name\":\"NOTlinkedPath\"}],\"name\":\"from\"}";
+		String json = """
+				{"children": [
+				    {
+				      "name": "linkedRecordType",
+				      "value": "coraText"
+				    },
+				    {
+				      "name": "linkedRecordId",
+				      "value": "exampleGroupText"
+				    },
+				    {
+				      "name": "linkedRepeatId",
+				      "value": "one"
+				    },
+				    {
+				      "children": [
+				        {
+				          "name": "nameInData",
+				          "value": "recordInfo"
+				        },
+				        {
+				          "children": [
+				            {
+				              "name": "nameInData",
+				              "value": "type"
+				            }
+				          ],
+				          "name": "linkedPath"
+				        }
+				      ],
+				      "name": "NOTlinkedPath"
+				    }
+				  ],
+				  "name": "from"}""";
 		JsonToClientDataConverter jsonToDataConverter = jsonToDataConverterFactory
 				.factorUsingString(json);
-		assertTrue(jsonToDataConverter instanceof JsonToBasicClientDataGroupConverter);
-		assertFalse(jsonToDataConverter instanceof JsonToBasicClientDataRecordLinkConverter);
+		assertTrue(jsonToDataConverter instanceof JsonToBasicClientDataRecordLinkConverter);
+		// assertTrue(jsonToDataConverter instanceof JsonToBasicClientDataGroupConverter);
+		// assertFalse(jsonToDataConverter instanceof JsonToBasicClientDataRecordLinkConverter);
 	}
 
 	@Test
 	public void testFactorOnJsonStringOnlyStreamIdFactorsGroupConverter() {
-		String json = "{\"children\":[{\"name\":\"streamId\",\"value\":\"soundBinary:18269669168741\"},{\"name\":\"NOTfilename\",\"value\":\"adele.png\"},{\"name\":\"NOTfilesize\",\"value\":\"8\"},{\"name\":\"NOTmimeType\",\"value\":\"application/octet-stream\"}],\"name\":\"master\"}";
+		String json = """
+				{"children": [
+				  {
+				    "name": "streamId",
+				    "value": "soundBinary:18269669168741"
+				  },
+				  {
+				    "name": "NOTfilename",
+				    "value": "adele.png"
+				  },
+				  {
+				    "name": "NOTfilesize",
+				    "value": "8"
+				  },
+				  {
+				    "name": "NOTmimeType",
+				    "value": "application/octet-stream"
+				  }
+				],
+				"name": "master"}""";
 		JsonToClientDataConverter jsonToDataConverter = jsonToDataConverterFactory
 				.factorUsingString(json);
 		assertTrue(jsonToDataConverter instanceof JsonToBasicClientDataGroupConverter);

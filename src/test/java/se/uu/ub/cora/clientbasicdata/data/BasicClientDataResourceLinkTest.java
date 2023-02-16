@@ -4,16 +4,21 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
+
+import java.util.Optional;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import se.uu.ub.cora.clientdata.ClientAction;
+import se.uu.ub.cora.clientdata.ClientActionLink;
 import se.uu.ub.cora.clientdata.ClientDataGroup;
 import se.uu.ub.cora.clientdata.ClientDataLink;
 import se.uu.ub.cora.clientdata.ClientDataMissingException;
 import se.uu.ub.cora.clientdata.ClientDataResourceLink;
+import se.uu.ub.cora.clientdata.spies.ClientActionLinkSpy;
 
 public class BasicClientDataResourceLinkTest {
 
@@ -118,10 +123,37 @@ public class BasicClientDataResourceLinkTest {
 	}
 
 	@Test
-	public void testHasReadActionsReadAction() throws Exception {
-		resourceLink.addAction(ClientAction.READ);
+	public void testHasReadDatasNoReadData() throws Exception {
+		assertFalse(resourceLink.hasReadAction());
+
+	}
+
+	@Test
+	public void testHasReadDatasReadData() throws Exception {
+		ClientActionLink actionLinkSpy = new ClientActionLinkSpy();
+
+		resourceLink.addActionLink(actionLinkSpy);
 
 		assertTrue(resourceLink.hasReadAction());
+
+	}
+
+	@Test
+	public void testGetActionLinkNoActionAdded() throws Exception {
+		Optional<ClientActionLink> actionLink = resourceLink.getActionLink(ClientAction.READ);
+
+		assertTrue(actionLink.isEmpty());
+	}
+
+	@Test
+	public void testGetActionLink() throws Exception {
+		ClientActionLink actionLinkSpy = new ClientActionLinkSpy();
+
+		resourceLink.addActionLink(actionLinkSpy);
+
+		Optional<ClientActionLink> actionLink = resourceLink.getActionLink(ClientAction.READ);
+
+		assertSame(actionLink.get(), actionLinkSpy);
 	}
 
 	@Test

@@ -20,12 +20,15 @@ package se.uu.ub.cora.clientbasicdata.data.spy;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import se.uu.ub.cora.clientdata.ClientAction;
+import se.uu.ub.cora.clientdata.ClientActionLink;
 import se.uu.ub.cora.clientdata.ClientDataResourceLink;
 import se.uu.ub.cora.testutils.mcr.MethodCallRecorder;
 
-public class BasicClientDataResourceLinkSpy extends BasicClientDataGroupOldSpy implements ClientDataResourceLink {
+public class BasicClientDataResourceLinkSpy extends BasicClientDataGroupOldSpy
+		implements ClientDataResourceLink {
 
 	public MethodCallRecorder MCR = new MethodCallRecorder();
 
@@ -35,13 +38,6 @@ public class BasicClientDataResourceLinkSpy extends BasicClientDataGroupOldSpy i
 
 	public BasicClientDataResourceLinkSpy(String nameInData) {
 		super(nameInData);
-	}
-
-	@Override
-	public void addAction(ClientAction action) {
-		MCR.addCall("action", action);
-		actions.add(action);
-
 	}
 
 	@Override
@@ -105,6 +101,18 @@ public class BasicClientDataResourceLinkSpy extends BasicClientDataGroupOldSpy i
 	public void setMimeType(String mimeType) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void addActionLink(ClientActionLink actionLink) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public Optional<ClientActionLink> getActionLink(ClientAction action) {
+		// TODO Auto-generated method stub
+		return Optional.empty();
 	}
 
 }

@@ -18,10 +18,12 @@
  */
 package se.uu.ub.cora.clientbasicdata.data;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.Optional;
 
 import se.uu.ub.cora.clientdata.ClientAction;
+import se.uu.ub.cora.clientdata.ClientActionLink;
 import se.uu.ub.cora.clientdata.ClientDataChild;
 import se.uu.ub.cora.clientdata.ClientDataGroup;
 import se.uu.ub.cora.clientdata.ClientDataResourceLink;
@@ -29,7 +31,7 @@ import se.uu.ub.cora.clientdata.ClientDataResourceLink;
 public final class BasicClientDataResourceLink extends BasicClientDataGroup
 		implements ClientDataResourceLink {
 
-	private List<ClientAction> actions = new ArrayList<>();
+	private Map<ClientAction, ClientActionLink> actions = new EnumMap<>(ClientAction.class);
 
 	public static BasicClientDataResourceLink withNameInData(String nameInData) {
 		return new BasicClientDataResourceLink(nameInData);
@@ -61,13 +63,21 @@ public final class BasicClientDataResourceLink extends BasicClientDataGroup
 	}
 
 	@Override
-	public void addAction(ClientAction action) {
-		actions.add(action);
+	public boolean hasReadAction() {
+		return getActionLink(ClientAction.READ).isPresent();
 	}
 
 	@Override
-	public boolean hasReadAction() {
-		return actions.contains(ClientAction.READ);
+	public void addActionLink(ClientActionLink actionLink) {
+		actions.put(actionLink.getAction(), actionLink);
+	}
+
+	@Override
+	public Optional<ClientActionLink> getActionLink(ClientAction action) {
+		if (actions.containsKey(action)) {
+			return Optional.of(actions.get(action));
+		}
+		return Optional.empty();
 	}
 
 	@Override

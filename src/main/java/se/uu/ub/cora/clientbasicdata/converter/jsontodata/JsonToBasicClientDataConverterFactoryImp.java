@@ -33,9 +33,9 @@ import se.uu.ub.cora.json.parser.org.OrgJsonParser;
 
 public class JsonToBasicClientDataConverterFactoryImp implements JsonToClientDataConverterFactory {
 
-	private static final int NUM_OF_RECORDLINK_CHILDREN = 2;
-	private static final int NUM_OF_RECORDLINK_CHILDREN_ONE_OPTIONAL = 3;
-	private static final int MAX_NUM_OF_RECORDLINK_CHILDREN = 4;
+	// private static final int NUM_OF_RECORDLINK_CHILDREN = 2;
+	// private static final int NUM_OF_RECORDLINK_CHILDREN_ONE_OPTIONAL = 3;
+	// private static final int MAX_NUM_OF_RECORDLINK_CHILDREN = 4;
 	private static final int NUM_OF_RESOURCELINK_CHILDREN = 4;
 
 	@Override
@@ -54,8 +54,7 @@ public class JsonToBasicClientDataConverterFactoryImp implements JsonToClientDat
 
 	private JsonToClientDataConverter createJsonToClientDataConverter(JsonObject json) {
 		if (isDataList(json)) {
-			return JsonToBasicClientDataListConverter.usingDataConverterAndJsonObject(this,
-					json);
+			return JsonToBasicClientDataListConverter.usingDataConverterAndJsonObject(this, json);
 		}
 		if (isRecord(json)) {
 			return createJsonToClientDataRecordConverter(json);
@@ -125,26 +124,23 @@ public class JsonToBasicClientDataConverterFactoryImp implements JsonToClientDat
 	}
 
 	private boolean isRecordLink(List<String> foundNames) {
-		return correctChildrenForLink(foundNames)
-				|| correctChildrenForLinkWithPathAndRepeatId(foundNames)
-				|| correctChildrenForLinkWithPath(foundNames);
+		return correctChildrenForLink(foundNames);
+		// || correctChildrenForLinkWithPathAndRepeatId(foundNames)
+		// || correctChildrenForLinkWithPath(foundNames);
 	}
 
 	private boolean correctChildrenForLink(List<String> foundNames) {
-		return foundNames.size() == NUM_OF_RECORDLINK_CHILDREN
-				&& foundNames.contains("linkedRecordType") && foundNames.contains("linkedRecordId");
+		return foundNames.contains("linkedRecordType") && foundNames.contains("linkedRecordId");
 	}
 
-	private boolean correctChildrenForLinkWithPathAndRepeatId(List<String> foundNames) {
-		return foundNames.size() == MAX_NUM_OF_RECORDLINK_CHILDREN
-				&& (foundNames.contains("linkedPath") && foundNames.contains("linkedRepeatId"));
-	}
-
-	private boolean correctChildrenForLinkWithPath(List<String> foundNames) {
-		return foundNames.size() == NUM_OF_RECORDLINK_CHILDREN_ONE_OPTIONAL
-				&& foundNames.contains("linkedRecordType") && foundNames.contains("linkedRecordId")
-				&& (foundNames.contains("linkedPath") || foundNames.contains("linkedRepeatId"));
-	}
+	// private boolean correctChildrenForLinkWithPathAndRepeatId(List<String> foundNames) {
+	// return (foundNames.contains("linkedPath") && foundNames.contains("linkedRepeatId"));
+	// }
+	//
+	// private boolean correctChildrenForLinkWithPath(List<String> foundNames) {
+	// return foundNames.contains("linkedRecordType") && foundNames.contains("linkedRecordId")
+	// && (foundNames.contains("linkedPath") || foundNames.contains("linkedRepeatId"));
+	// }
 
 	private List<String> extractChildNames(JsonObject jsonObject) {
 		JsonArray childrenArray = jsonObject.getValueAsJsonArray("children");

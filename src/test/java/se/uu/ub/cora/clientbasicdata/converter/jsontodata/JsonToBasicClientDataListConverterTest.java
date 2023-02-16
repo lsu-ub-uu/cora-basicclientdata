@@ -7,9 +7,8 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import se.uu.ub.cora.clientdata.ClientConvertible;
+import se.uu.ub.cora.clientdata.ClientData;
 import se.uu.ub.cora.clientdata.ClientDataList;
-import se.uu.ub.cora.clientdata.ClientDataRecord;
-import se.uu.ub.cora.clientdata.spies.ClientDataRecordSpy;
 import se.uu.ub.cora.clientdata.spies.JsonToClientDataConverterFactorySpy;
 import se.uu.ub.cora.clientdata.spies.JsonToClientDataConverterSpy;
 import se.uu.ub.cora.json.parser.JsonObject;
@@ -19,9 +18,9 @@ import se.uu.ub.cora.json.parser.org.OrgJsonParser;
 
 public class JsonToBasicClientDataListConverterTest {
 
+	private JsonToBasicClientDataListConverter toDataListConverter;
 	private JsonToClientDataConverterFactorySpy factory;
 	private OrgJsonParser jsonParser = new OrgJsonParser();
-	private JsonToBasicClientDataListConverter toDataListConverter;
 
 	@BeforeMethod
 	private void beforeMethod() {
@@ -192,8 +191,7 @@ public class JsonToBasicClientDataListConverterTest {
 		JsonToClientDataConverterSpy recordConverter = (JsonToClientDataConverterSpy) factory.MCR
 				.getReturnValue("factorUsingJsonObject", callNumber);
 		recordConverter.MCR.assertMethodWasCalled("toInstance");
-		ClientDataRecord dataRecord = (ClientDataRecord) recordConverter.MCR
-				.getReturnValue("toInstance", 0);
+		ClientData dataRecord = (ClientData) recordConverter.MCR.getReturnValue("toInstance", 0);
 		assertSame(clientDataList.getDataList().get(callNumber), dataRecord);
 	}
 
@@ -214,11 +212,10 @@ public class JsonToBasicClientDataListConverterTest {
 		 * have returned different dataRecords objects
 		 */
 
-		ClientDataRecordSpy clientDataRecord1 = new ClientDataRecordSpy();
+		ClientData clientDataSpy = new ClientDataSpy();
 
 		JsonToClientDataConverterSpy jsonToDataConverter = new JsonToClientDataConverterSpy();
-		jsonToDataConverter.MRV.setDefaultReturnValuesSupplier("toInstance",
-				() -> clientDataRecord1);
+		jsonToDataConverter.MRV.setDefaultReturnValuesSupplier("toInstance", () -> clientDataSpy);
 
 		factory.MRV.setDefaultReturnValuesSupplier("factorUsingJsonObject",
 				() -> jsonToDataConverter);

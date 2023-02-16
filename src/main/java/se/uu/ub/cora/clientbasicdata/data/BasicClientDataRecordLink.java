@@ -18,10 +18,12 @@
  */
 package se.uu.ub.cora.clientbasicdata.data;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.Optional;
 
 import se.uu.ub.cora.clientdata.ClientAction;
+import se.uu.ub.cora.clientdata.ClientActionLink;
 import se.uu.ub.cora.clientdata.ClientDataChild;
 import se.uu.ub.cora.clientdata.ClientDataGroup;
 import se.uu.ub.cora.clientdata.ClientDataRecordLink;
@@ -31,7 +33,7 @@ public final class BasicClientDataRecordLink extends BasicClientDataGroup
 
 	private static final String LINKED_RECORD_ID = "linkedRecordId";
 	private static final String LINKED_RECORD_TYPE = "linkedRecordType";
-	private List<ClientAction> actions = new ArrayList<>();
+	private Map<ClientAction, ClientActionLink> actions = new EnumMap<>(ClientAction.class);
 
 	private BasicClientDataRecordLink(String nameInData) {
 		super(nameInData);
@@ -69,13 +71,8 @@ public final class BasicClientDataRecordLink extends BasicClientDataGroup
 	}
 
 	@Override
-	public void addAction(ClientAction action) {
-		actions.add(action);
-	}
-
-	@Override
 	public boolean hasReadAction() {
-		return actions.contains(ClientAction.READ);
+		return getActionLink(ClientAction.READ).isPresent();
 	}
 
 	@Override
@@ -86,6 +83,19 @@ public final class BasicClientDataRecordLink extends BasicClientDataGroup
 	@Override
 	public String getLinkedRecordId() {
 		return super.getFirstAtomicValueWithNameInData(LINKED_RECORD_ID);
+	}
+
+	@Override
+	public void addActionLink(ClientActionLink actionLink) {
+		actions.put(actionLink.getAction(), actionLink);
+	}
+
+	@Override
+	public Optional<ClientActionLink> getActionLink(ClientAction action) {
+		if (actions.containsKey(action)) {
+			return Optional.of(actions.get(action));
+		}
+		return Optional.empty();
 	}
 
 }
