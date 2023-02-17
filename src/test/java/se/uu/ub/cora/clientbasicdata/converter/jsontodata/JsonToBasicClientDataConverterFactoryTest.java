@@ -197,6 +197,9 @@ public class JsonToBasicClientDataConverterFactoryTest {
 		JsonToClientDataConverter jsonToDataConverter = jsonToDataConverterFactory
 				.factorUsingString(json);
 		assertTrue(jsonToDataConverter instanceof JsonToBasicClientDataRecordLinkConverter);
+		JsonToBasicClientDataRecordLinkConverter jsonToDataConverter2 = (JsonToBasicClientDataRecordLinkConverter) jsonToDataConverter;
+		assertTrue(jsonToDataConverter2
+				.onlyForTestGetActionLinkConverterFactory() instanceof JsonToBasicClientDataActionLinkConverterFactoryImp);
 	}
 
 	@Test
@@ -344,8 +347,6 @@ public class JsonToBasicClientDataConverterFactoryTest {
 		JsonToClientDataConverter jsonToDataConverter = jsonToDataConverterFactory
 				.factorUsingString(json);
 		assertTrue(jsonToDataConverter instanceof JsonToBasicClientDataRecordLinkConverter);
-		// assertTrue(jsonToDataConverter instanceof JsonToBasicClientDataGroupConverter);
-		// assertFalse(jsonToDataConverter instanceof JsonToBasicClientDataRecordLinkConverter);
 	}
 
 	@Test
@@ -387,8 +388,6 @@ public class JsonToBasicClientDataConverterFactoryTest {
 		JsonToClientDataConverter jsonToDataConverter = jsonToDataConverterFactory
 				.factorUsingString(json);
 		assertTrue(jsonToDataConverter instanceof JsonToBasicClientDataRecordLinkConverter);
-		// assertTrue(jsonToDataConverter instanceof JsonToBasicClientDataGroupConverter);
-		// assertFalse(jsonToDataConverter instanceof JsonToBasicClientDataRecordLinkConverter);
 	}
 
 	@Test
@@ -430,8 +429,6 @@ public class JsonToBasicClientDataConverterFactoryTest {
 		JsonToClientDataConverter jsonToDataConverter = jsonToDataConverterFactory
 				.factorUsingString(json);
 		assertTrue(jsonToDataConverter instanceof JsonToBasicClientDataRecordLinkConverter);
-		// assertTrue(jsonToDataConverter instanceof JsonToBasicClientDataGroupConverter);
-		// assertFalse(jsonToDataConverter instanceof JsonToBasicClientDataRecordLinkConverter);
 	}
 
 	@Test

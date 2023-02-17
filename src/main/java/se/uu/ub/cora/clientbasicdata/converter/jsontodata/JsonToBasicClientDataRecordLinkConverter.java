@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Uppsala University Library
+ * Copyright 2019, 2023 Uppsala University Library
  *
  * This file is part of Cora.
  *
@@ -18,32 +18,48 @@
  */
 package se.uu.ub.cora.clientbasicdata.converter.jsontodata;
 
+import java.util.Map;
+
 import se.uu.ub.cora.clientbasicdata.data.BasicClientDataRecordLink;
+import se.uu.ub.cora.clientdata.ClientActionLink;
 import se.uu.ub.cora.clientdata.ClientConvertible;
 import se.uu.ub.cora.clientdata.ClientDataGroup;
 import se.uu.ub.cora.clientdata.converter.JsonToClientDataConverter;
 import se.uu.ub.cora.json.parser.JsonObject;
 import se.uu.ub.cora.json.parser.JsonParseException;
+import se.uu.ub.cora.json.parser.JsonValue;
 
 public class JsonToBasicClientDataRecordLinkConverter extends JsonToBasicClientDataGroupConverter
 		implements JsonToClientDataConverter {
 
+	private static final String ERROR_MESSAGE_OPTIONAL_MISSING = "RecordLink must contain name and "
+			+ "children. And it may contain actionLinks, attributes or repeatId";
 	private static final int OPTIONAL_NUM_OF_CHILDREN = 3;
+	private static final int NUM_OF_ALLOWED_KEYS_AT_TOP_LEVEL = 5;
 	private static final int MIN_NUM_OF_CHILDREN = 2;
 	private static final int MAX_NUM_OF_CHILDREN = 4;
+	private static final String ACTION_LINKS = "actionLinks";
+	private JsonToBasicClientDataActionLinkConverterFactory actionLinkConverterFactory;
+	private BasicClientDataRecordLink recordLink;
 
-	public static JsonToBasicClientDataRecordLinkConverter forJsonObject(JsonObject jsonObject) {
-		return new JsonToBasicClientDataRecordLinkConverter(jsonObject);
+	public static JsonToBasicClientDataRecordLinkConverter forJsonObject(
+			JsonToBasicClientDataActionLinkConverterFactory actionLinkConverterFactory,
+			JsonObject jsonObject) {
+		return new JsonToBasicClientDataRecordLinkConverter(actionLinkConverterFactory, jsonObject);
 	}
 
-	private JsonToBasicClientDataRecordLinkConverter(JsonObject jsonObject) {
+	private JsonToBasicClientDataRecordLinkConverter(
+			JsonToBasicClientDataActionLinkConverterFactory actionLinkConverterFactory,
+			JsonObject jsonObject) {
 		super(jsonObject);
+		this.actionLinkConverterFactory = actionLinkConverterFactory;
 	}
 
 	@Override
 	public ClientConvertible toInstance() {
-		BasicClientDataRecordLink recordLink = (BasicClientDataRecordLink) super.toInstance();
-		throwErrorIfLinkChildrenAreIncorrect(recordLink);
+		recordLink = (BasicClientDataRecordLink) super.toInstance();
+		throwErrorIfLinkChildrenAreIncorrect();
+		possiblyAddActionLinks();
 		return recordLink;
 	}
 
@@ -52,7 +68,7 @@ public class JsonToBasicClientDataRecordLinkConverter extends JsonToBasicClientD
 		dataGroup = BasicClientDataRecordLink.withNameInData(nameInData);
 	}
 
-	private void throwErrorIfLinkChildrenAreIncorrect(ClientDataGroup recordLink) {
+	private void throwErrorIfLinkChildrenAreIncorrect() {
 		if (incorrectNumberOfChildren(recordLink) || missingMandatoryChildren(recordLink)
 				|| maxNumOfChildrenButOneOptionalChildIsMissing(recordLink)
 				|| okNumOfChildrenButOpitionChildrenMissing(recordLink)) {
@@ -86,6 +102,59 @@ public class JsonToBasicClientDataRecordLinkConverter extends JsonToBasicClientD
 		return recordLink.getChildren().size() == OPTIONAL_NUM_OF_CHILDREN
 				&& childIsMissing(recordLink, "linkedRepeatId")
 				&& childIsMissing(recordLink, "linkedPath");
+	}
+
+	private void possiblyAddActionLinks() {
+		if (jsonObject.containsKey(ACTION_LINKS)) {
+			JsonObject actionLinks = jsonObject.getValueAsJsonObject(ACTION_LINKS);
+			for (Map.Entry<String, JsonValue> actionLinkEntry : actionLinks.entrySet()) {
+				convertAndAddActionLink(actionLinkEntry);
+			}
+		}
+	}
+
+	private void convertAndAddActionLink(Map.Entry<String, JsonValue> actionLinkEntry) {
+		JsonToBasicClientDataActionLinkConverter actionLinkConverter = actionLinkConverterFactory
+				.factor((JsonObject) actionLinkEntry.getValue());
+		ClientActionLink actionLink = actionLinkConverter.toInstance();
+		recordLink.addActionLink(actionLink);
+	}
+
+	@Override
+	protected void validateNoOfKeysAtTopLevel() {
+		if (moreKeysAtTopLevelThanPossible()) {
+			throw new JsonParseException(
+					"RecordLinkData data can only contain keys: name, children, actionLinks, "
+							+ "repeatId and attributes");
+		}
+		if (threeKeysAtTopLevelButButAllOptionalAreMissing()) {
+			throw new JsonParseException(ERROR_MESSAGE_OPTIONAL_MISSING);
+		}
+		if (maxKeysAtTopLevelButAnyOfTheOptionalsIsMissing()) {
+			throw new JsonParseException(ERROR_MESSAGE_OPTIONAL_MISSING);
+		}
+	}
+
+	private boolean threeKeysAtTopLevelButButAllOptionalAreMissing() {
+		return jsonObject.keySet().size() == ONE_OPTIONAL_KEY_IS_PRESENT && !hasAttributes()
+				&& !hasRepeatId() && !hasActionLinks();
+	}
+
+	protected boolean hasActionLinks() {
+		return jsonObject.containsKey(ACTION_LINKS);
+	}
+
+	private boolean maxKeysAtTopLevelButAnyOfTheOptionalsIsMissing() {
+		return jsonObject.keySet().size() == NUM_OF_ALLOWED_KEYS_AT_TOP_LEVEL
+				&& (!hasAttributes() || !hasRepeatId() || !hasActionLinks());
+	}
+
+	private boolean moreKeysAtTopLevelThanPossible() {
+		return jsonObject.keySet().size() > NUM_OF_ALLOWED_KEYS_AT_TOP_LEVEL;
+	}
+
+	public JsonToBasicClientDataActionLinkConverterFactory onlyForTestGetActionLinkConverterFactory() {
+		return actionLinkConverterFactory;
 	}
 
 }

@@ -33,11 +33,11 @@ import se.uu.ub.cora.json.parser.JsonValue;
 
 public class JsonToBasicClientDataGroupConverter implements JsonToClientDataConverter {
 
-	private static final int ONE_OPTIONAL_KEY_IS_PRESENT = 3;
+	protected static final int ONE_OPTIONAL_KEY_IS_PRESENT = 3;
 	private static final String CHILDREN = "children";
 	private static final String ATTRIBUTES = "attributes";
 	private static final int NUM_OF_ALLOWED_KEYS_AT_TOP_LEVEL = 4;
-	private JsonObject jsonObject;
+	protected JsonObject jsonObject;
 	protected BasicClientDataGroup dataGroup;
 
 	static JsonToBasicClientDataGroupConverter forJsonObject(JsonObject jsonObject) {
@@ -79,7 +79,7 @@ public class JsonToBasicClientDataGroupConverter implements JsonToClientDataConv
 		validateNoOfKeysAtTopLevel();
 	}
 
-	private void validateNoOfKeysAtTopLevel() {
+	protected void validateNoOfKeysAtTopLevel() {
 		if (threeKeysAtTopLevelButAttributeAndRepeatIdIsMissing()) {
 			throw new JsonParseException(
 					"Group data must contain name and children, and may contain "
@@ -132,11 +132,11 @@ public class JsonToBasicClientDataGroupConverter implements JsonToClientDataConv
 
 	}
 
-	private boolean hasAttributes() {
+	protected boolean hasAttributes() {
 		return jsonObject.containsKey(ATTRIBUTES);
 	}
 
-	private boolean hasRepeatId() {
+	protected boolean hasRepeatId() {
 		return jsonObject.containsKey("repeatId");
 	}
 
