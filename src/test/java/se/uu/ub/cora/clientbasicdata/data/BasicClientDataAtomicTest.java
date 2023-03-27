@@ -24,6 +24,7 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 import java.util.Collection;
+import java.util.Optional;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -104,4 +105,22 @@ public class BasicClientDataAtomicTest {
 		dataAtomic.getAttribute("someAttributeId");
 	}
 
+	@Test
+	public void testGetAttributeValueNoAttribute() throws Exception {
+		Optional<String> attributeValue = dataAtomic.getAttributeValue("attributeNameInData");
+
+		assertTrue(attributeValue.isEmpty());
+	}
+
+	@Test
+	public void testGetAttributeValueAttributeExists() throws Exception {
+		dataAtomic.addAttributeByIdWithValue("someAttributeName3", "someValue");
+		dataAtomic.addAttributeByIdWithValue("someAttributeName2", "someValue");
+		dataAtomic.addAttributeByIdWithValue("someAttributeName", "someValue");
+
+		Optional<String> attributeValue = dataAtomic.getAttributeValue("someAttributeName");
+
+		assertTrue(attributeValue.isPresent());
+		assertEquals(attributeValue.get(), "someValue");
+	}
 }

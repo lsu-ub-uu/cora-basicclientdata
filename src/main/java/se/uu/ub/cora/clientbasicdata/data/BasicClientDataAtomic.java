@@ -22,6 +22,7 @@ package se.uu.ub.cora.clientbasicdata.data;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.Set;
 
 import se.uu.ub.cora.clientdata.ClientDataAtomic;
@@ -114,6 +115,16 @@ public final class BasicClientDataAtomic implements ClientDataAtomic {
 	@Override
 	public String getRepeatId() {
 		return repeatId;
+	}
+
+	@Override
+	public Optional<String> getAttributeValue(String nameInData) {
+		for (ClientDataAttribute dataAttribute : attributes) {
+			if (dataAttribute.getNameInData().equals(nameInData)) {
+				return Optional.of(dataAttribute.getValue());
+			}
+		}
+		return Optional.empty();
 	}
 
 }

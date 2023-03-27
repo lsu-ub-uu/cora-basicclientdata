@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import org.testng.annotations.BeforeMethod;
@@ -1029,4 +1030,145 @@ public class BasicClientDataGroupTest {
 		assertSame(childrenLeft.get(0), atomicChild);
 	}
 
+	@Test
+	public void testContainsChildOfTypeAndName() throws Exception {
+		addTestChildrenToDefaultGroup();
+
+		assertFalse(defaultDataGroup.containsChildOfTypeAndName(ClientDataAtomic.class, ""));
+		assertTrue(defaultDataGroup.containsChildOfTypeAndName(ClientDataAtomic.class, "atomic1"));
+		assertFalse(defaultDataGroup.containsChildOfTypeAndName(ClientDataGroup.class, ""));
+		assertTrue(defaultDataGroup.containsChildOfTypeAndName(ClientDataGroup.class, "group1"));
+	}
+
+	private void addTestChildrenToDefaultGroup() {
+		ClientDataAtomicSpy atomicChild = new ClientDataAtomicSpy();
+		defaultDataGroup.addChild(atomicChild);
+		atomicChild.MRV.setDefaultReturnValuesSupplier("getNameInData", () -> "atomic1");
+
+		ClientDataAtomicSpy atomicChild2 = new ClientDataAtomicSpy();
+		defaultDataGroup.addChild(atomicChild2);
+		atomicChild2.MRV.setDefaultReturnValuesSupplier("getNameInData", () -> "atomic2");
+
+		ClientDataAtomicSpy atomicChild3 = new ClientDataAtomicSpy();
+		defaultDataGroup.addChild(atomicChild3);
+		atomicChild3.MRV.setDefaultReturnValuesSupplier("getNameInData", () -> "atomic2");
+
+		ClientDataGroupSpy groupChild = new ClientDataGroupSpy();
+		defaultDataGroup.addChild(groupChild);
+		groupChild.MRV.setDefaultReturnValuesSupplier("getNameInData", () -> "group1");
+
+		ClientDataGroupSpy groupChild2 = new ClientDataGroupSpy();
+		defaultDataGroup.addChild(groupChild2);
+		groupChild2.MRV.setDefaultReturnValuesSupplier("getNameInData", () -> "group2");
+
+		ClientDataGroupSpy groupChild3 = new ClientDataGroupSpy();
+		defaultDataGroup.addChild(groupChild3);
+		groupChild3.MRV.setDefaultReturnValuesSupplier("getNameInData", () -> "group2");
+	}
+
+	@Test(expectedExceptions = ClientDataMissingException.class, expectedExceptionsMessageRegExp = ""
+			+ "Child of type: ClientDataAtomic and name: someName not found as child.")
+	public void testGetFirstChildOfTypeAndNameThrowsExceptionIfMissing() throws Exception {
+		addTestChildrenToDefaultGroup();
+
+		defaultDataGroup.getFirstChildOfTypeAndName(ClientDataAtomic.class, "someName");
+	}
+
+	@Test
+	public void testGetFirstChildOfTypeAndName() throws Exception {
+		addTestChildrenToDefaultGroup();
+
+		ClientDataAtomic atomic = defaultDataGroup
+				.getFirstChildOfTypeAndName(ClientDataAtomic.class, "atomic1");
+		assertEquals(atomic.getNameInData(), "atomic1");
+
+		ClientDataGroup group = defaultDataGroup.getFirstChildOfTypeAndName(ClientDataGroup.class,
+				"group1");
+		assertEquals(group.getNameInData(), "group1");
+	}
+
+	@Test
+	public void testGetChildrenOfTypeAndNameNoMatchReturnsEmptyList() throws Exception {
+		addTestChildrenToDefaultGroup();
+
+		List<ClientDataAtomic> children = defaultDataGroup
+				.getChildrenOfTypeAndName(ClientDataAtomic.class, "");
+		assertTrue(children.isEmpty());
+	}
+
+	@Test
+	public void testGetChildrenOfTypeAndName() throws Exception {
+		addTestChildrenToDefaultGroup();
+
+		List<ClientDataAtomic> children = defaultDataGroup
+				.getChildrenOfTypeAndName(ClientDataAtomic.class, "atomic2");
+		assertEquals(children.size(), 2);
+		assertEquals(children.get(0).getNameInData(), "atomic2");
+		assertEquals(children.get(1).getNameInData(), "atomic2");
+	}
+
+	@Test
+	public void testRemoveFirstChildWithTypeAndNameNoRemovedChildReturnsFalse() throws Exception {
+		addTestChildrenToDefaultGroup();
+
+		boolean removed = defaultDataGroup.removeFirstChildWithTypeAndName(ClientDataAtomic.class,
+				"");
+		assertFalse(removed);
+		assertEquals(defaultDataGroup.getChildren().size(), 6);
+	}
+
+	@Test
+	public void testRemoveFirstChildWithTypeAndNameIsRemovedAndReturnsTrue() throws Exception {
+		addTestChildrenToDefaultGroup();
+
+		boolean removed = defaultDataGroup.removeFirstChildWithTypeAndName(ClientDataAtomic.class,
+				"atomic1");
+		assertTrue(removed);
+		assertEquals(defaultDataGroup.getChildren().size(), 5);
+	}
+
+	@Test
+	public void testRemoveChildrenWithTypeAndNameNoRemovedChildReturnsFalse() throws Exception {
+		addTestChildrenToDefaultGroup();
+
+		boolean removed = defaultDataGroup.removeChildrenWithTypeAndName(ClientDataAtomic.class,
+				"");
+		assertFalse(removed);
+		assertEquals(defaultDataGroup.getChildren().size(), 6);
+	}
+
+	@Test
+	public void testRemoveChildrenWithTypeAndNameIsRemovedAndReturnsTrue() throws Exception {
+		addTestChildrenToDefaultGroup();
+
+		boolean removed = defaultDataGroup.removeChildrenWithTypeAndName(ClientDataAtomic.class,
+				"atomic1");
+		assertTrue(removed);
+		assertEquals(defaultDataGroup.getChildren().size(), 5);
+
+		boolean removed2 = defaultDataGroup.removeChildrenWithTypeAndName(ClientDataAtomic.class,
+				"atomic2");
+		assertTrue(removed2);
+		assertEquals(defaultDataGroup.getChildren().size(), 3);
+
+	}
+
+	@Test
+	public void testGetAttributeValueNoAttribute() throws Exception {
+		Optional<String> attributeValue = defaultDataGroup.getAttributeValue("attributeNameInData");
+
+		assertTrue(attributeValue.isEmpty());
+	}
+
+	@Test
+	public void testGetAttributeValueAttributeExists() throws Exception {
+		defaultDataGroup.addAttributeByIdWithValue("someAttributeName2", "someValue");
+		defaultDataGroup.addAttributeByIdWithValue("someAttributeName", "someValue");
+		defaultDataGroup.addAttributeByIdWithValue("someAttributeName3", "someValue");
+
+		Optional<String> attributeValue = defaultDataGroup.getAttributeValue("someAttributeName");
+
+		assertTrue(attributeValue.isPresent());
+		assertEquals(attributeValue.get(), "someValue");
+	}
 }
