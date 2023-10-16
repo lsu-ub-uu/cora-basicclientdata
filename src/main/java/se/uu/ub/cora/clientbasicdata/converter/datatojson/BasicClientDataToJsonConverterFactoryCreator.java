@@ -1,5 +1,6 @@
 /*
  * Copyright 2021 Uppsala University Library
+ * Copyright 2023 Olov McKie
  *
  * This file is part of Cora.
  *
@@ -23,14 +24,14 @@ import se.uu.ub.cora.clientdata.converter.ClientDataToJsonConverterFactoryCreato
 import se.uu.ub.cora.json.builder.JsonBuilderFactory;
 import se.uu.ub.cora.json.builder.org.OrgJsonBuilderFactoryAdapter;
 
-public class BasicDataToJsonConverterFactoryCreator implements ClientDataToJsonConverterFactoryCreator {
+public class BasicClientDataToJsonConverterFactoryCreator
+		implements ClientDataToJsonConverterFactoryCreator {
 
 	JsonBuilderFactory builderFactory = new OrgJsonBuilderFactoryAdapter();
 
 	@Override
 	public ClientDataToJsonConverterFactory createFactory() {
-		return BasicClientDataToJsonConverterFactory
-				.usingBuilderFactory(builderFactory);
+		return BasicClientDataToJsonConverterFactory.usingBuilderFactory(builderFactory);
 	}
 
 }

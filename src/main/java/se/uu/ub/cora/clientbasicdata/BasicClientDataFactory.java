@@ -1,6 +1,6 @@
 /*
  * Copyright 2019, 2022 Uppsala University Library
- * Copyright 2022 Olov McKie
+ * Copyright 2022, 2023 Olov McKie
  * 
  * This file is part of Cora.
  *
@@ -19,6 +19,7 @@
  */
 package se.uu.ub.cora.clientbasicdata;
 
+import se.uu.ub.cora.clientbasicdata.data.BasicClientActionLink;
 import se.uu.ub.cora.clientbasicdata.data.BasicClientDataAtomic;
 import se.uu.ub.cora.clientbasicdata.data.BasicClientDataAttribute;
 import se.uu.ub.cora.clientbasicdata.data.BasicClientDataChildFilter;
@@ -28,6 +29,8 @@ import se.uu.ub.cora.clientbasicdata.data.BasicClientDataRecord;
 import se.uu.ub.cora.clientbasicdata.data.BasicClientDataRecordGroup;
 import se.uu.ub.cora.clientbasicdata.data.BasicClientDataRecordLink;
 import se.uu.ub.cora.clientbasicdata.data.BasicClientDataResourceLink;
+import se.uu.ub.cora.clientdata.ClientAction;
+import se.uu.ub.cora.clientdata.ClientActionLink;
 import se.uu.ub.cora.clientdata.ClientDataAtomic;
 import se.uu.ub.cora.clientdata.ClientDataAttribute;
 import se.uu.ub.cora.clientdata.ClientDataChildFilter;
@@ -118,8 +121,12 @@ public class BasicClientDataFactory implements ClientDataFactory {
 	}
 
 	@Override
+	public ClientActionLink factorActionLinkUsingAction(ClientAction clientAction) {
+		return BasicClientActionLink.withAction(clientAction);
+	}
+
+	@Override
 	public ClientDataChildFilter factorDataChildFilterUsingNameInData(String childNameInData) {
 		return BasicClientDataChildFilter.usingNameInData(childNameInData);
 	}
-
 }

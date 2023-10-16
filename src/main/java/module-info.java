@@ -1,5 +1,5 @@
 import se.uu.ub.cora.clientbasicdata.BasicClientDataFactory;
-import se.uu.ub.cora.clientbasicdata.converter.datatojson.BasicDataToJsonConverterFactoryCreator;
+import se.uu.ub.cora.clientbasicdata.converter.datatojson.BasicClientDataToJsonConverterFactoryCreator;
 import se.uu.ub.cora.clientbasicdata.converter.jsontodata.JsonToBasicClientDataConverterFactoryImp;
 
 module se.uu.ub.cora.clientbasicdata {
@@ -15,5 +15,5 @@ module se.uu.ub.cora.clientbasicdata {
 	provides se.uu.ub.cora.clientdata.converter.JsonToClientDataConverterFactory
 			with JsonToBasicClientDataConverterFactoryImp;
 	provides se.uu.ub.cora.clientdata.converter.ClientDataToJsonConverterFactoryCreator
-			with BasicDataToJsonConverterFactoryCreator;
+			with BasicClientDataToJsonConverterFactoryCreator;
 }

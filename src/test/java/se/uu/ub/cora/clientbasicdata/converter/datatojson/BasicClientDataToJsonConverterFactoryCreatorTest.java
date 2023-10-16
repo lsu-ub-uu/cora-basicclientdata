@@ -1,5 +1,6 @@
 /*
  * Copyright 2021 Uppsala University Library
+ * Copyright 2023 Olov McKie
  *
  * This file is part of Cora.
  *
@@ -24,17 +25,15 @@ import static org.testng.Assert.assertTrue;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import se.uu.ub.cora.clientbasicdata.converter.datatojson.BasicClientDataToJsonConverterFactory;
-import se.uu.ub.cora.clientbasicdata.converter.datatojson.BasicDataToJsonConverterFactoryCreator;
 import se.uu.ub.cora.json.builder.org.OrgJsonBuilderFactoryAdapter;
 
 public class BasicClientDataToJsonConverterFactoryCreatorTest {
 
-	private BasicDataToJsonConverterFactoryCreator factoryCreator;
+	private BasicClientDataToJsonConverterFactoryCreator factoryCreator;
 
 	@BeforeMethod
 	public void beforeMethod() {
-		factoryCreator = new BasicDataToJsonConverterFactoryCreator();
+		factoryCreator = new BasicClientDataToJsonConverterFactoryCreator();
 	}
 
 	@Test

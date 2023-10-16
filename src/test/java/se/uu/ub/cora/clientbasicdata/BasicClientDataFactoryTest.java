@@ -1,6 +1,6 @@
 /*
  * Copyright 2019, 2022 Uppsala University Library
- * Copyright 2022 Olov McKie
+ * Copyright 2022, 2023 Olov McKie
  * 
  * This file is part of Cora.
  *
@@ -29,6 +29,7 @@ import java.util.Collection;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import se.uu.ub.cora.clientbasicdata.data.BasicClientActionLink;
 import se.uu.ub.cora.clientbasicdata.data.BasicClientDataAtomic;
 import se.uu.ub.cora.clientbasicdata.data.BasicClientDataAttribute;
 import se.uu.ub.cora.clientbasicdata.data.BasicClientDataChildFilter;
@@ -38,6 +39,8 @@ import se.uu.ub.cora.clientbasicdata.data.BasicClientDataRecord;
 import se.uu.ub.cora.clientbasicdata.data.BasicClientDataRecordGroup;
 import se.uu.ub.cora.clientbasicdata.data.BasicClientDataRecordLink;
 import se.uu.ub.cora.clientbasicdata.data.BasicClientDataResourceLink;
+import se.uu.ub.cora.clientdata.ClientAction;
+import se.uu.ub.cora.clientdata.ClientActionLink;
 import se.uu.ub.cora.clientdata.ClientDataAtomic;
 import se.uu.ub.cora.clientdata.ClientDataAttribute;
 import se.uu.ub.cora.clientdata.ClientDataFactory;
@@ -48,7 +51,7 @@ import se.uu.ub.cora.clientdata.ClientDataRecordGroup;
 import se.uu.ub.cora.clientdata.ClientDataRecordLink;
 import se.uu.ub.cora.clientdata.ClientDataResourceLink;
 
-public class BasicClientCoraDataFactoryTest {
+public class BasicClientDataFactoryTest {
 	private ClientDataFactory dataFactory;
 	private String containDataOfType = "someType";
 	private String nameInData = "nameInData";
@@ -152,12 +155,6 @@ public class BasicClientCoraDataFactoryTest {
 		assertEquals(factoredDataRecordLink.getNameInData(), nameInData);
 		assertEquals(factoredDataRecordLink.getLinkedRecordType(), recordType);
 		assertEquals(factoredDataRecordLink.getLinkedRecordId(), recordId);
-
-		// assertEquals(factoredDataRecordLink.getChildren().size(), 2);
-		// assertEquals(factoredDataRecordLink.getFirstAtomicValueWithNameInData("linkedRecordType"),
-		// recordType);
-		// assertEquals(factoredDataRecordLink.getFirstAtomicValueWithNameInData("linkedRecordId"),
-		// recordId);
 	}
 
 	@Test
@@ -198,6 +195,15 @@ public class BasicClientCoraDataFactoryTest {
 		assertTrue(factoredDataAttribute instanceof BasicClientDataAttribute);
 		assertEquals(factoredDataAttribute.getNameInData(), nameInData);
 		assertEquals(factoredDataAttribute.getValue(), value);
+	}
+
+	@Test
+	public void testFactorActionLinkUsingAction() {
+		ClientActionLink factoredActionLink = dataFactory
+				.factorActionLinkUsingAction(ClientAction.UPDATE);
+
+		assertTrue(factoredActionLink instanceof BasicClientActionLink);
+		assertEquals(factoredActionLink.getAction(), ClientAction.UPDATE);
 	}
 
 	@Test
