@@ -445,4 +445,9 @@ public class BasicClientDataGroup implements ClientDataGroup {
 		}
 		return Optional.empty();
 	}
+
+	@Override
+	public boolean hasRepeatId() {
+		return repeatId != null && !"".equals(repeatId);
+	}
 }

@@ -78,6 +78,23 @@ public class BasicClientDataGroupTest {
 	}
 
 	@Test
+	public void testHasRepeatIdNotSet() throws Exception {
+		assertFalse(defaultDataGroup.hasRepeatId());
+	}
+
+	@Test
+	public void testHasRepeatIdSetToEmpty() throws Exception {
+		defaultDataGroup.setRepeatId("");
+		assertFalse(defaultDataGroup.hasRepeatId());
+	}
+
+	@Test
+	public void testHasRepeatIdSet() throws Exception {
+		defaultDataGroup.setRepeatId("3");
+		assertTrue(defaultDataGroup.hasRepeatId());
+	}
+
+	@Test
 	public void testAddAttribute() {
 		defaultDataGroup.addAttributeByIdWithValue("someAttributeName", "value");
 		Collection<ClientDataAttribute> attributes = defaultDataGroup.getAttributes();
