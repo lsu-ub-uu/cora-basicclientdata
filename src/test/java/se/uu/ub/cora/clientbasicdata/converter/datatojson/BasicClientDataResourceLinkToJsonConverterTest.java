@@ -18,52 +18,138 @@
  */
 package se.uu.ub.cora.clientbasicdata.converter.datatojson;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertSame;
-import static org.testng.Assert.assertTrue;
+
+import java.util.Optional;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import se.uu.ub.cora.clientbasicdata.data.spy.BasicClientDataResourceLinkSpy;
-import se.uu.ub.cora.clientdata.converter.ClientDataToJsonConverter;
 import se.uu.ub.cora.clientdata.converter.ClientDataToJsonConverterFactory;
+import se.uu.ub.cora.json.builder.org.OrgJsonBuilderFactoryAdapter;
 
 public class BasicClientDataResourceLinkToJsonConverterTest {
 
 	BasicClientDataResourceLinkToJsonConverter resourceLinkToJsonConverter;
 	ClientDataToJsonConverterFactory converterFactory;
 	BasicClientJsonBuilderFactorySpy jsonBuilderFactorySpy;
-	String recordURL;
+	Optional<String> recordURL;
 	private BasicClientDataResourceLinkSpy dataResourceLink;
+	private BasicClientDataResourceLinkToJsonConverter converter;
 
 	@BeforeMethod
 	public void beforeMethod() {
-		recordURL = "https://somesystem.org/rest/records/someRecordType/someRecordId";
-		dataResourceLink = new BasicClientDataResourceLinkSpy("someNameInData");
-
+		dataResourceLink = new BasicClientDataResourceLinkSpy();
 		jsonBuilderFactorySpy = new BasicClientJsonBuilderFactorySpy();
-
 		converterFactory = new BasicClientDataToJsonConverterFactorySpy();
-		resourceLinkToJsonConverter = BasicClientDataResourceLinkToJsonConverter
-				.usingConverterFactoryJsonBuilderFactoryAndDataResourceLinkAndRecordUrl(
-						converterFactory, jsonBuilderFactorySpy, dataResourceLink, recordURL);
 
+		constructWithRecordUrl();
+
+		// recordURL = "https://somesystem.org/rest/records/someRecordType/someRecordId";
+		// dataResourceLink = new BasicClientDataResourceLinkSpy("someNameInData");
+		//
+		// jsonBuilderFactorySpy = new BasicClientJsonBuilderFactorySpy();
+		//
+		// converterFactory = new BasicClientDataToJsonConverterFactorySpy();
+		// resourceLinkToJsonConverter = BasicClientDataResourceLinkToJsonConverter
+		// .usingConverterFactoryJsonBuilderFactoryAndDataResourceLinkAndRecordUrl(
+		// converterFactory, jsonBuilderFactorySpy, dataResourceLink, recordURL);
+
+	}
+
+	private void constructWithRecordUrl() {
+		dataResourceLink.MRV.setDefaultReturnValuesSupplier("getNameInData", () -> "master");
+		dataResourceLink.MRV.setDefaultReturnValuesSupplier("getMimeType",
+				() -> "application/octet-stream");
+
+		recordURL = Optional.of("https://somesystem.org/rest/records/someRecordType/someRecordId");
+		converter = BasicClientDataResourceLinkToJsonConverter
+				.usingConverterFactoryJsonBuilderFactoryAndDataResourceLinkAndRecordUrl(
+						converterFactory, new OrgJsonBuilderFactoryAdapter(), dataResourceLink,
+						recordURL);
+	}
+
+	@Test
+	public void testToJson() {
+		String json = converter.toJson();
+
+		String expectedJson = """
+				{
+				    "name": "master",
+				    "mimeType": "application/octet-stream"
+				}""";
+		assertEquals(json, expectedJson);
+	}
+
+	@Test
+	public void testToJson2() {
+		dataResourceLink.MRV.setDefaultReturnValuesSupplier("getNameInData", () -> "thumbnail");
+		dataResourceLink.MRV.setDefaultReturnValuesSupplier("getMimeType", () -> "image/jpeg");
+
+		String json = converter.toJson();
+
+		String expectedJson = """
+				{
+				    "name": "thumbnail",
+				    "mimeType": "image/jpeg"
+				}""";
+		assertEquals(json, expectedJson);
+	}
+
+	@Test
+	public void testJsonWithRepeatId() throws Exception {
+		dataResourceLink.MRV.setDefaultReturnValuesSupplier("hasRepeatId", () -> true);
+		dataResourceLink.MRV.setDefaultReturnValuesSupplier("getRepeatId", () -> "1");
+
+		String json = converter.toJson();
+
+		String expectedJson = """
+				{
+				    "repeatId": "1",
+				    "name": "master",
+				    "mimeType": "application/octet-stream"
+				}""";
+		assertEquals(json, expectedJson);
+	}
+
+	@Test
+	public void testToJsonCompactFormatWithoutRepeatId() {
+		String json = converter.toJsonCompactFormat();
+
+		String expectedJson = """
+				{"name":"master","mimeType":"application/octet-stream"}""";
+
+		assertEquals(json, expectedJson);
+	}
+
+	@Test
+	public void testToJsonCompactFormatWithRepeatId() {
+		dataResourceLink.MRV.setDefaultReturnValuesSupplier("hasRepeatId", () -> true);
+		dataResourceLink.MRV.setDefaultReturnValuesSupplier("getRepeatId", () -> "1");
+
+		String json = converter.toJsonCompactFormat();
+
+		String expectedJson = """
+				{"repeatId":"1","name":"master","mimeType":"application/octet-stream"}""";
+		assertEquals(json, expectedJson);
 	}
 
 	@Test
 	public void testConverterFactorySetInParent() throws Exception {
-		assertSame(resourceLinkToJsonConverter.converterFactory, converterFactory);
-	}
+		constructWithRecordUrl();
 
-	@Test
-	public void testResourceLinkConverterExtendsGroupConverter() throws Exception {
-		assertTrue(resourceLinkToJsonConverter instanceof BasicClientDataGroupToJsonConverter);
-		assertTrue(resourceLinkToJsonConverter instanceof ClientDataToJsonConverter);
+		assertSame(converter.onlyForTestGetConverterFactory(), converterFactory);
 	}
 
 	@Test
 	public void testNoActions() throws Exception {
-		resourceLinkToJsonConverter.hookForSubclassesToImplementExtraConversion();
+		converter = BasicClientDataResourceLinkToJsonConverter
+				.usingConverterFactoryJsonBuilderFactoryAndDataResourceLinkAndRecordUrl(
+						converterFactory, jsonBuilderFactorySpy, dataResourceLink, recordURL);
+
+		converter.toJsonObjectBuilder();
 
 		assertJsonBuilderNotUsed();
 	}
@@ -79,12 +165,14 @@ public class BasicClientDataResourceLinkToJsonConverterTest {
 
 	@Test
 	public void testActionLinksBuilderAddedToMainBuilder() throws Exception {
-		dataResourceLink.hasReadAction = true;
+		dataResourceLink.MRV.setDefaultReturnValuesSupplier("hasReadAction", () -> true);
+		converter = BasicClientDataResourceLinkToJsonConverter
+				.usingConverterFactoryJsonBuilderFactoryAndDataResourceLinkAndRecordUrl(
+						converterFactory, jsonBuilderFactorySpy, dataResourceLink, recordURL);
 
-		resourceLinkToJsonConverter.hookForSubclassesToImplementExtraConversion();
+		converter.toJsonObjectBuilder();
 
 		dataResourceLink.MCR.assertParameters("hasReadAction", 0);
-
 		assertActionLinksBuilderAddedToMainBuilder();
 	}
 
@@ -99,9 +187,12 @@ public class BasicClientDataResourceLinkToJsonConverterTest {
 
 	@Test
 	public void testActionAddedToActionBuilder() throws Exception {
-		dataResourceLink.hasReadAction = true;
+		dataResourceLink.MRV.setDefaultReturnValuesSupplier("hasReadAction", () -> true);
+		converter = BasicClientDataResourceLinkToJsonConverter
+				.usingConverterFactoryJsonBuilderFactoryAndDataResourceLinkAndRecordUrl(
+						converterFactory, jsonBuilderFactorySpy, dataResourceLink, recordURL);
 
-		resourceLinkToJsonConverter.hookForSubclassesToImplementExtraConversion();
+		converter.toJsonObjectBuilder();
 
 		BasicClientJsonObjectBuilderSpy actionLinksBuilderSpy = getActionsBuilder();
 		BasicClientJsonObjectBuilderSpy internalLinkBuilderSpy = (BasicClientJsonObjectBuilderSpy) jsonBuilderFactorySpy.MCR
@@ -111,7 +202,7 @@ public class BasicClientDataResourceLinkToJsonConverterTest {
 
 		internalLinkBuilderSpy.MCR.assertParameters("addKeyString", 0, "rel", "read");
 		internalLinkBuilderSpy.MCR.assertParameters("addKeyString", 1, "url",
-				recordURL + "/" + dataResourceLink.getNameInData());
+				recordURL.get() + "/" + dataResourceLink.getNameInData());
 		internalLinkBuilderSpy.MCR.assertParameters("addKeyString", 2, "requestMethod", "GET");
 		String mimeType = (String) dataResourceLink.MCR.getReturnValue("getMimeType", 0);
 		internalLinkBuilderSpy.MCR.assertParameters("addKeyString", 3, "accept", mimeType);
@@ -123,4 +214,107 @@ public class BasicClientDataResourceLinkToJsonConverterTest {
 		return (BasicClientJsonObjectBuilderSpy) jsonBuilderFactorySpy.MCR
 				.getReturnValue("createObjectBuilder", 1);
 	}
+
+	@Test
+	public void testJsonWithActions() throws Exception {
+		dataResourceLink.MRV.setDefaultReturnValuesSupplier("hasReadAction", () -> true);
+		converter = BasicClientDataResourceLinkToJsonConverter
+				.usingConverterFactoryJsonBuilderFactoryAndDataResourceLinkAndRecordUrl(
+						converterFactory, new OrgJsonBuilderFactoryAdapter(), dataResourceLink,
+						recordURL);
+
+		String json = converter.toJson();
+
+		String excpectedJson = """
+				{
+				    "actionLinks": {"read": {
+				        "requestMethod": "GET",
+				        "rel": "read",
+				        "url": "https://somesystem.org/rest/records/someRecordType/someRecordId/master",
+				        "accept": "application/octet-stream"
+				    }},
+				    "name": "master",
+				    "mimeType": "application/octet-stream"
+				}""";
+		assertEquals(json, excpectedJson);
+	}
+
+	/////////////////////////////////////////////////
+
+	// @Test
+	// public void testConverterFactorySetInParent() throws Exception {
+	// assertSame(resourceLinkToJsonConverter.converterFactory, converterFactory);
+	// }
+	//
+	// @Test
+	// public void testResourceLinkConverterExtendsGroupConverter() throws Exception {
+	// assertTrue(resourceLinkToJsonConverter instanceof BasicClientDataGroupToJsonConverter);
+	// assertTrue(resourceLinkToJsonConverter instanceof ClientDataToJsonConverter);
+	// }
+	//
+	// @Test
+	// public void testNoActions() throws Exception {
+	// resourceLinkToJsonConverter.hookForSubclassesToImplementExtraConversion();
+	//
+	// assertJsonBuilderNotUsed();
+	// }
+	//
+	// private void assertJsonBuilderNotUsed() {
+	// dataResourceLink.MCR.assertParameters("hasReadAction", 0);
+	//
+	// BasicClientJsonObjectBuilderSpy jsonObjectBuilderSpy = (BasicClientJsonObjectBuilderSpy)
+	// jsonBuilderFactorySpy.MCR
+	// .getReturnValue("createObjectBuilder", 0);
+	//
+	// jsonObjectBuilderSpy.MCR.assertMethodNotCalled("addKeyJsonObjectBuilder");
+	// }
+	//
+	// @Test
+	// public void testActionLinksBuilderAddedToMainBuilder() throws Exception {
+	// dataResourceLink.hasReadAction = true;
+	//
+	// resourceLinkToJsonConverter.hookForSubclassesToImplementExtraConversion();
+	//
+	// dataResourceLink.MCR.assertParameters("hasReadAction", 0);
+	//
+	// assertActionLinksBuilderAddedToMainBuilder();
+	// }
+	//
+	// private void assertActionLinksBuilderAddedToMainBuilder() {
+	// BasicClientJsonObjectBuilderSpy mainBuilderSpy = (BasicClientJsonObjectBuilderSpy)
+	// jsonBuilderFactorySpy.MCR
+	// .getReturnValue("createObjectBuilder", 0);
+	// BasicClientJsonObjectBuilderSpy actionLinksBuilderSpy = getActionsBuilder();
+	//
+	// mainBuilderSpy.MCR.assertParameters("addKeyJsonObjectBuilder", 0, "actionLinks",
+	// actionLinksBuilderSpy);
+	// }
+	//
+	// @Test
+	// public void testActionAddedToActionBuilder() throws Exception {
+	// dataResourceLink.hasReadAction = true;
+	//
+	// resourceLinkToJsonConverter.hookForSubclassesToImplementExtraConversion();
+	//
+	// BasicClientJsonObjectBuilderSpy actionLinksBuilderSpy = getActionsBuilder();
+	// BasicClientJsonObjectBuilderSpy internalLinkBuilderSpy = (BasicClientJsonObjectBuilderSpy)
+	// jsonBuilderFactorySpy.MCR
+	// .getReturnValue("createObjectBuilder", 2);
+	// actionLinksBuilderSpy.MCR.assertParameters("addKeyJsonObjectBuilder", 0, "read",
+	// internalLinkBuilderSpy);
+	//
+	// internalLinkBuilderSpy.MCR.assertParameters("addKeyString", 0, "rel", "read");
+	// internalLinkBuilderSpy.MCR.assertParameters("addKeyString", 1, "url",
+	// recordURL + "/" + dataResourceLink.getNameInData());
+	// internalLinkBuilderSpy.MCR.assertParameters("addKeyString", 2, "requestMethod", "GET");
+	// String mimeType = (String) dataResourceLink.MCR.getReturnValue("getMimeType", 0);
+	// internalLinkBuilderSpy.MCR.assertParameters("addKeyString", 3, "accept", mimeType);
+	// internalLinkBuilderSpy.MCR.assertNumberOfCallsToMethod("addKeyString", 4);
+	//
+	// }
+	//
+	// private BasicClientJsonObjectBuilderSpy getActionsBuilder() {
+	// return (BasicClientJsonObjectBuilderSpy) jsonBuilderFactorySpy.MCR
+	// .getReturnValue("createObjectBuilder", 1);
+	// }
 }

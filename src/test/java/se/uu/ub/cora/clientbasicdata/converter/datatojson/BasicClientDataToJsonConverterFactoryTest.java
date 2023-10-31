@@ -67,7 +67,8 @@ public class BasicClientDataToJsonConverterFactoryTest {
 		dataAttribute = BasicClientDataAttribute.withNameInDataAndValue("attributeNameInData",
 				"attributeValue");
 		dataRecordLink = BasicClientDataRecordLink.withNameInData("recordLinkNameInData");
-		dataResourceLink = BasicClientDataResourceLink.withNameInData("recordLinkNameInData");
+		dataResourceLink = BasicClientDataResourceLink
+				.withNameInDataAndMimeType("recordLinkNameInData", "");
 	}
 
 	@Test

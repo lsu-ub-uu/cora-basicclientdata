@@ -160,9 +160,10 @@ public class BasicClientDataFactoryTest {
 	@Test
 	public void testFactorResourceLinkUsingNameInData() {
 		ClientDataResourceLink factoredDataResourceLink = dataFactory
-				.factorResourceLinkUsingNameInData(nameInData);
+				.factorResourceLinkUsingNameInDataAndMimeType(nameInData, "someMimeType");
 		assertTrue(factoredDataResourceLink instanceof BasicClientDataResourceLink);
 		assertEquals(factoredDataResourceLink.getNameInData(), nameInData);
+		assertEquals(factoredDataResourceLink.getMimeType(), "someMimeType");
 	}
 
 	@Test
