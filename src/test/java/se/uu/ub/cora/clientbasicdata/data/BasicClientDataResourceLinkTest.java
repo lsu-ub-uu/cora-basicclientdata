@@ -50,6 +50,23 @@ public class BasicClientDataResourceLinkTest {
 	}
 
 	@Test
+	public void testHasRepeatIdNotSet() throws Exception {
+		assertFalse(resourceLink.hasRepeatId());
+	}
+
+	@Test
+	public void testHasRepeatIdSetToEmpty() throws Exception {
+		resourceLink.setRepeatId("");
+		assertFalse(resourceLink.hasRepeatId());
+	}
+
+	@Test
+	public void testHasRepeatIdSet() throws Exception {
+		resourceLink.setRepeatId("3");
+		assertTrue(resourceLink.hasRepeatId());
+	}
+
+	@Test
 	public void testHasReadActionsNoReadAction() throws Exception {
 		assertFalse(resourceLink.hasReadAction());
 	}

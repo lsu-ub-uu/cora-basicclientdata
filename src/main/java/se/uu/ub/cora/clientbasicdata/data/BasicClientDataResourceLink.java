@@ -88,6 +88,11 @@ public final class BasicClientDataResourceLink implements ClientDataResourceLink
 	}
 
 	@Override
+	public boolean hasRepeatId() {
+		return repeatId != null && !"".equals(repeatId);
+	}
+
+	@Override
 	public String getNameInData() {
 		return nameInData;
 	}

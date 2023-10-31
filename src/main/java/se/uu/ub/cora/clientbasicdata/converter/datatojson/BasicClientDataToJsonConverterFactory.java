@@ -19,6 +19,8 @@
 
 package se.uu.ub.cora.clientbasicdata.converter.datatojson;
 
+import java.util.Optional;
+
 import se.uu.ub.cora.clientdata.ClientConvertible;
 import se.uu.ub.cora.clientdata.ClientDataAtomic;
 import se.uu.ub.cora.clientdata.ClientDataAttribute;
@@ -66,10 +68,12 @@ public class BasicClientDataToJsonConverterFactory implements ClientDataToJsonCo
 					.usingConverterFactoryAndJsonBuilderFactoryAndDataRecordLinkAndBaseUrl(this,
 							builderFactory, (ClientDataRecordLink) convertible, baseUrl);
 		}
-		if (isDataResourceLinkAndHasRecordUrl(convertible)) {
+		if (isDataResourceLink(convertible)) {
+			Optional<String> optionalRecordUrl = Optional.ofNullable(recordUrl);
 			return BasicClientDataResourceLinkToJsonConverter
 					.usingConverterFactoryJsonBuilderFactoryAndDataResourceLinkAndRecordUrl(this,
-							builderFactory, (ClientDataResourceLink) convertible, recordUrl);
+							builderFactory, (ClientDataResourceLink) convertible,
+							optionalRecordUrl);
 
 		}
 		if (convertible instanceof ClientDataGroup) {
@@ -85,8 +89,11 @@ public class BasicClientDataToJsonConverterFactory implements ClientDataToJsonCo
 				builderFactory, (ClientDataAttribute) convertible);
 	}
 
-	private boolean isDataResourceLinkAndHasRecordUrl(ClientConvertible convertible) {
-		return (convertible instanceof ClientDataResourceLink) && (recordUrl != null);
+	// private boolean isDataResourceLinkAndHasRecordUrl(ClientConvertible convertible) {
+	// return (convertible instanceof ClientDataResourceLink) && (recordUrl != null);
+	// }
+	private boolean isDataResourceLink(ClientConvertible convertible) {
+		return (convertible instanceof ClientDataResourceLink);
 	}
 
 	private boolean isDataRecordLinkAndHasBaseUrl(ClientConvertible convertible) {

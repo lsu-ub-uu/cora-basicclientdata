@@ -24,6 +24,8 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
 
+import java.util.Optional;
+
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -68,7 +70,7 @@ public class BasicClientDataToJsonConverterFactoryTest {
 				"attributeValue");
 		dataRecordLink = BasicClientDataRecordLink.withNameInData("recordLinkNameInData");
 		dataResourceLink = BasicClientDataResourceLink
-				.withNameInDataAndMimeType("recordLinkNameInData", "");
+				.withNameInDataAndMimeType("recordLinkNameInData", "someMimeType");
 	}
 
 	@Test
@@ -122,12 +124,12 @@ public class BasicClientDataToJsonConverterFactoryTest {
 
 	@Test
 	public void testDataResourceLinkNoUrl() throws Exception {
-		BasicClientDataGroupToJsonConverter dataToJsonConverter = (BasicClientDataGroupToJsonConverter) converterFactory
+		BasicClientDataResourceLinkToJsonConverter dataToJsonConverter = (BasicClientDataResourceLinkToJsonConverter) converterFactory
 				.factorUsingConvertible(dataResourceLink);
 
 		JsonBuilderFactory jsonBuilderFactory = dataToJsonConverter.jsonBuilderFactory;
 		assertSame(jsonBuilderFactory, builderFactory);
-		assertFalse(dataToJsonConverter instanceof BasicClientDataResourceLinkToJsonConverter);
+		// assertFalse(dataToJsonConverter instanceof BasicClientDataResourceLinkToJsonConverter);
 	}
 
 	// TODO: Implement Converter for ClientDataList add test
@@ -187,10 +189,10 @@ public class BasicClientDataToJsonConverterFactoryTest {
 		BasicClientDataResourceLinkToJsonConverter converter = (BasicClientDataResourceLinkToJsonConverter) converterFactory
 				.factorUsingBaseUrlAndRecordUrlAndConvertible(baseUrl, recordUrl, dataResourceLink);
 
-		JsonBuilderFactory jsonBuilderFactory = converter.resourceLinkBuilderFactory;
+		JsonBuilderFactory jsonBuilderFactory = converter.jsonBuilderFactory;
 		assertSame(jsonBuilderFactory, builderFactory);
 		assertSame(converter.converterFactory, converterFactory);
-		assertEquals(converter.recordURL, recordUrl);
+		assertEquals(converter.recordURL, Optional.of(recordUrl));
 	}
 
 	@Test
@@ -216,8 +218,8 @@ public class BasicClientDataToJsonConverterFactoryTest {
 		ClientDataToJsonConverter converter = converterFactory
 				.factorUsingConvertible(dataResourceLink);
 
-		assertTrue(converter instanceof BasicClientDataGroupToJsonConverter);
-		assertFalse(converter instanceof BasicClientDataResourceLinkToJsonConverter);
+		assertFalse(converter instanceof BasicClientDataGroupToJsonConverter);
+		assertTrue(converter instanceof BasicClientDataResourceLinkToJsonConverter);
 	}
 
 	@Test

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Uppsala University Library
+ * Copyright 2019, 2023 Uppsala University Library
  *
  * This file is part of Cora.
  *
@@ -27,11 +27,10 @@ import se.uu.ub.cora.json.parser.JsonParseException;
 
 public class JsonToBasicClientDataResourceLinkConverter implements JsonToClientDataConverter {
 
-	private static final int MAX_JSON_KEYS_WITHOUT_REPEAT_ID = 2;
-	private static final int MAX_JSON_KEYS_WITH_REPEAT_ID = 3;
+	private static final int NUMBER_OF_KEYS_ONE_OPTIONAL_KEY = 3;
+	private static final int MAX_NUMBER_OF_JSON_KEYS = 4;
 	private static final String PARSING_ERROR_MSG = "Error parsing jsonObject: ResourceLink must "
-			+ "contain name, mimeType and repeatId.";
-	// private static final int NUM_OF_RESOURCELINK_CHILDREN = 4;
+			+ "contain name, mimeType and may contain actionLinks and/or repeatId.";
 	private JsonObject jsonObject;
 
 	private JsonToBasicClientDataResourceLinkConverter(JsonObject jsonObject) {
@@ -45,26 +44,40 @@ public class JsonToBasicClientDataResourceLinkConverter implements JsonToClientD
 	}
 
 	private void validateJson() {
-		if (validateJsonKeys()) {
+		if (validateJsonKeysFail()) {
 			throw new JsonParseException(PARSING_ERROR_MSG);
 		}
 	}
 
-	private boolean validateJsonKeys() {
-		return exceedeFieldsRepeatIdExists() || exceedeFieldsRepeatIdNotExists()
-				|| nameAndMimeTypeNotExists();
+	private boolean validateJsonKeysFail() {
+		return nameOrMimeTypeIsMissing() || threeKeysActionLinksOrRepeatIdIsMissing()
+				|| maxNumberOfKeysActionLinksOrRepeatIdIsMissing() || moreThenMaxNumberOfKeys();
 	}
 
-	private boolean nameAndMimeTypeNotExists() {
+	private boolean nameOrMimeTypeIsMissing() {
 		return !jsonObject.containsKey("name") || !jsonObject.containsKey("mimeType");
 	}
 
-	private boolean exceedeFieldsRepeatIdNotExists() {
-		return !repeatIdExists() && jsonObject.keySet().size() > MAX_JSON_KEYS_WITHOUT_REPEAT_ID;
+	private boolean threeKeysActionLinksOrRepeatIdIsMissing() {
+		return actionLinksIsMissing() && !repeatIdExists()
+				&& jsonObject.keySet().size() == NUMBER_OF_KEYS_ONE_OPTIONAL_KEY;
 	}
 
-	private boolean exceedeFieldsRepeatIdExists() {
-		return repeatIdExists() && jsonObject.keySet().size() > MAX_JSON_KEYS_WITH_REPEAT_ID;
+	private boolean maxNumberOfKeysActionLinksOrRepeatIdIsMissing() {
+		return (actionLinksIsMissing() || !repeatIdExists())
+				&& jsonObject.keySet().size() == MAX_NUMBER_OF_JSON_KEYS;
+	}
+
+	private boolean moreThenMaxNumberOfKeys() {
+		return jsonObject.keySet().size() > MAX_NUMBER_OF_JSON_KEYS;
+	}
+
+	private boolean actionLinksIsMissing() {
+		return !jsonObject.containsKey("actionLinks");
+	}
+
+	private boolean repeatIdExists() {
+		return jsonObject.containsKey("repeatId");
 	}
 
 	private ClientDataResourceLink createResourceLinkFromJson() {
@@ -88,10 +101,6 @@ public class JsonToBasicClientDataResourceLinkConverter implements JsonToClientD
 			String repeatId = getValueAsStringFromJsonObject("repeatId");
 			resourceLink.setRepeatId(repeatId);
 		}
-	}
-
-	private boolean repeatIdExists() {
-		return jsonObject.containsKey("repeatId");
 	}
 
 	// @Override

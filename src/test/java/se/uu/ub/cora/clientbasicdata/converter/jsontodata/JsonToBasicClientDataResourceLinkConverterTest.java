@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Uppsala University Library
+ * Copyright 2019, 2023 Uppsala University Library
  *
  * This file is part of Cora.
  *
@@ -20,6 +20,7 @@
 package se.uu.ub.cora.clientbasicdata.converter.jsontodata;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import org.testng.annotations.Test;
 
@@ -45,6 +46,30 @@ public class JsonToBasicClientDataResourceLinkConverterTest {
 
 		assertEquals(resourceLink.getNameInData(), "master");
 		assertEquals(resourceLink.getMimeType(), "application/vnd.uub.record+json");
+	}
+
+	@Test
+	public void testToInstanceWithActionLink() {
+		String json = """
+				{
+					"actionLinks": {
+						"read": {
+							"requestMethod": "GET",
+							"rel": "read",
+							"url": "http://localhost:38080/systemone/rest/record/binary/binary:14826085103360/master",
+							"accept": "image/jpeg"
+						}
+					},
+					"name": "master",
+					"mimeType": "image/jpeg"
+				}
+				""";
+		BasicClientDataResourceLink resourceLink = (BasicClientDataResourceLink) getConverterdLink(
+				json);
+
+		assertEquals(resourceLink.getNameInData(), "master");
+		assertEquals(resourceLink.getMimeType(), "image/jpeg");
+		assertTrue(resourceLink.hasReadAction());
 	}
 
 	private ClientDataLink getConverterdLink(String json) {
@@ -74,7 +99,8 @@ public class JsonToBasicClientDataResourceLinkConverterTest {
 	}
 
 	@Test(expectedExceptions = JsonParseException.class, expectedExceptionsMessageRegExp = ""
-			+ "Error parsing jsonObject: ResourceLink must contain name, mimeType and repeatId.")
+			+ "Error parsing jsonObject: ResourceLink must "
+			+ "contain name, mimeType and may contain actionLinks and/or repeatId.")
 	public void testExceptionMimeTypeNotExist() {
 		String json = """
 				{
@@ -86,7 +112,8 @@ public class JsonToBasicClientDataResourceLinkConverterTest {
 	}
 
 	@Test(expectedExceptions = JsonParseException.class, expectedExceptionsMessageRegExp = ""
-			+ "Error parsing jsonObject: ResourceLink must contain name, mimeType and repeatId.")
+			+ "Error parsing jsonObject: ResourceLink must "
+			+ "contain name, mimeType and may contain actionLinks and/or repeatId.")
 	public void testExceptionNameNotExist() {
 		String json = """
 				{
@@ -98,21 +125,24 @@ public class JsonToBasicClientDataResourceLinkConverterTest {
 	}
 
 	@Test(expectedExceptions = JsonParseException.class, expectedExceptionsMessageRegExp = ""
-			+ "Error parsing jsonObject: ResourceLink must contain name, mimeType and repeatId.")
+			+ "Error parsing jsonObject: ResourceLink must "
+			+ "contain name, mimeType and may contain actionLinks and/or repeatId.")
 	public void testExceptionIfTooManyFields() {
 		String json = """
 				{
 				  "name": "master",
 				  "mimeType": "application/vnd.uub.record+json",
 				  "repeatId":"0",
-				  "someOther": "someOther"
+				  "someOther": "someOther",
+				  "someOther2": "someOther"
 				}
 				""";
 		getConverterdLink(json);
 	}
 
 	@Test(expectedExceptions = JsonParseException.class, expectedExceptionsMessageRegExp = ""
-			+ "Error parsing jsonObject: ResourceLink must contain name, mimeType and repeatId.")
+			+ "Error parsing jsonObject: ResourceLink must "
+			+ "contain name, mimeType and may contain actionLinks and/or repeatId.")
 	public void testExceptionIfTooManyFields2() {
 		String json = """
 				{
@@ -125,7 +155,8 @@ public class JsonToBasicClientDataResourceLinkConverterTest {
 	}
 
 	@Test(expectedExceptions = JsonParseException.class, expectedExceptionsMessageRegExp = ""
-			+ "Error parsing jsonObject: ResourceLink must contain name, mimeType and repeatId.")
+			+ "Error parsing jsonObject: ResourceLink must "
+			+ "contain name, mimeType and may contain actionLinks and/or repeatId.")
 	public void testExceptionIfTooManyFields3() {
 		String json = """
 				{

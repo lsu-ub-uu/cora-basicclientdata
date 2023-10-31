@@ -34,7 +34,7 @@ public class BasicClientDataResourceLinkToJsonConverter implements ClientDataToJ
 	private JsonObjectBuilder jsonObjectBuilder;
 	private static final String READ = "read";
 	private static final String GET = "GET";
-	private ClientDataToJsonConverterFactory converterFactory;
+	ClientDataToJsonConverterFactory converterFactory;
 
 	private BasicClientDataResourceLinkToJsonConverter(
 			ClientDataToJsonConverterFactory converterFactory,
