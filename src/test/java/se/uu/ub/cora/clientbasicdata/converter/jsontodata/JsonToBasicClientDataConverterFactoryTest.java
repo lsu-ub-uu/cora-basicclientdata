@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Uppsala University Library
+ * Copyright 2015, 2023 Uppsala University Library
  *
  * This file is part of Cora.
  *
@@ -158,7 +158,8 @@ public class JsonToBasicClientDataConverterFactoryTest {
 
 	@Test
 	public void testFactorOnJsonStringDataGroupEmptyChildren() {
-		json = "{\"name\":\"groupNameInData\", \"children\":[]}";
+		json = """
+				{"name":"groupNameInData", "children":[]}""";
 		JsonToClientDataConverter jsonToDataConverter = jsonToDataConverterFactory
 				.factorUsingString(json);
 		assertTrue(jsonToDataConverter instanceof JsonToBasicClientDataGroupConverter);
@@ -166,7 +167,9 @@ public class JsonToBasicClientDataConverterFactoryTest {
 
 	@Test
 	public void testFactorOnJsonStringDataGroupAtomicChild() {
-		String json = "{\"name\":\"id\",\"children\":[{\"name\":\"someNameInData\",\"value\":\"id2\"}]}";
+		String json = """
+				{"name":"id","children":[{"name":"someNameInData","value":"id2"}]}
+				""";
 		JsonToClientDataConverter jsonToDataConverter = jsonToDataConverterFactory
 				.factorUsingString(json);
 		assertTrue(jsonToDataConverter instanceof JsonToBasicClientDataGroupConverter);
@@ -305,7 +308,11 @@ public class JsonToBasicClientDataConverterFactoryTest {
 
 	@Test
 	public void testFactorOnJsonStringWithLinkedPathButNotLinkedRecordIdFactorsDataGroup() {
-		String json = "{\"children\":[{\"name\":\"linkedRecordType\",\"value\":\"coraText\"},{\"name\":\"NOTlinkedRecordId\",\"value\":\"exampleGroupText\"},{\"children\":[{\"name\":\"nameInData\",\"value\":\"recordInfo\"},{\"children\":[{\"name\":\"nameInData\",\"value\":\"type\"}],\"name\":\"linkedPath\"}],\"name\":\"linkedPath\"}],\"name\":\"from\"}";
+		String json = "{\"children\":[{\"name\":\"linkedRecordType\",\"value\":\"coraText\"},"
+				+ "{\"name\":\"NOTlinkedRecordId\",\"value\":\"exampleGroupText\"},"
+				+ "{\"children\":[{\"name\":\"nameInData\",\"value\":\"recordInfo\"},"
+				+ "{\"children\":[{\"name\":\"nameInData\",\"value\":\"type\"}],"
+				+ "\"name\":\"linkedPath\"}],\"name\":\"linkedPath\"}],\"name\":\"from\"}";
 		JsonToClientDataConverter jsonToDataConverter = jsonToDataConverterFactory
 				.factorUsingString(json);
 		assertTrue(jsonToDataConverter instanceof JsonToBasicClientDataGroupConverter);
@@ -488,10 +495,22 @@ public class JsonToBasicClientDataConverterFactoryTest {
 
 	@Test
 	public void testFactorOnJsonStringCompleteSetupFactorsDataResourceLink() {
-		String json = "{\"children\":[{\"name\":\"streamId\",\"value\":\"soundBinary:18269669168741\"},{\"name\":\"filename\",\"value\":\"adele.png\"},{\"name\":\"filesize\",\"value\":\"8\"},{\"name\":\"mimeType\",\"value\":\"application/octet-stream\"}],\"name\":\"master\"}";
+		String json = """
+				{
+					"mimeType": "application/octet-stream",
+					"name": "master"
+				}
+				""";
+
 		JsonToClientDataConverter jsonToDataConverter = jsonToDataConverterFactory
 				.factorUsingString(json);
+
 		assertTrue(jsonToDataConverter instanceof JsonToBasicClientDataResourceLinkConverter);
+		JsonToBasicClientDataResourceLinkConverter converter = (JsonToBasicClientDataResourceLinkConverter) jsonToDataConverter;
+		JsonToBasicClientDataActionLinkConverterFactory createdActionLinkConverterFactory = converter
+				.onlyForTestGetActionLinkConverterFactory();
+		assertTrue(
+				createdActionLinkConverterFactory instanceof JsonToBasicClientDataActionLinkConverterFactoryImp);
 	}
 
 	@Test

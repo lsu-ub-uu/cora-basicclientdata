@@ -66,6 +66,23 @@ public class BasicClientDataAtomicTest {
 	}
 
 	@Test
+	public void testHasRepeatIdNotSet() throws Exception {
+		assertFalse(dataAtomic.hasRepeatId());
+	}
+
+	@Test
+	public void testHasRepeatIdSetToEmpty() throws Exception {
+		dataAtomic.setRepeatId("");
+		assertFalse(dataAtomic.hasRepeatId());
+	}
+
+	@Test
+	public void testHasRepeatIdSet() throws Exception {
+		dataAtomic.setRepeatId("3");
+		assertTrue(dataAtomic.hasRepeatId());
+	}
+
+	@Test
 	public void testAddAttribute() {
 		dataAtomic.addAttributeByIdWithValue("someAttributeName", "value");
 		Collection<ClientDataAttribute> attributes = dataAtomic.getAttributes();

@@ -254,4 +254,10 @@ public class BasicClientDataGroupOldSpy implements ClientDataGroup {
 		return Optional.empty();
 	}
 
+	@Override
+	public boolean hasRepeatId() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

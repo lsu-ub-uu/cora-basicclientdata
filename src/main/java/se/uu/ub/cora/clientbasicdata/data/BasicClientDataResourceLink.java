@@ -18,48 +18,33 @@
  */
 package se.uu.ub.cora.clientbasicdata.data;
 
+import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Optional;
 
 import se.uu.ub.cora.clientdata.ClientAction;
 import se.uu.ub.cora.clientdata.ClientActionLink;
-import se.uu.ub.cora.clientdata.ClientDataChild;
-import se.uu.ub.cora.clientdata.ClientDataGroup;
+import se.uu.ub.cora.clientdata.ClientDataAttribute;
 import se.uu.ub.cora.clientdata.ClientDataResourceLink;
 
-public final class BasicClientDataResourceLink extends BasicClientDataGroup
-		implements ClientDataResourceLink {
+public final class BasicClientDataResourceLink implements ClientDataResourceLink {
+
+	private static final String NOT_YET_IMPLEMENTED = "Not yet implemented.";
 
 	private Map<ClientAction, ClientActionLink> actions = new EnumMap<>(ClientAction.class);
+	private String mimeType;
+	private String nameInData;
+	private String repeatId;
 
-	public static BasicClientDataResourceLink withNameInData(String nameInData) {
-		return new BasicClientDataResourceLink(nameInData);
+	public static BasicClientDataResourceLink withNameInDataAndMimeType(String nameInData,
+			String mimeType) {
+		return new BasicClientDataResourceLink(nameInData, mimeType);
 	}
 
-	private BasicClientDataResourceLink(String nameInData) {
-		super(nameInData);
-	}
-
-	public static BasicClientDataResourceLink fromDataGroup(ClientDataGroup dataGroup) {
-		return new BasicClientDataResourceLink(dataGroup);
-	}
-
-	private BasicClientDataResourceLink(ClientDataGroup dataGroup) {
-		super(dataGroup.getNameInData());
-		addResourceLinkChildren(dataGroup);
-		setRepeatId(dataGroup.getRepeatId());
-	}
-
-	private void addResourceLinkChildren(ClientDataGroup dataGroup) {
-		ClientDataChild streamId = dataGroup.getFirstChildWithNameInData("streamId");
-		addChild(streamId);
-		ClientDataChild fileName = dataGroup.getFirstChildWithNameInData("filename");
-		addChild(fileName);
-		ClientDataChild fileSize = dataGroup.getFirstChildWithNameInData("filesize");
-		addChild(fileSize);
-		ClientDataChild mimeType = dataGroup.getFirstChildWithNameInData("mimeType");
-		addChild(mimeType);
+	private BasicClientDataResourceLink(String nameInData, String mimeType) {
+		this.nameInData = nameInData;
+		this.mimeType = mimeType;
 	}
 
 	@Override
@@ -81,42 +66,60 @@ public final class BasicClientDataResourceLink extends BasicClientDataGroup
 	}
 
 	@Override
-	public void setStreamId(String streamId) {
-		super.addChild(BasicClientDataAtomic.withNameInDataAndValue("streamId", streamId));
-	}
-
-	@Override
-	public String getStreamId() {
-		return super.getFirstAtomicValueWithNameInData("streamId");
-	}
-
-	@Override
-	public void setFileName(String fileName) {
-		super.addChild(BasicClientDataAtomic.withNameInDataAndValue("filename", fileName));
-	}
-
-	@Override
-	public String getFileName() {
-		return super.getFirstAtomicValueWithNameInData("filename");
-	}
-
-	@Override
-	public void setFileSize(String fileSize) {
-		super.addChild(BasicClientDataAtomic.withNameInDataAndValue("filesize", fileSize));
-	}
-
-	@Override
-	public String getFileSize() {
-		return super.getFirstAtomicValueWithNameInData("filesize");
-	}
-
-	@Override
 	public void setMimeType(String mimeType) {
-		super.addChild(BasicClientDataAtomic.withNameInDataAndValue("mimeType", mimeType));
+		this.mimeType = mimeType;
+
 	}
 
 	@Override
 	public String getMimeType() {
-		return super.getFirstAtomicValueWithNameInData("mimeType");
+		return mimeType;
 	}
+
+	@Override
+	public void setRepeatId(String repeatId) {
+		this.repeatId = repeatId;
+
+	}
+
+	@Override
+	public String getRepeatId() {
+		return repeatId;
+	}
+
+	@Override
+	public boolean hasRepeatId() {
+		return repeatId != null && !"".equals(repeatId);
+	}
+
+	@Override
+	public String getNameInData() {
+		return nameInData;
+	}
+
+	@Override
+	public void addAttributeByIdWithValue(String nameInData, String value) {
+		throw new UnsupportedOperationException(NOT_YET_IMPLEMENTED);
+	}
+
+	@Override
+	public boolean hasAttributes() {
+		return false;
+	}
+
+	@Override
+	public ClientDataAttribute getAttribute(String nameInData) {
+		throw new UnsupportedOperationException(NOT_YET_IMPLEMENTED);
+	}
+
+	@Override
+	public Collection<ClientDataAttribute> getAttributes() {
+		throw new UnsupportedOperationException(NOT_YET_IMPLEMENTED);
+	}
+
+	@Override
+	public Optional<String> getAttributeValue(String nameInData) {
+		throw new UnsupportedOperationException(NOT_YET_IMPLEMENTED);
+	}
+
 }

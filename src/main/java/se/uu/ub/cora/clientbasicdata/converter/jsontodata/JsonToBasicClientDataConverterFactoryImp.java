@@ -1,5 +1,5 @@
 /*
- * Copyright 2015, 2022 Uppsala University Library
+ * Copyright 2015, 2022, 2023 Uppsala University Library
  *
  * This file is part of Cora.
  *
@@ -33,8 +33,6 @@ import se.uu.ub.cora.json.parser.org.OrgJsonParser;
 
 public class JsonToBasicClientDataConverterFactoryImp implements JsonToClientDataConverterFactory {
 
-	private static final int NUM_OF_RESOURCELINK_CHILDREN = 4;
-
 	@Override
 	public JsonToClientDataConverter factorUsingString(String jsonString) {
 		JsonParser jsonParser = new OrgJsonParser();
@@ -62,6 +60,11 @@ public class JsonToBasicClientDataConverterFactoryImp implements JsonToClientDat
 		if (isGroup(json)) {
 			return createConverterForGroupOrLink(json);
 		}
+		if (isResourceLink(json)) {
+			return JsonToBasicClientDataResourceLinkConverter
+					.usingActionLinkConverterFactoryforJsonObject(
+							createActionLinkConverterFactory(), json);
+		}
 		if (isAtomicData(json)) {
 			return JsonToBasicClientDataAtomicConverter.forJsonObject(json);
 		}
@@ -77,11 +80,19 @@ public class JsonToBasicClientDataConverterFactoryImp implements JsonToClientDat
 	}
 
 	private JsonToClientDataConverter createJsonToClientDataRecordConverter(JsonObject json) {
-		JsonToBasicClientDataActionLinkConverterFactory converterFactory = JsonToBasicClientDataActionLinkConverterFactoryImp
-				.usingJsonToClientDataConverterFactory(this);
-		JsonToClientDataFactories factories = new JsonToClientDataFactories(this, converterFactory);
+		JsonToClientDataFactories factories = createConverterFactories();
 		return JsonToBasicClientDataRecordConverter.usingConverterFactoriesAndJsonObject(factories,
 				json);
+	}
+
+	private JsonToClientDataFactories createConverterFactories() {
+		JsonToBasicClientDataActionLinkConverterFactory converterFactory = createActionLinkConverterFactory();
+		return new JsonToClientDataFactories(this, converterFactory);
+	}
+
+	private JsonToBasicClientDataActionLinkConverterFactory createActionLinkConverterFactory() {
+		return JsonToBasicClientDataActionLinkConverterFactoryImp
+				.usingJsonToClientDataConverterFactory(this);
 	}
 
 	private void verifyJsonObject(JsonObject json) {
@@ -110,17 +121,12 @@ public class JsonToBasicClientDataConverterFactoryImp implements JsonToClientDat
 			return JsonToBasicClientDataRecordLinkConverter
 					.forJsonObject(actionLinkconverterFactory, jsonObject);
 		}
-		if (isResourceLink(foundNames)) {
-			return JsonToBasicClientDataResourceLinkConverter.forJsonObject(jsonObject);
-		}
 
 		return JsonToBasicClientDataGroupConverter.forJsonObject(jsonObject);
 	}
 
-	private boolean isResourceLink(List<String> foundNames) {
-		return foundNames.size() == NUM_OF_RESOURCELINK_CHILDREN && foundNames.contains("streamId")
-				&& foundNames.contains("filename") && foundNames.contains("filesize")
-				&& foundNames.contains("mimeType");
+	private boolean isResourceLink(JsonObject jsonObject) {
+		return jsonObject.containsKey("name") && jsonObject.containsKey("mimeType");
 	}
 
 	private boolean isRecordLink(List<String> foundNames) {

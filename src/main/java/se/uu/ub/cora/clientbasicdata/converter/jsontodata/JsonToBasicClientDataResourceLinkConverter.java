@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Uppsala University Library
+ * Copyright 2019, 2023 Uppsala University Library
  *
  * This file is part of Cora.
  *
@@ -18,55 +18,137 @@
  */
 package se.uu.ub.cora.clientbasicdata.converter.jsontodata;
 
+import java.util.Map;
+
 import se.uu.ub.cora.clientbasicdata.data.BasicClientDataResourceLink;
+import se.uu.ub.cora.clientdata.ClientActionLink;
 import se.uu.ub.cora.clientdata.ClientConvertible;
-import se.uu.ub.cora.clientdata.ClientDataGroup;
+import se.uu.ub.cora.clientdata.ClientDataResourceLink;
 import se.uu.ub.cora.clientdata.converter.JsonToClientDataConverter;
 import se.uu.ub.cora.json.parser.JsonObject;
 import se.uu.ub.cora.json.parser.JsonParseException;
+import se.uu.ub.cora.json.parser.JsonValue;
 
-public class JsonToBasicClientDataResourceLinkConverter extends JsonToBasicClientDataGroupConverter
-		implements JsonToClientDataConverter {
+public class JsonToBasicClientDataResourceLinkConverter implements JsonToClientDataConverter {
 
-	private static final int NUM_OF_RESOURCELINK_CHILDREN = 4;
+	private static final int NUMBER_OF_KEYS_ONE_OPTIONAL_KEY = 3;
+	private static final int MAX_NUMBER_OF_JSON_KEYS = 4;
+	private static final String PARSING_ERROR_MSG = "Error parsing jsonObject: ResourceLink must "
+			+ "contain name, mimeType and may contain actionLinks and/or repeatId.";
+	private JsonObject jsonObject;
+	private JsonToBasicClientDataActionLinkConverterFactory actionLinkConverterFactory;
 
-	private JsonToBasicClientDataResourceLinkConverter(JsonObject jsonObject) {
-		super(jsonObject);
+	public static JsonToBasicClientDataResourceLinkConverter usingActionLinkConverterFactoryforJsonObject(
+			JsonToBasicClientDataActionLinkConverterFactory actionLinkConverterFactory,
+			JsonObject jsonObject) {
+		return new JsonToBasicClientDataResourceLinkConverter(actionLinkConverterFactory,
+				jsonObject);
+	}
+
+	private JsonToBasicClientDataResourceLinkConverter(
+			JsonToBasicClientDataActionLinkConverterFactory actionLinkConverterFactory,
+			JsonObject jsonObject) {
+		this.actionLinkConverterFactory = actionLinkConverterFactory;
+		this.jsonObject = jsonObject;
 	}
 
 	@Override
 	public ClientConvertible toInstance() {
-		BasicClientDataResourceLink resourceLink = (BasicClientDataResourceLink) super.toInstance();
-		throwErrorIfLinkChildrenAreIncorrect(resourceLink);
-		return resourceLink;
+		validateJson();
+		return createResourceLinkFromJson();
 	}
 
-	private void throwErrorIfLinkChildrenAreIncorrect(ClientDataGroup recordLink) {
-		if (incorrectNumberOfChildren(recordLink) || incorrectChildren(recordLink)) {
-			throw new JsonParseException(
-					"ResourceLinkData must and can only contain children with name "
-							+ "streamId and filename and filesize and mimeType");
+	private void validateJson() {
+		if (validateJsonKeysFail()) {
+			throw new JsonParseException(PARSING_ERROR_MSG);
 		}
 	}
 
-	private boolean incorrectNumberOfChildren(ClientDataGroup recordLink) {
-		return recordLink.getChildren().size() != NUM_OF_RESOURCELINK_CHILDREN;
+	private boolean validateJsonKeysFail() {
+		return nameOrMimeTypeIsMissing() || threeKeysActionLinksOrRepeatIdIsMissing()
+				|| maxNumberOfKeysActionLinksOrRepeatIdIsMissing() || moreThenMaxNumberOfKeys();
 	}
 
-	private boolean incorrectChildren(ClientDataGroup recordLink) {
-		return !recordLink.containsChildWithNameInData("streamId")
-				|| !recordLink.containsChildWithNameInData("filename")
-				|| !recordLink.containsChildWithNameInData("filesize")
-				|| !recordLink.containsChildWithNameInData("mimeType");
+	private boolean nameOrMimeTypeIsMissing() {
+		return !jsonObject.containsKey("name") || !jsonObject.containsKey("mimeType");
 	}
 
-	public static JsonToBasicClientDataResourceLinkConverter forJsonObject(JsonObject jsonObject) {
-		return new JsonToBasicClientDataResourceLinkConverter(jsonObject);
+	private boolean threeKeysActionLinksOrRepeatIdIsMissing() {
+		return actionLinksIsMissing() && !repeatIdExists()
+				&& jsonObject.keySet().size() == NUMBER_OF_KEYS_ONE_OPTIONAL_KEY;
 	}
 
-	@Override
-	protected void createInstanceOfDataElement(String nameInData) {
-		dataGroup = BasicClientDataResourceLink.withNameInData(nameInData);
+	private boolean maxNumberOfKeysActionLinksOrRepeatIdIsMissing() {
+		return (actionLinksIsMissing() || !repeatIdExists())
+				&& jsonObject.keySet().size() == MAX_NUMBER_OF_JSON_KEYS;
 	}
 
+	private boolean moreThenMaxNumberOfKeys() {
+		return jsonObject.keySet().size() > MAX_NUMBER_OF_JSON_KEYS;
+	}
+
+	private boolean actionLinksIsMissing() {
+		return !actionLinkExists();
+	}
+
+	private boolean actionLinkExists() {
+		return jsonObject.containsKey("actionLinks");
+	}
+
+	private boolean repeatIdExists() {
+		return jsonObject.containsKey("repeatId");
+	}
+
+	private ClientDataResourceLink createResourceLinkFromJson() {
+		ClientDataResourceLink resourceLink = createResourceLinkWithNameAndMimeType();
+		possiblySetRepeatId(resourceLink);
+		possiblyConvertAndSetActionLink(resourceLink);
+		return resourceLink;
+	}
+
+	private void possiblyConvertAndSetActionLink(ClientDataResourceLink resourceLink) {
+		if (actionLinkExists()) {
+			convertAndSetActionLink(resourceLink);
+		}
+	}
+
+	private void convertAndSetActionLink(ClientDataResourceLink resourceLink) {
+		JsonObject actionLinks = jsonObject.getValueAsJsonObject("actionLinks");
+		for (Map.Entry<String, JsonValue> actionLinkEntry : actionLinks.entrySet()) {
+			convertAndAddActionLink(resourceLink, actionLinkEntry);
+		}
+	}
+
+	private void convertAndAddActionLink(ClientDataResourceLink resourceLink,
+			Map.Entry<String, JsonValue> actionLinkEntry) {
+		JsonToBasicClientDataActionLinkConverter actionLinkConverter = actionLinkConverterFactory
+				.factor((JsonObject) actionLinkEntry.getValue());
+		ClientActionLink actionLink = actionLinkConverter.toInstance();
+		resourceLink.addActionLink(actionLink);
+	}
+
+	private ClientDataResourceLink createResourceLinkWithNameAndMimeType() {
+		String nameInData = getValueAsStringFromJsonObject("name");
+		String mimeType = getValueAsStringFromJsonObject("mimeType");
+		return BasicClientDataResourceLink.withNameInDataAndMimeType(nameInData, mimeType);
+	}
+
+	private String getValueAsStringFromJsonObject(String key) {
+		return jsonObject.getValueAsJsonString(key).getStringValue();
+	}
+
+	private void possiblySetRepeatId(ClientDataResourceLink resourceLink) {
+		if (repeatIdExists()) {
+			String repeatId = getValueAsStringFromJsonObject("repeatId");
+			resourceLink.setRepeatId(repeatId);
+		}
+	}
+
+	public JsonToBasicClientDataActionLinkConverterFactory onlyForTestGetActionLinkConverterFactory() {
+		return actionLinkConverterFactory;
+	}
+
+	public JsonObject onlyForTestGetJsonObject() {
+		return jsonObject;
+	}
 }

@@ -99,8 +99,9 @@ public class BasicClientDataFactory implements ClientDataFactory {
 	}
 
 	@Override
-	public ClientDataResourceLink factorResourceLinkUsingNameInData(String nameInData) {
-		return BasicClientDataResourceLink.withNameInData(nameInData);
+	public ClientDataResourceLink factorResourceLinkUsingNameInDataAndMimeType(String nameInData,
+			String mimeType) {
+		return BasicClientDataResourceLink.withNameInDataAndMimeType(nameInData, mimeType);
 	}
 
 	@Override

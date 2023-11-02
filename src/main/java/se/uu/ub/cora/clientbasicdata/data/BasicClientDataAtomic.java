@@ -108,6 +108,11 @@ public final class BasicClientDataAtomic implements ClientDataAtomic {
 	}
 
 	@Override
+	public boolean hasRepeatId() {
+		return repeatId != null && !"".equals(repeatId);
+	}
+
+	@Override
 	public void setRepeatId(String repeatId) {
 		this.repeatId = repeatId;
 	}
