@@ -1,5 +1,5 @@
 /*
- * Copyright 2015, 2022 Uppsala University Library
+ * Copyright 2015, 2022, 2023 Uppsala University Library
  *
  * This file is part of Cora.
  *
@@ -33,8 +33,6 @@ import se.uu.ub.cora.json.parser.org.OrgJsonParser;
 
 public class JsonToBasicClientDataConverterFactoryImp implements JsonToClientDataConverterFactory {
 
-	private static final int NUM_OF_RESOURCELINK_CHILDREN = 1;
-
 	@Override
 	public JsonToClientDataConverter factorUsingString(String jsonString) {
 		JsonParser jsonParser = new OrgJsonParser();
@@ -63,7 +61,9 @@ public class JsonToBasicClientDataConverterFactoryImp implements JsonToClientDat
 			return createConverterForGroupOrLink(json);
 		}
 		if (isResourceLink(json)) {
-			return JsonToBasicClientDataResourceLinkConverter.forJsonObject(json);
+			return JsonToBasicClientDataResourceLinkConverter
+					.usingActionLinkConverterFactoryforJsonObject(
+							createActionLinkConverterFactory(), json);
 		}
 		if (isAtomicData(json)) {
 			return JsonToBasicClientDataAtomicConverter.forJsonObject(json);
@@ -80,11 +80,19 @@ public class JsonToBasicClientDataConverterFactoryImp implements JsonToClientDat
 	}
 
 	private JsonToClientDataConverter createJsonToClientDataRecordConverter(JsonObject json) {
-		JsonToBasicClientDataActionLinkConverterFactory converterFactory = JsonToBasicClientDataActionLinkConverterFactoryImp
-				.usingJsonToClientDataConverterFactory(this);
-		JsonToClientDataFactories factories = new JsonToClientDataFactories(this, converterFactory);
+		JsonToClientDataFactories factories = createConverterFactories();
 		return JsonToBasicClientDataRecordConverter.usingConverterFactoriesAndJsonObject(factories,
 				json);
+	}
+
+	private JsonToClientDataFactories createConverterFactories() {
+		JsonToBasicClientDataActionLinkConverterFactory converterFactory = createActionLinkConverterFactory();
+		return new JsonToClientDataFactories(this, converterFactory);
+	}
+
+	private JsonToBasicClientDataActionLinkConverterFactory createActionLinkConverterFactory() {
+		return JsonToBasicClientDataActionLinkConverterFactoryImp
+				.usingJsonToClientDataConverterFactory(this);
 	}
 
 	private void verifyJsonObject(JsonObject json) {

@@ -18,12 +18,16 @@
  */
 package se.uu.ub.cora.clientbasicdata.converter.jsontodata;
 
+import java.util.Map;
+
 import se.uu.ub.cora.clientbasicdata.data.BasicClientDataResourceLink;
+import se.uu.ub.cora.clientdata.ClientActionLink;
 import se.uu.ub.cora.clientdata.ClientConvertible;
 import se.uu.ub.cora.clientdata.ClientDataResourceLink;
 import se.uu.ub.cora.clientdata.converter.JsonToClientDataConverter;
 import se.uu.ub.cora.json.parser.JsonObject;
 import se.uu.ub.cora.json.parser.JsonParseException;
+import se.uu.ub.cora.json.parser.JsonValue;
 
 public class JsonToBasicClientDataResourceLinkConverter implements JsonToClientDataConverter {
 
@@ -32,8 +36,19 @@ public class JsonToBasicClientDataResourceLinkConverter implements JsonToClientD
 	private static final String PARSING_ERROR_MSG = "Error parsing jsonObject: ResourceLink must "
 			+ "contain name, mimeType and may contain actionLinks and/or repeatId.";
 	private JsonObject jsonObject;
+	private JsonToBasicClientDataActionLinkConverterFactory actionLinkConverterFactory;
 
-	private JsonToBasicClientDataResourceLinkConverter(JsonObject jsonObject) {
+	public static JsonToBasicClientDataResourceLinkConverter usingActionLinkConverterFactoryforJsonObject(
+			JsonToBasicClientDataActionLinkConverterFactory actionLinkConverterFactory,
+			JsonObject jsonObject) {
+		return new JsonToBasicClientDataResourceLinkConverter(actionLinkConverterFactory,
+				jsonObject);
+	}
+
+	private JsonToBasicClientDataResourceLinkConverter(
+			JsonToBasicClientDataActionLinkConverterFactory actionLinkConverterFactory,
+			JsonObject jsonObject) {
+		this.actionLinkConverterFactory = actionLinkConverterFactory;
 		this.jsonObject = jsonObject;
 	}
 
@@ -73,7 +88,11 @@ public class JsonToBasicClientDataResourceLinkConverter implements JsonToClientD
 	}
 
 	private boolean actionLinksIsMissing() {
-		return !jsonObject.containsKey("actionLinks");
+		return !actionLinkExists();
+	}
+
+	private boolean actionLinkExists() {
+		return jsonObject.containsKey("actionLinks");
 	}
 
 	private boolean repeatIdExists() {
@@ -83,7 +102,29 @@ public class JsonToBasicClientDataResourceLinkConverter implements JsonToClientD
 	private ClientDataResourceLink createResourceLinkFromJson() {
 		ClientDataResourceLink resourceLink = createResourceLinkWithNameAndMimeType();
 		possiblySetRepeatId(resourceLink);
+		possiblyConvertAndSetActionLink(resourceLink);
 		return resourceLink;
+	}
+
+	private void possiblyConvertAndSetActionLink(ClientDataResourceLink resourceLink) {
+		if (actionLinkExists()) {
+			convertAndSetActionLink(resourceLink);
+		}
+	}
+
+	private void convertAndSetActionLink(ClientDataResourceLink resourceLink) {
+		JsonObject actionLinks = jsonObject.getValueAsJsonObject("actionLinks");
+		for (Map.Entry<String, JsonValue> actionLinkEntry : actionLinks.entrySet()) {
+			convertAndAddActionLink(resourceLink, actionLinkEntry);
+		}
+	}
+
+	private void convertAndAddActionLink(ClientDataResourceLink resourceLink,
+			Map.Entry<String, JsonValue> actionLinkEntry) {
+		JsonToBasicClientDataActionLinkConverter actionLinkConverter = actionLinkConverterFactory
+				.factor((JsonObject) actionLinkEntry.getValue());
+		ClientActionLink actionLink = actionLinkConverter.toInstance();
+		resourceLink.addActionLink(actionLink);
 	}
 
 	private ClientDataResourceLink createResourceLinkWithNameAndMimeType() {
@@ -103,39 +144,11 @@ public class JsonToBasicClientDataResourceLinkConverter implements JsonToClientD
 		}
 	}
 
-	// @Override
-	// public ClientConvertible toInstance() {
-	// BasicClientDataResourceLink resourceLink = (BasicClientDataResourceLink) super.toInstance();
-	// throwErrorIfLinkChildrenAreIncorrect(resourceLink);
-	// return resourceLink;
-	// }
-
-	// private void throwErrorIfLinkChildrenAreIncorrect(ClientDataGroup recordLink) {
-	// if (incorrectNumberOfChildren(recordLink) || incorrectChildren(recordLink)) {
-	// throw new JsonParseException(
-	// "ResourceLinkData must and can only contain children with name "
-	// + "streamId and filename and filesize and mimeType");
-	// }
-	// }
-	//
-	// private boolean incorrectNumberOfChildren(ClientDataGroup recordLink) {
-	// return recordLink.getChildren().size() != NUM_OF_RESOURCELINK_CHILDREN;
-	// }
-	//
-	// private boolean incorrectChildren(ClientDataGroup recordLink) {
-	// return !recordLink.containsChildWithNameInData("streamId")
-	// || !recordLink.containsChildWithNameInData("filename")
-	// || !recordLink.containsChildWithNameInData("filesize")
-	// || !recordLink.containsChildWithNameInData("mimeType");
-	// }
-	//
-	public static JsonToBasicClientDataResourceLinkConverter forJsonObject(JsonObject jsonObject) {
-		return new JsonToBasicClientDataResourceLinkConverter(jsonObject);
+	public JsonToBasicClientDataActionLinkConverterFactory onlyForTestGetActionLinkConverterFactory() {
+		return actionLinkConverterFactory;
 	}
-	//
-	// @Override
-	// protected void createInstanceOfDataElement(String nameInData) {
-	// dataGroup = BasicClientDataResourceLink.withNameInData(nameInData);
-	// }
 
+	public JsonObject onlyForTestGetJsonObject() {
+		return jsonObject;
+	}
 }

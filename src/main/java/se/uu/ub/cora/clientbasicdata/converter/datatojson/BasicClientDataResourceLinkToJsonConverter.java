@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Uppsala University Library
+ * Copyright 2021, 2023 Uppsala University Library
  *
  * This file is part of Cora.
  *
@@ -36,6 +36,14 @@ public class BasicClientDataResourceLinkToJsonConverter implements ClientDataToJ
 	private static final String GET = "GET";
 	ClientDataToJsonConverterFactory converterFactory;
 
+	public static BasicClientDataResourceLinkToJsonConverter usingConverterFactoryJsonBuilderFactoryAndDataResourceLinkAndRecordUrl(
+			ClientDataToJsonConverterFactory converterFactory, JsonBuilderFactory factory,
+			ClientDataResourceLink convertible, Optional<String> recordURL) {
+
+		return new BasicClientDataResourceLinkToJsonConverter(converterFactory, convertible,
+				recordURL, factory);
+	}
+
 	private BasicClientDataResourceLinkToJsonConverter(
 			ClientDataToJsonConverterFactory converterFactory,
 			ClientDataResourceLink dataResourceLink, Optional<String> recordURL,
@@ -47,16 +55,8 @@ public class BasicClientDataResourceLinkToJsonConverter implements ClientDataToJ
 		this.jsonBuilderFactory = jsonBuilderFactory;
 	}
 
-	public static BasicClientDataResourceLinkToJsonConverter usingConverterFactoryJsonBuilderFactoryAndDataResourceLinkAndRecordUrl(
-			ClientDataToJsonConverterFactory converterFactory, JsonBuilderFactory factory,
-			ClientDataResourceLink convertible, Optional<String> recordURL) {
-
-		return new BasicClientDataResourceLinkToJsonConverter(converterFactory, convertible,
-				recordURL, factory);
-	}
-
 	private void possiblyAddActionLink() {
-		if (dataResourceLink.hasReadAction()) {
+		if (dataResourceLink.hasReadAction() && recordURL.isPresent()) {
 			createReadActionLink();
 		}
 	}
@@ -69,6 +69,7 @@ public class BasicClientDataResourceLinkToJsonConverter implements ClientDataToJ
 	}
 
 	private JsonObjectBuilder buildReadAction() {
+
 		String url = recordURL.get() + "/" + dataResourceLink.getNameInData();
 		String mimeType = dataResourceLink.getMimeType();
 		JsonObjectBuilder readAction = jsonBuilderFactory.createObjectBuilder();

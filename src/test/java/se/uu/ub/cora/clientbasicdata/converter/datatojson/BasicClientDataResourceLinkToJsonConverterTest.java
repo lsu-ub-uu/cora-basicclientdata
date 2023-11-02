@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Uppsala University Library
+ * Copyright 2021, 2023 Uppsala University Library
  *
  * This file is part of Cora.
  *
@@ -239,82 +239,22 @@ public class BasicClientDataResourceLinkToJsonConverterTest {
 		assertEquals(json, excpectedJson);
 	}
 
-	/////////////////////////////////////////////////
+	@Test
+	public void testJsonWithActionsButMissingURL() throws Exception {
+		dataResourceLink.MRV.setDefaultReturnValuesSupplier("hasReadAction", () -> true);
+		converter = BasicClientDataResourceLinkToJsonConverter
+				.usingConverterFactoryJsonBuilderFactoryAndDataResourceLinkAndRecordUrl(
+						converterFactory, new OrgJsonBuilderFactoryAdapter(), dataResourceLink,
+						Optional.ofNullable(null));
 
-	// @Test
-	// public void testConverterFactorySetInParent() throws Exception {
-	// assertSame(resourceLinkToJsonConverter.converterFactory, converterFactory);
-	// }
-	//
-	// @Test
-	// public void testResourceLinkConverterExtendsGroupConverter() throws Exception {
-	// assertTrue(resourceLinkToJsonConverter instanceof BasicClientDataGroupToJsonConverter);
-	// assertTrue(resourceLinkToJsonConverter instanceof ClientDataToJsonConverter);
-	// }
-	//
-	// @Test
-	// public void testNoActions() throws Exception {
-	// resourceLinkToJsonConverter.hookForSubclassesToImplementExtraConversion();
-	//
-	// assertJsonBuilderNotUsed();
-	// }
-	//
-	// private void assertJsonBuilderNotUsed() {
-	// dataResourceLink.MCR.assertParameters("hasReadAction", 0);
-	//
-	// BasicClientJsonObjectBuilderSpy jsonObjectBuilderSpy = (BasicClientJsonObjectBuilderSpy)
-	// jsonBuilderFactorySpy.MCR
-	// .getReturnValue("createObjectBuilder", 0);
-	//
-	// jsonObjectBuilderSpy.MCR.assertMethodNotCalled("addKeyJsonObjectBuilder");
-	// }
-	//
-	// @Test
-	// public void testActionLinksBuilderAddedToMainBuilder() throws Exception {
-	// dataResourceLink.hasReadAction = true;
-	//
-	// resourceLinkToJsonConverter.hookForSubclassesToImplementExtraConversion();
-	//
-	// dataResourceLink.MCR.assertParameters("hasReadAction", 0);
-	//
-	// assertActionLinksBuilderAddedToMainBuilder();
-	// }
-	//
-	// private void assertActionLinksBuilderAddedToMainBuilder() {
-	// BasicClientJsonObjectBuilderSpy mainBuilderSpy = (BasicClientJsonObjectBuilderSpy)
-	// jsonBuilderFactorySpy.MCR
-	// .getReturnValue("createObjectBuilder", 0);
-	// BasicClientJsonObjectBuilderSpy actionLinksBuilderSpy = getActionsBuilder();
-	//
-	// mainBuilderSpy.MCR.assertParameters("addKeyJsonObjectBuilder", 0, "actionLinks",
-	// actionLinksBuilderSpy);
-	// }
-	//
-	// @Test
-	// public void testActionAddedToActionBuilder() throws Exception {
-	// dataResourceLink.hasReadAction = true;
-	//
-	// resourceLinkToJsonConverter.hookForSubclassesToImplementExtraConversion();
-	//
-	// BasicClientJsonObjectBuilderSpy actionLinksBuilderSpy = getActionsBuilder();
-	// BasicClientJsonObjectBuilderSpy internalLinkBuilderSpy = (BasicClientJsonObjectBuilderSpy)
-	// jsonBuilderFactorySpy.MCR
-	// .getReturnValue("createObjectBuilder", 2);
-	// actionLinksBuilderSpy.MCR.assertParameters("addKeyJsonObjectBuilder", 0, "read",
-	// internalLinkBuilderSpy);
-	//
-	// internalLinkBuilderSpy.MCR.assertParameters("addKeyString", 0, "rel", "read");
-	// internalLinkBuilderSpy.MCR.assertParameters("addKeyString", 1, "url",
-	// recordURL + "/" + dataResourceLink.getNameInData());
-	// internalLinkBuilderSpy.MCR.assertParameters("addKeyString", 2, "requestMethod", "GET");
-	// String mimeType = (String) dataResourceLink.MCR.getReturnValue("getMimeType", 0);
-	// internalLinkBuilderSpy.MCR.assertParameters("addKeyString", 3, "accept", mimeType);
-	// internalLinkBuilderSpy.MCR.assertNumberOfCallsToMethod("addKeyString", 4);
-	//
-	// }
-	//
-	// private BasicClientJsonObjectBuilderSpy getActionsBuilder() {
-	// return (BasicClientJsonObjectBuilderSpy) jsonBuilderFactorySpy.MCR
-	// .getReturnValue("createObjectBuilder", 1);
-	// }
+		String json = converter.toJson();
+
+		String excpectedJson = """
+				{
+				    "name": "master",
+				    "mimeType": "application/octet-stream"
+				}""";
+		assertEquals(json, excpectedJson);
+	}
+
 }

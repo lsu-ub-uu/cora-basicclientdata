@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Uppsala University Library
+ * Copyright 2015, 2023 Uppsala University Library
  *
  * This file is part of Cora.
  *
@@ -501,9 +501,16 @@ public class JsonToBasicClientDataConverterFactoryTest {
 					"name": "master"
 				}
 				""";
+
 		JsonToClientDataConverter jsonToDataConverter = jsonToDataConverterFactory
 				.factorUsingString(json);
+
 		assertTrue(jsonToDataConverter instanceof JsonToBasicClientDataResourceLinkConverter);
+		JsonToBasicClientDataResourceLinkConverter converter = (JsonToBasicClientDataResourceLinkConverter) jsonToDataConverter;
+		JsonToBasicClientDataActionLinkConverterFactory createdActionLinkConverterFactory = converter
+				.onlyForTestGetActionLinkConverterFactory();
+		assertTrue(
+				createdActionLinkConverterFactory instanceof JsonToBasicClientDataActionLinkConverterFactoryImp);
 	}
 
 	@Test
