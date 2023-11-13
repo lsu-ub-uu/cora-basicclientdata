@@ -26,6 +26,7 @@ import se.uu.ub.cora.clientdata.ClientDataAtomic;
 import se.uu.ub.cora.clientdata.ClientDataAttribute;
 import se.uu.ub.cora.clientdata.ClientDataGroup;
 import se.uu.ub.cora.clientdata.ClientDataList;
+import se.uu.ub.cora.clientdata.ClientDataRecord;
 import se.uu.ub.cora.clientdata.ClientDataRecordLink;
 import se.uu.ub.cora.clientdata.ClientDataResourceLink;
 import se.uu.ub.cora.clientdata.converter.ClientDataToJsonConverter;
@@ -62,6 +63,18 @@ public class BasicClientDataToJsonConverterFactory implements ClientDataToJsonCo
 			return BasicClientDataListToJsonConverter.usingJsonFactoryForDataList(this,
 					builderFactory, (ClientDataList) convertible);
 		}
+		if (convertible instanceof ClientDataRecord) {
+			// RecordActionsToJsonConverter actionsConverter = RecordActionsToJsonConverterImp
+			// .usingConverterFactoryAndBuilderFactoryAndBaseUrl(this, builderFactory,
+			// baseUrl);
+			// return BasicClientDataRecordToJsonConverter
+			// .usingConverterFactoryAndActionsConverterAndBuilderFactoryAndBaseUrlAndDataRecord(
+			// this, actionsConverter, builderFactory, baseUrl,
+			// (ClientDataRecord) convertible);
+			return BasicClientDataRecordToJsonConverter
+					.usingConverterFactoryAndActionsConverterAndBuilderFactoryAndBaseUrlAndDataRecord(
+							this, null, builderFactory, baseUrl, (ClientDataRecord) convertible);
+		}
 
 		if (isDataRecordLinkAndHasBaseUrl(convertible)) {
 			return BasicClientDataRecordLinkToJsonConverter
@@ -76,6 +89,7 @@ public class BasicClientDataToJsonConverterFactory implements ClientDataToJsonCo
 							optionalRecordUrl);
 
 		}
+
 		if (convertible instanceof ClientDataGroup) {
 			return BasicClientDataGroupToJsonConverter
 					.usingConverterFactoryAndBuilderFactoryAndDataGroup(this, builderFactory,
