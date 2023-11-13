@@ -66,49 +66,50 @@ public class BasicClientDataRecordToJsonConverter implements ClientDataToJsonCon
 	public JsonObjectBuilder toJsonObjectBuilder() {
 		convertMainDataGroup();
 		possiblyConvertPermissions();
-		// possiblyConvertActions();
+		possiblyConvertActions();
 		return createTopLevelJsonObjectWithRecordAsChild();
 	}
 
-	// private void possiblyConvertActions() {
-	// if (dataRecord.hasActions()) {
-	// ActionsConverterData actionsConverterData = collectDataForActions();
-	// possiblySetSearchIdFromRecordType(actionsConverterData);
-	// JsonObjectBuilder jsonObjectBuilder = actionsConverter
-	// .toJsonObjectBuilder(actionsConverterData);
-	// recordJsonObjectBuilder.addKeyJsonObjectBuilder("actionLinks", jsonObjectBuilder);
-	// }
-	// }
+	private void possiblyConvertActions() {
+		if (dataRecord.hasActions()) {
+			BasicClientActionsConverterData actionsConverterData = collectDataForActions();
+			possiblySetSearchIdFromRecordType(actionsConverterData);
+			JsonObjectBuilder jsonObjectBuilder = actionsConverter
+					.toJsonObjectBuilder(actionsConverterData);
+			recordJsonObjectBuilder.addKeyJsonObjectBuilder("actionLinks", jsonObjectBuilder);
+		}
+	}
 
-	// private ActionsConverterData collectDataForActions() {
-	// ActionsConverterData actionsConverterData = new ActionsConverterData();
-	// actionsConverterData.recordType = dataRecord.getType();
-	// actionsConverterData.recordId = dataRecord.getId();
-	// actionsConverterData.actions.addAll(dataRecord.getActions());
-	// return actionsConverterData;
-	// }
+	private BasicClientActionsConverterData collectDataForActions() {
+		BasicClientActionsConverterData actionsConverterData = new BasicClientActionsConverterData();
+		actionsConverterData.recordType = dataRecord.getType();
+		actionsConverterData.recordId = dataRecord.getId();
+		actionsConverterData.actions.addAll(dataRecord.getActions());
+		return actionsConverterData;
+	}
 
-	// private void possiblySetSearchIdFromRecordType(ActionsConverterData actionsConverterData) {
-	// if (thisRecordIsRecordType()) {
-	// // ClientDataGroup dataGroup = dataRecord.getDataRecordGroup();
-	// ClientDataGroup dataGroup = ClientDataProvider
-	// .createGroupFromRecordGroup(dataRecord.getDataRecordGroup());
-	// possiblySetSearchRecordIdIfDefinedInDataGroup(actionsConverterData, dataGroup);
-	// }
-	// }
+	private void possiblySetSearchIdFromRecordType(
+			BasicClientActionsConverterData actionsConverterData) {
+		if (thisRecordIsRecordType()) {
+			// ClientDataGroup dataGroup = dataRecord.getDataRecordGroup();
+			ClientDataGroup dataGroup = ClientDataProvider
+					.createGroupFromRecordGroup(dataRecord.getDataRecordGroup());
+			possiblySetSearchRecordIdIfDefinedInDataGroup(actionsConverterData, dataGroup);
+		}
+	}
 
-	// private void possiblySetSearchRecordIdIfDefinedInDataGroup(
-	// ActionsConverterData actionsConverterData, ClientDataGroup dataGroup) {
-	// if (dataGroup.containsChildWithNameInData("search")) {
-	// ClientDataGroup searchGroup = dataGroup.getFirstGroupWithNameInData("search");
-	// actionsConverterData.searchRecordId = searchGroup
-	// .getFirstAtomicValueWithNameInData("linkedRecordId");
-	// }
-	// }
+	private void possiblySetSearchRecordIdIfDefinedInDataGroup(
+			BasicClientActionsConverterData actionsConverterData, ClientDataGroup dataGroup) {
+		if (dataGroup.containsChildWithNameInData("search")) {
+			ClientDataGroup searchGroup = dataGroup.getFirstGroupWithNameInData("search");
+			actionsConverterData.searchRecordId = searchGroup
+					.getFirstAtomicValueWithNameInData("linkedRecordId");
+		}
+	}
 
-	// private boolean thisRecordIsRecordType() {
-	// return "recordType".equals(dataRecord.getType());
-	// }
+	private boolean thisRecordIsRecordType() {
+		return "recordType".equals(dataRecord.getType());
+	}
 
 	private void convertMainDataGroup() {
 		ClientDataToJsonConverter dataToJsonConverter;
