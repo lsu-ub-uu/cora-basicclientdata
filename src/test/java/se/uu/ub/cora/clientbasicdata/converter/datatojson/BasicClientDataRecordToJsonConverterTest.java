@@ -34,9 +34,9 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import se.uu.ub.cora.clientdata.ClientDataGroup;
+import se.uu.ub.cora.clientdata.converter.ClientDataToJsonConverter;
 import se.uu.ub.cora.clientdata.spies.ClientDataRecordSpy;
 import se.uu.ub.cora.clientdata.spy.DataRecordSpy;
-import se.uu.ub.cora.clientdata.starter.DataToJsonConverterSpy;
 import se.uu.ub.cora.json.builder.JsonObjectBuilder;
 import se.uu.ub.cora.testutils.mcr.MethodCallRecorder;
 
@@ -48,7 +48,7 @@ public class BasicClientDataRecordToJsonConverterTest {
 
 	private BasicClientDataToJsonConverterFactorySpy converterFactory;
 	private String baseUrl = "some/base/url/";
-	private ClientClientDataRecordSpy dataGroup;
+	private ClientDataRecordSpy dataGroup;
 	private BasicClientRecordActionsToJsonConverterSpy actionsConverterSpy;
 
 	@BeforeMethod
@@ -56,7 +56,7 @@ public class BasicClientDataRecordToJsonConverterTest {
 		converterFactory = new BasicClientDataToJsonConverterFactorySpy();
 		actionsConverterSpy = new BasicClientRecordActionsToJsonConverterSpy();
 		builderFactory = new BasicClientJsonBuilderFactorySpy();
-		dataGroup = new ClientClientDataRecordSpy();
+		dataGroup = new ClientDataRecordSpy();
 		dataRecord = new ClientDataRecordSpy();
 		dataRecord.MRV.setDefaultReturnValuesSupplier("getDataGroup",
 				(Supplier<ClientDataGroup>) () -> dataGroup);
@@ -71,7 +71,7 @@ public class BasicClientDataRecordToJsonConverterTest {
 	@Test
 	public void testConverterImplementsDataToJsonConverter() throws Exception {
 		createDataRecordToJsonConverter();
-		assertTrue(dataRecordToJsonConverter instanceof DataToJsonConverter);
+		assertTrue(dataRecordToJsonConverter instanceof ClientDataToJsonConverter);
 	}
 
 	@Test
@@ -92,8 +92,8 @@ public class BasicClientDataRecordToJsonConverterTest {
 				.getReturnValue("factorUsingConvertible", 0);
 		assertKeyDataAddedToRecordBuilderIsBuilderFromDataGroupConverter(dataGroupConverter);
 
-		BasicClientBasicClientJsonObjectBuilderSpy recordBuilder = getRecordBuilderFromSpy();
-		BasicClientBasicClientJsonObjectBuilderSpy rootWrappingBuilder = getRootWrappingBuilder();
+		BasicClientJsonObjectBuilderSpy recordBuilder = getRecordBuilderFromSpy();
+		BasicClientJsonObjectBuilderSpy rootWrappingBuilder = getRootWrappingBuilder();
 		rootWrappingBuilder.MCR.assertParameters("addKeyJsonObjectBuilder", 0, "record",
 				recordBuilder);
 		assertSame(returnedJsonObjectBuilder, rootWrappingBuilder);
@@ -101,20 +101,20 @@ public class BasicClientDataRecordToJsonConverterTest {
 
 	private void assertKeyDataAddedToRecordBuilderIsBuilderFromDataGroupConverter(
 			BasicClientDataToJsonConverterSpy dataGroupConverter) {
-		BasicClientBasicClientJsonObjectBuilderSpy dataGroupBuilder = (BasicClientBasicClientJsonObjectBuilderSpy) dataGroupConverter.MCR
+		BasicClientJsonObjectBuilderSpy dataGroupBuilder = (BasicClientJsonObjectBuilderSpy) dataGroupConverter.MCR
 				.getReturnValue("toJsonObjectBuilder", 0);
 
-		BasicClientBasicClientJsonObjectBuilderSpy recordBuilder = getRecordBuilderFromSpy();
+		BasicClientJsonObjectBuilderSpy recordBuilder = getRecordBuilderFromSpy();
 		recordBuilder.MCR.assertParameters("addKeyJsonObjectBuilder", 0, "data", dataGroupBuilder);
 	}
 
-	private BasicClientBasicClientJsonObjectBuilderSpy getRootWrappingBuilder() {
-		return (BasicClientBasicClientJsonObjectBuilderSpy) builderFactory.MCR
+	private BasicClientJsonObjectBuilderSpy getRootWrappingBuilder() {
+		return (BasicClientJsonObjectBuilderSpy) builderFactory.MCR
 				.getReturnValue("createObjectBuilder", 1);
 	}
 
-	private BasicClientBasicClientJsonObjectBuilderSpy getRecordBuilderFromSpy() {
-		return (BasicClientBasicClientJsonObjectBuilderSpy) builderFactory.MCR
+	private BasicClientJsonObjectBuilderSpy getRecordBuilderFromSpy() {
+		return (BasicClientJsonObjectBuilderSpy) builderFactory.MCR
 				.getReturnValue("createObjectBuilder", 0);
 	}
 
@@ -132,12 +132,12 @@ public class BasicClientDataRecordToJsonConverterTest {
 		converterFactory.MCR.assertParameters("factorUsingBaseUrlAndRecordUrlAndConvertible", 0,
 				baseUrl, recordUrl, dataRecord.getDataGroup());
 
-		DataToJsonConverterSpy dataGroupConverter = (DataToJsonConverterSpy) converterFactory.MCR
+		BasicClientDataToJsonConverterSpy dataGroupConverter = (BasicClientDataToJsonConverterSpy) converterFactory.MCR
 				.getReturnValue("factorUsingBaseUrlAndRecordUrlAndConvertible", 0);
 		assertKeyDataAddedToRecordBuilderIsBuilderFromDataGroupConverter(dataGroupConverter);
 
-		BasicClientBasicClientJsonObjectBuilderSpy recordBuilder = getRecordBuilderFromSpy();
-		BasicClientBasicClientJsonObjectBuilderSpy rootWrappingBuilder = getRootWrappingBuilder();
+		BasicClientJsonObjectBuilderSpy recordBuilder = getRecordBuilderFromSpy();
+		BasicClientJsonObjectBuilderSpy rootWrappingBuilder = getRootWrappingBuilder();
 		rootWrappingBuilder.MCR.assertParameters("addKeyJsonObjectBuilder", 0, "record",
 				recordBuilder);
 	}
@@ -159,10 +159,10 @@ public class BasicClientDataRecordToJsonConverterTest {
 	}
 
 	private void assertTwoPermissionsAddedCorrectlyForType(String type, int postitionOfTypes) {
-		BasicClientBasicClientJsonObjectBuilderSpy permissionBuilder = getPermissionBuilderFromSpy();
-		BasicClientBasicClientJsonObjectBuilderSpy recordBuilder = getRecordBuilderFromSpy();
+		BasicClientJsonObjectBuilderSpy permissionBuilder = getPermissionBuilderFromSpy();
+		BasicClientJsonObjectBuilderSpy recordBuilder = getRecordBuilderFromSpy();
 
-		JsonArrayBuilderSpy typePermissionBuilder = getTypePermissionArrayBuilderFromSpy(
+		BasicClientJsonArrayBuilderSpy typePermissionBuilder = getTypePermissionArrayBuilderFromSpy(
 				postitionOfTypes);
 
 		assertPermissionsCalledAddString(type, typePermissionBuilder);
@@ -177,7 +177,7 @@ public class BasicClientDataRecordToJsonConverterTest {
 	}
 
 	private void assertPermissionsCalledAddString(String type,
-			JsonArrayBuilderSpy typePermissionBuilder) {
+			BasicClientJsonArrayBuilderSpy typePermissionBuilder) {
 
 		List<Object> values = getAllParameterValuesOnCallAddString(typePermissionBuilder);
 
@@ -186,7 +186,7 @@ public class BasicClientDataRecordToJsonConverterTest {
 	}
 
 	private List<Object> getAllParameterValuesOnCallAddString(
-			JsonArrayBuilderSpy typePermissionBuilder) {
+			BasicClientJsonArrayBuilderSpy typePermissionBuilder) {
 		List<Object> values = new ArrayList<>();
 		for (int i = 0; i <= 1; i++) {
 			Object value = getValueFromAParameter(typePermissionBuilder, i);
@@ -195,20 +195,22 @@ public class BasicClientDataRecordToJsonConverterTest {
 		return values;
 	}
 
-	private Object getValueFromAParameter(JsonArrayBuilderSpy typePermissionBuilder, int i) {
+	private Object getValueFromAParameter(BasicClientJsonArrayBuilderSpy typePermissionBuilder,
+			int i) {
 		Map<String, Object> parameters = typePermissionBuilder.MCR
 				.getParametersForMethodAndCallNumber("addString", i);
 		Object value = parameters.get("value");
 		return value;
 	}
 
-	private JsonArrayBuilderSpy getTypePermissionArrayBuilderFromSpy(int postitionOfTypes) {
-		return (JsonArrayBuilderSpy) builderFactory.MCR.getReturnValue("createArrayBuilder",
-				postitionOfTypes);
+	private BasicClientJsonArrayBuilderSpy getTypePermissionArrayBuilderFromSpy(
+			int postitionOfTypes) {
+		return (BasicClientJsonArrayBuilderSpy) builderFactory.MCR
+				.getReturnValue("createArrayBuilder", postitionOfTypes);
 	}
 
-	private BasicClientBasicClientJsonObjectBuilderSpy getPermissionBuilderFromSpy() {
-		return (BasicClientBasicClientJsonObjectBuilderSpy) builderFactory.MCR
+	private BasicClientJsonObjectBuilderSpy getPermissionBuilderFromSpy() {
+		return (BasicClientJsonObjectBuilderSpy) builderFactory.MCR
 				.getReturnValue("createObjectBuilder", 1);
 	}
 
@@ -256,16 +258,16 @@ public class BasicClientDataRecordToJsonConverterTest {
 		String jsonString = forTest.toJson();
 
 		forTest.MCR.assertMethodWasCalled("toJsonObjectBuilder");
-		BasicClientBasicClientJsonObjectBuilderSpy builderSpy = (BasicClientBasicClientJsonObjectBuilderSpy) forTest.MCR
+		BasicClientJsonObjectBuilderSpy builderSpy = (BasicClientJsonObjectBuilderSpy) forTest.MCR
 				.getReturnValue("toJsonObjectBuilder", 0);
 		builderSpy.MCR.assertReturn("toJsonFormattedPrettyString", 0, jsonString);
 		builderSpy.MCR.assertMethodWasCalled("toJsonFormattedPrettyString");
 	}
 
-	private class DataRecordToJsonConverterForTest extends DataRecordToJsonConverter {
+	private class DataRecordToJsonConverterForTest extends BasicClientDataRecordToJsonConverter {
 		MethodCallRecorder MCR = new MethodCallRecorder();
 
-		DataRecordToJsonConverterForTest(JsonBuilderFactorySpy builderFactory) {
+		DataRecordToJsonConverterForTest(BasicClientJsonBuilderFactorySpy builderFactory) {
 			super(null, null, builderFactory, null, null);
 		}
 
@@ -294,7 +296,7 @@ public class BasicClientDataRecordToJsonConverterTest {
 
 	@Test
 	public void testConvertActionsNoActions() throws Exception {
-		DataRecordSpy dataRecordSpy = createDataRecordToJsonConverterUsingDataRecordSpy();
+		ClientDataRecordSpy dataRecordSpy = createDataRecordToJsonConverterUsingDataRecordSpy();
 
 		dataRecordToJsonConverter.toJsonObjectBuilder();
 
@@ -303,7 +305,7 @@ public class BasicClientDataRecordToJsonConverterTest {
 
 	private ClientDataRecordSpy createDataRecordToJsonConverterUsingDataRecordSpy() {
 		ClientDataRecordSpy dataRecordSpy = new ClientDataRecordSpy();
-		dataRecordToJsonConverter = DataRecordToJsonConverter
+		dataRecordToJsonConverter = BasicClientDataRecordToJsonConverter
 				.usingConverterFactoryAndActionsConverterAndBuilderFactoryAndBaseUrlAndDataRecord(
 						converterFactory, actionsConverterSpy, builderFactory, baseUrl,
 						dataRecordSpy);
