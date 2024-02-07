@@ -19,7 +19,10 @@
 
 package se.uu.ub.cora.clientbasicdata.converter.jsontodata;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import se.uu.ub.cora.clientbasicdata.data.BasicClientDataRecord;
 import se.uu.ub.cora.clientdata.ClientActionLink;
@@ -38,7 +41,7 @@ public class JsonToBasicClientDataRecordConverter implements JsonToClientDataCon
 
 	private static final String PERMISSIONS = "permissions";
 	private static final String ACTION_LINKS = "actionLinks";
-	private static final int NUM_OF_ALLOWED_KEYS = 3;
+	private static final int NUM_OF_ALLOWED_KEYS = 4;
 	private JsonObject json;
 	private JsonObject jsonRecord;
 	private JsonToClientDataConverterFactory factory;
@@ -78,6 +81,7 @@ public class JsonToBasicClientDataRecordConverter implements JsonToClientDataCon
 		clientDataRecord = BasicClientDataRecord.withDataRecordGroup(clientDataRecordGroup);
 		possiblyAddActionLinks();
 		possiblyAddPermissions();
+		possiblyOtherProtocols();
 		return clientDataRecord;
 	}
 
@@ -94,6 +98,38 @@ public class JsonToBasicClientDataRecordConverter implements JsonToClientDataCon
 			JsonArray readPermissions = permissions.getValueAsJsonArray("read");
 			addReadPermissions(readPermissions);
 		}
+	}
+
+	private void possiblyOtherProtocols() {
+		if (jsonRecord.containsKey("otherProtocols")) {
+			JsonObject otherProtocols = jsonRecord.getValueAsJsonObject("otherProtocols");
+			for (Entry<String, JsonValue> protocolEntry : otherProtocols.entrySet()) {
+				addProtocolToDataRecord(protocolEntry);
+			}
+		}
+
+	}
+
+	private void addProtocolToDataRecord(Entry<String, JsonValue> protocolEntry) {
+		Map<String, String> properites = readProtocolProperties(protocolEntry);
+		clientDataRecord.putProtocol(protocolEntry.getKey(), properites);
+	}
+
+	private Map<String, String> readProtocolProperties(Entry<String, JsonValue> protocolEntry) {
+		var setOfPropertyEntries = getPropertiesSet(protocolEntry);
+		Map<String, String> properites = new HashMap<>();
+		for (Entry<String, JsonValue> property : setOfPropertyEntries) {
+			properites.put(property.getKey(), readPropertyValue(property));
+		}
+		return properites;
+	}
+
+	private Set<Entry<String, JsonValue>> getPropertiesSet(Entry<String, JsonValue> protocolEntry) {
+		return ((JsonObject) protocolEntry.getValue()).entrySet();
+	}
+
+	private String readPropertyValue(Entry<String, JsonValue> propertiesEntry) {
+		return ((JsonString) propertiesEntry.getValue()).getStringValue();
 	}
 
 	private void addReadPermissions(JsonArray readPermissions) {
@@ -133,7 +169,8 @@ public class JsonToBasicClientDataRecordConverter implements JsonToClientDataCon
 	private void validateOnlyCorrectKeysAtSecondLevel() {
 		if (moreKeysThanAllowed() || maxNumOfKeysButPermissionsIsMissing()) {
 			throw new JsonParseException(
-					"Record data must contain only keys: data and actionLinks and permissions");
+					"Record data must contain keys: data and actionLinks and possibly "
+							+ "permissions and otherProtocols");
 
 		}
 		if (!jsonRecord.containsKey("data")) {

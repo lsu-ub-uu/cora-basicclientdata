@@ -24,7 +24,9 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -36,13 +38,14 @@ import se.uu.ub.cora.clientdata.ClientAction;
 import se.uu.ub.cora.clientdata.ClientActionLink;
 import se.uu.ub.cora.clientdata.ClientData;
 import se.uu.ub.cora.clientdata.ClientDataMissingException;
+import se.uu.ub.cora.clientdata.ClientDataRecord;
 import se.uu.ub.cora.clientdata.ClientDataRecordLink;
 import se.uu.ub.cora.clientdata.spies.ClientActionLinkSpy;
 import se.uu.ub.cora.clientdata.spies.ClientDataRecordGroupSpy;
 import se.uu.ub.cora.clientdata.spies.ClientDataRecordLinkSpy;
 
 public class BasicClientDataRecordTest {
-	private BasicClientDataRecord dataRecord;
+	private ClientDataRecord dataRecord;
 	private ClientDataRecordGroupSpy dataRecordGroup;
 	// private ClientDataGroupSpy recordInfoGroup;
 	// private ClientDataRecordLinkSpy typeLink;
@@ -51,18 +54,9 @@ public class BasicClientDataRecordTest {
 	@BeforeMethod
 	public void beforeMethod() {
 		searchLink = new ClientDataRecordLinkSpy();
-
-		// typeLink = new ClientDataRecordLinkSpy();
-		// recordInfoGroup = new ClientDataGroupSpy();
-		// recordInfoGroup.MRV.setSpecificReturnValuesSupplier("getFirstChildWithNameInData",
-		// (Supplier<ClientDataRecordLink>) () -> typeLink, "type");
-
 		dataRecordGroup = new ClientDataRecordGroupSpy();
 		dataRecordGroup.MRV.setDefaultReturnValuesSupplier("getType", () -> "someType");
 		dataRecordGroup.MRV.setDefaultReturnValuesSupplier("getId", () -> "someId");
-
-		// dataRecordGroup.MRV.setSpecificReturnValuesSupplier("getFirstGroupWithNameInData",
-		// (Supplier<ClientDataGroup>) () -> recordInfoGroup, "recordInfo");
 
 		dataRecordGroup.MRV.setSpecificReturnValuesSupplier("getFirstChildWithNameInData",
 				(Supplier<ClientDataRecordLink>) () -> searchLink, "search");
@@ -319,4 +313,37 @@ public class BasicClientDataRecordTest {
 		searchLink.MCR.assertReturn("getLinkedRecordId", 0, searchId);
 	}
 
+	@Test
+	public void testGetOtherProtocols_hasProtocol() throws Exception {
+		String protocol = "iiif";
+		assertFalse(dataRecord.hasProtocol(protocol));
+
+		Map<String, String> iiifProperties = createIiifProperties();
+		dataRecord.putProtocol(protocol, iiifProperties);
+
+		assertTrue(dataRecord.hasProtocol(protocol));
+	}
+
+	private Map<String, String> createIiifProperties() {
+		Map<String, String> iiifProperties = new HashMap<>();
+		iiifProperties.put("server", "someServer");
+		return iiifProperties;
+	}
+
+	@Test
+	public void testGetOtherProtocols_getProtocol() throws Exception {
+		String protocol = "iiif";
+		Map<String, String> iiifProperties = createIiifProperties();
+
+		dataRecord.putProtocol(protocol, iiifProperties);
+		Map<String, String> returnedIiifProperties = dataRecord.getProtocol(protocol);
+
+		assertEquals(returnedIiifProperties, iiifProperties);
+	}
+
+	@Test(expectedExceptions = ClientDataMissingException.class, expectedExceptionsMessageRegExp = ""
+			+ "Requested protocol: nonExistingProtocol, does not exist in ClientDataRecord")
+	public void testGetProtocolDoesNotExist() throws Exception {
+		dataRecord.getProtocol("nonExistingProtocol");
+	}
 }

@@ -22,6 +22,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
 
+import java.util.Map;
 import java.util.Set;
 
 import org.testng.annotations.BeforeMethod;
@@ -106,36 +107,90 @@ public class JsonToBasicClientDataRecordConverterTest {
 	@Test(expectedExceptions = JsonParseException.class, expectedExceptionsMessageRegExp = ""
 			+ "Error parsing jsonRecord: Record data must contain only key: record")
 	public void testRecordExtraKey() throws Exception {
-		String json = "{\"record\":{";
-		json += "\"data\":{";
-		json += "\"name\":\"groupNameInData\", \"children\":[]";
-		json += "}";
-		json += ",\"actionLinks\":\"noActionLink\"";
-		json += "}";
-		json += ",\"someExtraKey\":\"someExtraData\"";
-		json += "}";
+		String json = """
+				{
+					"record":{
+						"data":{
+							"name":"groupNameInData", "children":[]
+						}
+						,"actionLinks":"noActionLink"
+					},
+					"someExtraKey":"someExtraData"
+				}
+				""";
 		parseStringAndCreateConverter(json);
 	}
 
 	@Test(expectedExceptions = JsonParseException.class, expectedExceptionsMessageRegExp = ""
 			+ "Error parsing jsonRecord: Record data must contain child with key: actionLinks")
 	public void testRecordNoActionLinks() throws Exception {
-		String json = "{\"record\":{\"data\":{\"name\":\"groupNameInData\",\"children\":[]},\"permissions\":{\"read\":[\"librisId\"],\"write\":[\"librisId\",\"rootOrganisation\"]}}}";
+		String json = "{\"record\":{\"data\":{\"name\":\"groupNameInData\",\"children\":[]},"
+				+ "\"permissions\":{\"read\":[\"librisId\"],\"write\":[\"librisId\",\"rootOrganisation\"]}}}";
 
 		parseStringAndCreateConverter(json);
 	}
 
 	@Test(expectedExceptions = JsonParseException.class, expectedExceptionsMessageRegExp = ""
-			+ "Error parsing jsonRecord: Record data must contain only keys: data and actionLinks and permissions")
+			+ "Error parsing jsonRecord: Record data must contain keys: data and actionLinks "
+			+ "and possibly permissions and otherProtocols")
 	public void testRecordExtraKeyOnSecondLevel() throws Exception {
-		String json = "{\"record\":{\"data\":{\"name\":\"groupNameInData\",\"children\":[]},\"actionLinks\":{\"read\":{\"requestMethod\":\"GET\",\"rel\":\"read\"}},\"permissions\":{\"read\":[\"librisId\"]},\"extraKey\":{\"name\":\"groupNameInData\"}}}";
+		String json = """
+				{
+				  "record": {
+				    "data": {
+				      "name": "groupNameInData",
+				      "children": []
+				    },
+				    "actionLinks": {
+				      "read": {
+				        "requestMethod": "GET",
+				        "rel": "read"
+				      }
+				    },
+				    "permissions": {
+				      "read": [
+				        "librisId"
+				      ]
+				    },
+				    "extraKey": {
+				      "name": "groupNameInData"
+				    },
+				    "otherProtocols": {
+				      "iiif": {
+				        "server": "someServer",
+				        "identifier": "someIdentifier"
+				      }
+				    }
+				  }
+				}""";
 		parseStringAndCreateConverter(json);
 	}
 
 	@Test(expectedExceptions = JsonParseException.class, expectedExceptionsMessageRegExp = ""
-			+ "Error parsing jsonRecord: Record data must contain only keys: data and actionLinks and permissions")
+			+ "Error parsing jsonRecord: Record data must contain keys: data and actionLinks "
+			+ "and possibly permissions and otherProtocols")
 	public void testMaxNumberOfKeysOnSecondLevelNoPermissions() throws Exception {
-		String json = "{\"record\":{\"data\":{\"name\":\"groupNameInData\",\"children\":[]},\"actionLinks\":{\"read\":{\"requestMethod\":\"GET\",\"rel\":\"read\"}},\"NOTpermissions\":{\"read\":[\"librisId\"]}}}";
+		String json = """
+				  {"record": {
+				    "data": {
+				      "name": "groupNameInData",
+				      "children": []
+				    },
+				    "actionLinks": {
+				      "read": {
+				        "requestMethod": "GET",
+				        "rel": "read"
+				      }
+				    },
+				    "NOTpermissions": {
+				      "read": [
+				        "librisId"
+				      ]
+				    },
+					"otherProtocols":{"iiif":{"server":"someServer","identifier":"someIdentifier"}}
+				  }
+				}
+				""";
 
 		parseStringAndCreateConverter(json);
 
@@ -143,10 +198,10 @@ public class JsonToBasicClientDataRecordConverterTest {
 
 	@Test
 	public void providedFactoryIsUsedForActionLinks() throws Exception {
-		setActionLinkConvereterToreturnClientDataGroup();
-
+		setActionLinkConvereterToReturnClientDataGroup();
 		String json = """
-				{"record":{
+				{
+				"record":{
 					"data":{
 						"name":"groupNameInData"
 						, "children":[]
@@ -183,7 +238,7 @@ public class JsonToBasicClientDataRecordConverterTest {
 				clientDataRecord.getActionLink(ClientAction.READ).get());
 	}
 
-	private void setActionLinkConvereterToreturnClientDataGroup() {
+	private void setActionLinkConvereterToReturnClientDataGroup() {
 		ClientDataRecordGroupSpy clientDataRecordGroup = new ClientDataRecordGroupSpy();
 
 		JsonToClientDataConverterSpy jsonToDataConverter = new JsonToClientDataConverterSpy();
@@ -195,7 +250,7 @@ public class JsonToBasicClientDataRecordConverterTest {
 
 	@Test
 	public void testCheckReadPermissions() {
-		setActionLinkConvereterToreturnClientDataGroup();
+		setActionLinkConvereterToReturnClientDataGroup();
 
 		String json = """
 				{"record":{"data":{"name":"groupNameInData","children":[]},
@@ -212,7 +267,7 @@ public class JsonToBasicClientDataRecordConverterTest {
 
 	@Test
 	public void testCheckWritePermissions() {
-		setActionLinkConvereterToreturnClientDataGroup();
+		setActionLinkConvereterToReturnClientDataGroup();
 
 		String json = """
 				{"record":{"data":{"name":"groupNameInData","children":[]},
@@ -224,6 +279,24 @@ public class JsonToBasicClientDataRecordConverterTest {
 		assertEquals(writePermissions.size(), 2);
 		assertTrue(writePermissions.contains("rating"));
 		assertTrue(writePermissions.contains("parentId"));
+
+	}
+
+	@Test
+	public void testOtherProtocols() throws Exception {
+		setActionLinkConvereterToReturnClientDataGroup();
+
+		String json = """
+				{"record":{"data":{"name":"groupNameInData","children":[]},
+				"actionLinks":{"read":{"requestMethod":"GET","rel":"read"}},
+				"permissions":{"write":["rating","parentId"]},
+				"otherProtocols":{"iiif":{"server":"someServer","identifier":"someIdentifier"}}}}""";
+
+		ClientDataRecord clientDataRecord = (ClientDataRecord) parseStringAndCreateConverter(json);
+
+		assertTrue(clientDataRecord.hasProtocol("iiif"));
+		Map<String, String> iiifProtocol = clientDataRecord.getProtocol("iiif");
+		assertEquals(iiifProtocol.get("server"), "someServer");
 
 	}
 

@@ -18,8 +18,10 @@
  */
 package se.uu.ub.cora.clientbasicdata.data;
 
+import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
@@ -38,6 +40,7 @@ public final class BasicClientDataRecord implements ClientDataRecord {
 	private Map<ClientAction, ClientActionLink> actions = new EnumMap<>(ClientAction.class);
 	private Set<String> readPermissions = new LinkedHashSet<>();
 	private Set<String> writePermissions = new LinkedHashSet<>();
+	private Map<String, Map<String, String>> protocols = new HashMap<>();
 
 	public static BasicClientDataRecord withDataRecordGroup(ClientDataRecordGroup dataRecordGroup) {
 		return new BasicClientDataRecord(dataRecordGroup);
@@ -159,6 +162,34 @@ public final class BasicClientDataRecord implements ClientDataRecord {
 				.getFirstChildWithNameInData(SEARCH);
 		return search.getLinkedRecordId();
 
+	}
+
+	@Override
+	public boolean hasProtocol(String protocol) {
+		return protocols.containsKey(protocol);
+	}
+
+	@Override
+	public void putProtocol(String protocol, Map<String, String> protocolProperties) {
+		protocols.put(protocol, protocolProperties);
+	}
+
+	@Override
+	public Map<String, String> getProtocol(String protocol) {
+		possiblyThrowErrorIfRequestedProtocolIsMissing(protocol);
+		return protocols.get(protocol);
+	}
+
+	private void possiblyThrowErrorIfRequestedProtocolIsMissing(String protocol) {
+		if (requestedProtocolIsMissing(protocol)) {
+			String errorText = MessageFormat.format(
+					"Requested protocol: {0}, does not exist in ClientDataRecord", protocol);
+			throw new ClientDataMissingException(errorText);
+		}
+	}
+
+	private boolean requestedProtocolIsMissing(String protocol) {
+		return !protocols.containsKey(protocol);
 	}
 
 }
