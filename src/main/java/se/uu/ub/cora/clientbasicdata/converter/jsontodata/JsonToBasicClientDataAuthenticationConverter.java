@@ -18,6 +18,8 @@
  */
 package se.uu.ub.cora.clientbasicdata.converter.jsontodata;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import se.uu.ub.cora.clientbasicdata.data.BasicClientDataAuthentication;
@@ -30,25 +32,24 @@ import se.uu.ub.cora.json.parser.JsonObject;
 import se.uu.ub.cora.json.parser.JsonParseException;
 import se.uu.ub.cora.json.parser.JsonValue;
 
-public class JsonToBasicClientDataAutenticationConverter {
+public class JsonToBasicClientDataAuthenticationConverter implements JsonToClientDataConverter {
 	private static final String DATA = "data";
 	private static final String ACTION_LINKS = "actionLinks";
 	private static final int NUM_OF_ALLOWED_KEYS = 2;
 
 	private JsonObject json;
-	private JsonObject jsonRecord;
 	private JsonToClientDataConverterFactory factory;
 	private JsonToBasicClientDataActionLinkConverterFactory actionLinkConverterFactory;
 	private BasicClientDataAuthentication clientDataAuthentication;
 
-	public static JsonToBasicClientDataAutenticationConverter usingConverterFactoriesAndJsonObject(
+	public static JsonToBasicClientDataAuthenticationConverter usingConverterFactoriesAndJsonObject(
 			JsonToClientDataFactories convertFactories, JsonObject jsonObject) {
-		return new JsonToBasicClientDataAutenticationConverter(
+		return new JsonToBasicClientDataAuthenticationConverter(
 				convertFactories.dataConverterFactory(),
 				convertFactories.actionLinkConverterFactory(), jsonObject);
 	}
 
-	private JsonToBasicClientDataAutenticationConverter(JsonToClientDataConverterFactory factory,
+	private JsonToBasicClientDataAuthenticationConverter(JsonToClientDataConverterFactory factory,
 			JsonToBasicClientDataActionLinkConverterFactory actionLinkConverterFactory,
 			JsonObject json) {
 		this.factory = factory;
@@ -56,6 +57,7 @@ public class JsonToBasicClientDataAutenticationConverter {
 		this.json = json;
 	}
 
+	@Override
 	public ClientConvertible toInstance() {
 		try {
 			return tryToInstanciate();
@@ -66,13 +68,9 @@ public class JsonToBasicClientDataAutenticationConverter {
 
 	private BasicClientDataAuthentication tryToInstanciate() {
 		validateOnlyRecordKeyAtTopLevel();
-		jsonRecord = json.getValueAsJsonObject("authentication");
-		validateOnlyCorrectKeysAtSecondLevel();
-
-		ClientDataGroup clientDataGroup = convertDataRecordGroup();
-
-		clientDataAuthentication = BasicClientDataAuthentication.withDataGroup(clientDataGroup);
-		possiblyAddActionLinks();
+		JsonObject jsonAuthentication = readAuthentication();
+		validateAuthenticationOnlyContainsDataAndActionLinks(jsonAuthentication);
+		convertToClientDataAuthentication(jsonAuthentication);
 		return clientDataAuthentication;
 	}
 
@@ -86,43 +84,68 @@ public class JsonToBasicClientDataAutenticationConverter {
 		}
 	}
 
-	private void validateOnlyCorrectKeysAtSecondLevel() {
-		if (differentNoOfKeysThanAllowed()) {
+	private JsonObject readAuthentication() {
+		JsonObject jsonAuthentication = json.getValueAsJsonObject("authentication");
+		return jsonAuthentication;
+	}
+
+	private void convertToClientDataAuthentication(JsonObject jsonAuthentication) {
+		clientDataAuthentication = createClientDataAuthenticationFromJson(jsonAuthentication);
+		possiblyConvertAndAddActionLinks(jsonAuthentication);
+	}
+
+	private BasicClientDataAuthentication createClientDataAuthenticationFromJson(
+			JsonObject jsonAuthentication) {
+		JsonObject jsonDataObject = jsonAuthentication.getValueAsJsonObject(DATA);
+		JsonToClientDataConverter converter = factory.factorUsingJsonObject(jsonDataObject);
+		ClientDataGroup dataGroup = (ClientDataGroup) converter.toInstance();
+		return BasicClientDataAuthentication.withDataGroup(dataGroup);
+	}
+
+	private void validateAuthenticationOnlyContainsDataAndActionLinks(
+			JsonObject jsonAuthentication) {
+		if (differentNoOfKeysThanAllowed(jsonAuthentication)) {
 			throw new JsonParseException(
 					"Authentication data must contain keys: data and actionLinks");
 
 		}
-		if (!jsonRecord.containsKey(DATA)) {
+		if (!jsonAuthentication.containsKey(DATA)) {
 			throw new JsonParseException("Authentication data must contain child with key: data");
 		}
-		if (!jsonRecord.containsKey(ACTION_LINKS)) {
+		if (!jsonAuthentication.containsKey(ACTION_LINKS)) {
 			throw new JsonParseException(
 					"Authentication data must contain child with key: actionLinks");
 		}
 	}
 
-	private boolean differentNoOfKeysThanAllowed() {
-		return jsonRecord.keySet().size() != NUM_OF_ALLOWED_KEYS;
+	private boolean differentNoOfKeysThanAllowed(JsonObject jsonAuthentication) {
+		return jsonAuthentication.keySet().size() != NUM_OF_ALLOWED_KEYS;
 	}
 
-	private ClientDataGroup convertDataRecordGroup() {
-		JsonObject jsonDataObject = jsonRecord.getValueAsJsonObject(DATA);
-		JsonToClientDataConverter converter = factory.factorUsingJsonObject(jsonDataObject);
-		return (ClientDataGroup) converter.toInstance();
+	private void possiblyConvertAndAddActionLinks(JsonObject jsonAuthentication) {
+		List<ClientActionLink> actionLinks = convertActionLinks(jsonAuthentication);
+		addActionLinks(actionLinks);
 	}
 
-	private void possiblyAddActionLinks() {
-		JsonObject actionLinks = jsonRecord.getValueAsJsonObject(ACTION_LINKS);
-		for (Map.Entry<String, JsonValue> actionLinkEntry : actionLinks.entrySet()) {
-			convertAndAddActionLink(actionLinkEntry);
+	private void addActionLinks(List<ClientActionLink> actionLinks) {
+		for (ClientActionLink actionLink : actionLinks) {
+			clientDataAuthentication.addActionLink(actionLink);
 		}
 	}
 
-	private void convertAndAddActionLink(Map.Entry<String, JsonValue> actionLinkEntry) {
+	private List<ClientActionLink> convertActionLinks(JsonObject jsonAuthentication) {
+		List<ClientActionLink> cactionLinks = new ArrayList<>();
+		JsonObject actionLinks = jsonAuthentication.getValueAsJsonObject(ACTION_LINKS);
+		for (Map.Entry<String, JsonValue> actionLinkEntry : actionLinks.entrySet()) {
+			cactionLinks.add(convertActionLink(actionLinkEntry));
+		}
+		return cactionLinks;
+	}
+
+	private ClientActionLink convertActionLink(Map.Entry<String, JsonValue> actionLinkEntry) {
 		JsonToBasicClientDataActionLinkConverter actionLinkConverter = actionLinkConverterFactory
 				.factor((JsonObject) actionLinkEntry.getValue());
-		ClientActionLink actionLink = actionLinkConverter.toInstance();
-		clientDataAuthentication.addActionLink(actionLink);
+		return actionLinkConverter.toInstance();
 	}
 
 	public JsonToClientDataConverterFactory onlyForTestGetConverterFactory() {

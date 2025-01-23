@@ -20,6 +20,7 @@ package se.uu.ub.cora.clientbasicdata.converter.jsontodata;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertSame;
+import static org.testng.Assert.assertTrue;
 
 import java.util.List;
 import java.util.function.Supplier;
@@ -30,6 +31,7 @@ import org.testng.annotations.Test;
 import se.uu.ub.cora.clientdata.ClientAction;
 import se.uu.ub.cora.clientdata.ClientConvertible;
 import se.uu.ub.cora.clientdata.ClientDataAuthentication;
+import se.uu.ub.cora.clientdata.converter.JsonToClientDataConverter;
 import se.uu.ub.cora.clientdata.spies.ClientActionLinkSpy;
 import se.uu.ub.cora.clientdata.spies.ClientDataGroupSpy;
 import se.uu.ub.cora.clientdata.spies.JsonToClientDataConverterFactorySpy;
@@ -39,10 +41,10 @@ import se.uu.ub.cora.json.parser.JsonParseException;
 import se.uu.ub.cora.json.parser.JsonValue;
 import se.uu.ub.cora.json.parser.org.OrgJsonParser;
 
-public class JsonToBasicClientAuthenticationConverterTest {
+public class JsonToBasicClientDataAuthenticationConverterTest {
 
 	private JsonToClientDataConverterFactorySpy factory;
-	private JsonToBasicClientDataAutenticationConverter jsonToDataConverter;
+	private JsonToBasicClientDataAuthenticationConverter jsonToDataConverter;
 	private JsonToBasicClientDataActionLinkConverterFactorySpy actionLinkConverterFactory;
 	private OrgJsonParser jsonParser = new OrgJsonParser();
 	private JsonToClientDataFactories convertFactories;
@@ -88,11 +90,22 @@ public class JsonToBasicClientAuthenticationConverterTest {
 	}
 
 	@Test
+	public void testImplementsJsonToClientDataConverter() throws Exception {
+		JsonObject jsonObject = (JsonObject) jsonParser
+				.parseString("{\"authentication\":\"authentication\"}");
+
+		jsonToDataConverter = JsonToBasicClientDataAuthenticationConverter
+				.usingConverterFactoriesAndJsonObject(convertFactories, jsonObject);
+
+		assertTrue(jsonToDataConverter instanceof JsonToClientDataConverter);
+	}
+
+	@Test
 	public void testFactoryIsSentAlong() {
 		JsonObject jsonObject = (JsonObject) jsonParser
 				.parseString("{\"authentication\":\"authentication\"}");
 
-		jsonToDataConverter = JsonToBasicClientDataAutenticationConverter
+		jsonToDataConverter = JsonToBasicClientDataAuthenticationConverter
 				.usingConverterFactoriesAndJsonObject(convertFactories, jsonObject);
 
 		assertSame(jsonToDataConverter.onlyForTestGetConverterFactory(), factory);
@@ -107,7 +120,7 @@ public class JsonToBasicClientAuthenticationConverterTest {
 	private ClientConvertible parseStringAndCreateConverter(String json) {
 		JsonValue jsonValue = jsonParser.parseString(json);
 
-		jsonToDataConverter = JsonToBasicClientDataAutenticationConverter
+		jsonToDataConverter = JsonToBasicClientDataAuthenticationConverter
 				.usingConverterFactoriesAndJsonObject(convertFactories, (JsonObject) jsonValue);
 
 		return jsonToDataConverter.toInstance();
