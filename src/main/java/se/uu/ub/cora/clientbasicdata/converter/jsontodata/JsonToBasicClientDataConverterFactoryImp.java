@@ -68,6 +68,9 @@ public class JsonToBasicClientDataConverterFactoryImp implements JsonToClientDat
 		if (isAtomicData(json)) {
 			return JsonToBasicClientDataAtomicConverter.forJsonObject(json);
 		}
+		if (isAuthentication(json)) {
+			return createJsonToClientDataAuthenticationConverter(json);
+		}
 		return JsonToBasicClientDataAttributeConverter.forJsonObject(json);
 	}
 
@@ -79,10 +82,21 @@ public class JsonToBasicClientDataConverterFactoryImp implements JsonToClientDat
 		return jsonObject.containsKey("record");
 	}
 
+	private boolean isAuthentication(JsonObject jsonObject) {
+		return jsonObject.containsKey("authentication");
+	}
+
 	private JsonToClientDataConverter createJsonToClientDataRecordConverter(JsonObject json) {
 		JsonToClientDataFactories factories = createConverterFactories();
 		return JsonToBasicClientDataRecordConverter.usingConverterFactoriesAndJsonObject(factories,
 				json);
+	}
+
+	private JsonToClientDataConverter createJsonToClientDataAuthenticationConverter(
+			JsonObject json) {
+		JsonToClientDataFactories factories = createConverterFactories();
+		return JsonToBasicClientDataAuthenticationConverter
+				.usingConverterFactoriesAndJsonObject(factories, json);
 	}
 
 	private JsonToClientDataFactories createConverterFactories() {

@@ -87,7 +87,56 @@ public class JsonToBasicClientDataConverterFactoryTest {
 	}
 
 	@Test
-	public void testFactorDataListConverter() throws Exception {
+	public void testFactorOnJsonStringDataAuthentication() {
+		String json = """
+				{
+				  "authentication": {
+				    "data": {
+				      "children": [
+				        {"name": "token"     , "value": "someAuthToken"      },
+				        {"name": "validUntil", "value": "100"                },
+				        {"name": "renewUntil", "value": "200"                },
+				        {"name": "userId"    , "value": "someIdInUserStorage"},
+				        {"name": "loginId"   , "value": "someLoginId"        },
+				        {"name": "firstName" , "value": "someFirstName"      },
+				        {"name": "lastName"  , "value": "someLastName"       }
+				      ],
+				      "name": "authToken"
+				    },
+				    "actionLinks": {
+				      "renew": {
+				        "requestMethod": "POST",
+				        "rel": "renew",
+				        "url": "{protocol}://localhost:8080/login/rest/authToken/someTokenId",
+				        "accept": "application/vnd.uub.authentication+json"
+				      },
+				      "delete": {
+				        "requestMethod": "DELETE",
+				        "rel": "delete",
+				        "url": "{protocol}://localhost:8080/login/rest/authToken/someTokenId"
+				      }
+				    }
+				  }
+				}""";
+
+		JsonToBasicClientDataAuthenticationConverter jsonToDataConverter = (JsonToBasicClientDataAuthenticationConverter) jsonToDataConverterFactory
+				.factorUsingString(json);
+		assertTrue(jsonToDataConverter instanceof JsonToBasicClientDataAuthenticationConverter);
+		assertFactoriesForAuthenticationConverter(jsonToDataConverter);
+		assertEqualJson(jsonToDataConverter.onlyForTestGetJsonObject(), parseToJsonObject(json));
+
+	}
+
+	private void assertFactoriesForAuthenticationConverter(
+			JsonToBasicClientDataAuthenticationConverter jsonToDataConverter) {
+		assertSame(jsonToDataConverter.onlyForTestGetConverterFactory(),
+				jsonToDataConverterFactory);
+		assertTrue(jsonToDataConverter
+				.onlyForTestGetActionLinkConverterFactory() instanceof JsonToBasicClientDataActionLinkConverterFactoryImp);
+	}
+
+	@Test
+	public void testFactorDataListConverter() {
 		String json = """
 				{
 				  "dataList": {
