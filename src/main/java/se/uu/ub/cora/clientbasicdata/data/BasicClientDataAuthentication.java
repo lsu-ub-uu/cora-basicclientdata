@@ -43,7 +43,6 @@ public class BasicClientDataAuthentication implements ClientDataAuthentication {
 	@Override
 	public String getToken() {
 		return dataGroup.getFirstAtomicValueWithNameInData("token");
-
 	}
 
 	@Override
