@@ -34,8 +34,8 @@
 
 	<properties>
 		<json.version>3.10.0</json.version>
-		<clientdata.version>6.7-SNAPSHOT</clientdata.version>
-		<clientdata-spies.version>1.7.0</clientdata-spies.version>
+		<clientdata.version>6.7.0</clientdata.version>
+		<clientdata-spies.version>1.8.0</clientdata-spies.version>
 		<testutils.version>1.14.0</testutils.version>
 	</properties>
 
