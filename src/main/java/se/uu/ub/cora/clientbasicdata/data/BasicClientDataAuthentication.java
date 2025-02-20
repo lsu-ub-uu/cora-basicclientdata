@@ -18,7 +18,10 @@
  */
 package se.uu.ub.cora.clientbasicdata.data;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -26,6 +29,7 @@ import se.uu.ub.cora.clientdata.ClientAction;
 import se.uu.ub.cora.clientdata.ClientActionLink;
 import se.uu.ub.cora.clientdata.ClientDataAuthentication;
 import se.uu.ub.cora.clientdata.ClientDataGroup;
+import se.uu.ub.cora.clientdata.ClientDataRecordLink;
 
 public class BasicClientDataAuthentication implements ClientDataAuthentication {
 
@@ -85,5 +89,20 @@ public class BasicClientDataAuthentication implements ClientDataAuthentication {
 			return Optional.of(actions.get(action));
 		}
 		return Optional.empty();
+	}
+
+	@Override
+	public List<String> getPermissionUnitIds() {
+		if (!dataGroup.containsChildWithNameInData("permissionUnit")) {
+			return Collections.emptyList();
+		}
+
+		List<ClientDataRecordLink> permissionUnits = dataGroup
+				.getChildrenOfTypeAndName(ClientDataRecordLink.class, "permissionUnitId");
+		List<String> linkIds = new ArrayList<>();
+		for (ClientDataRecordLink permissionUnit : permissionUnits) {
+			linkIds.add(permissionUnit.getLinkedRecordId());
+		}
+		return linkIds;
 	}
 }

@@ -22,6 +22,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.testng.annotations.BeforeMethod;
@@ -34,6 +35,7 @@ import se.uu.ub.cora.clientdata.ClientData;
 import se.uu.ub.cora.clientdata.ClientDataAuthentication;
 import se.uu.ub.cora.clientdata.spies.ClientActionLinkSpy;
 import se.uu.ub.cora.clientdata.spies.ClientDataGroupSpy;
+import se.uu.ub.cora.clientdata.spies.ClientDataRecordLinkSpy;
 
 public class BasicClientDataAuthenticationTest {
 
@@ -135,5 +137,31 @@ public class BasicClientDataAuthenticationTest {
 		String token = dataAuthentication.getLastName();
 
 		assertEquals(token, "someLastName");
+	}
+
+	@Test
+	public void testGetPermissionUnitIds_noPermissionUnits() {
+		dataGroup.MRV.setSpecificReturnValuesSupplier("containsChildWithNameInData", () -> false,
+				"permissionUnit");
+
+		List<String> permissionUnitIds = dataAuthentication.getPermissionUnitIds();
+
+		assertTrue(permissionUnitIds.isEmpty());
+	}
+
+	@Test
+	public void testGetPermissionUnitIds_twoPermissionUnits() {
+		dataGroup.MRV.setSpecificReturnValuesSupplier("containsChildWithNameInData", () -> true,
+				"permissionUnit");
+		ClientDataRecordLinkSpy permissionUnit1 = new ClientDataRecordLinkSpy();
+		permissionUnit1.MRV.setSpecificReturnValuesSupplier("getLinkedRecordId", () -> "id1");
+		ClientDataRecordLinkSpy permissionUnit2 = new ClientDataRecordLinkSpy();
+		permissionUnit2.MRV.setSpecificReturnValuesSupplier("getLinkedRecordId", () -> "id2");
+		dataGroup.MRV.setDefaultReturnValuesSupplier("getChildrenOfTypeAndName",
+				() -> List.of(permissionUnit1, permissionUnit2));
+
+		List<String> permissionUnitIds = dataAuthentication.getPermissionUnitIds();
+
+		assertTrue(permissionUnitIds.size() == 2);
 	}
 }

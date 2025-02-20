@@ -85,21 +85,7 @@ public class JsonToBasicClientDataAuthenticationConverter implements JsonToClien
 	}
 
 	private JsonObject readAuthentication() {
-		JsonObject jsonAuthentication = json.getValueAsJsonObject("authentication");
-		return jsonAuthentication;
-	}
-
-	private void convertToClientDataAuthentication(JsonObject jsonAuthentication) {
-		clientDataAuthentication = createClientDataAuthenticationFromJson(jsonAuthentication);
-		possiblyConvertAndAddActionLinks(jsonAuthentication);
-	}
-
-	private BasicClientDataAuthentication createClientDataAuthenticationFromJson(
-			JsonObject jsonAuthentication) {
-		JsonObject jsonDataObject = jsonAuthentication.getValueAsJsonObject(DATA);
-		JsonToClientDataConverter converter = factory.factorUsingJsonObject(jsonDataObject);
-		ClientDataGroup dataGroup = (ClientDataGroup) converter.toInstance();
-		return BasicClientDataAuthentication.withDataGroup(dataGroup);
+		return json.getValueAsJsonObject("authentication");
 	}
 
 	private void validateAuthenticationOnlyContainsDataAndActionLinks(
@@ -120,6 +106,19 @@ public class JsonToBasicClientDataAuthenticationConverter implements JsonToClien
 
 	private boolean differentNoOfKeysThanAllowed(JsonObject jsonAuthentication) {
 		return jsonAuthentication.keySet().size() != NUM_OF_ALLOWED_KEYS;
+	}
+
+	private void convertToClientDataAuthentication(JsonObject jsonAuthentication) {
+		clientDataAuthentication = createClientDataAuthenticationFromJson(jsonAuthentication);
+		possiblyConvertAndAddActionLinks(jsonAuthentication);
+	}
+
+	private BasicClientDataAuthentication createClientDataAuthenticationFromJson(
+			JsonObject jsonAuthentication) {
+		JsonObject jsonDataObject = jsonAuthentication.getValueAsJsonObject(DATA);
+		JsonToClientDataConverter converter = factory.factorUsingJsonObject(jsonDataObject);
+		ClientDataGroup dataGroup = (ClientDataGroup) converter.toInstance();
+		return BasicClientDataAuthentication.withDataGroup(dataGroup);
 	}
 
 	private void possiblyConvertAndAddActionLinks(JsonObject jsonAuthentication) {
