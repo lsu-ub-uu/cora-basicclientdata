@@ -33,6 +33,7 @@ import se.uu.ub.cora.clientdata.ClientActionLink;
 import se.uu.ub.cora.clientdata.ClientConvertible;
 import se.uu.ub.cora.clientdata.ClientData;
 import se.uu.ub.cora.clientdata.ClientDataAuthentication;
+import se.uu.ub.cora.clientdata.ClientDataRecordLink;
 import se.uu.ub.cora.clientdata.spies.ClientActionLinkSpy;
 import se.uu.ub.cora.clientdata.spies.ClientDataGroupSpy;
 import se.uu.ub.cora.clientdata.spies.ClientDataRecordLinkSpy;
@@ -157,11 +158,12 @@ public class BasicClientDataAuthenticationTest {
 		permissionUnit1.MRV.setSpecificReturnValuesSupplier("getLinkedRecordId", () -> "id1");
 		ClientDataRecordLinkSpy permissionUnit2 = new ClientDataRecordLinkSpy();
 		permissionUnit2.MRV.setSpecificReturnValuesSupplier("getLinkedRecordId", () -> "id2");
-		dataGroup.MRV.setDefaultReturnValuesSupplier("getChildrenOfTypeAndName",
-				() -> List.of(permissionUnit1, permissionUnit2));
+		dataGroup.MRV.setSpecificReturnValuesSupplier("getChildrenOfTypeAndName",
+				() -> List.of(permissionUnit1, permissionUnit2), ClientDataRecordLink.class,
+				"permissionUnit");
 
 		List<String> permissionUnitIds = dataAuthentication.getPermissionUnitIds();
 
-		assertTrue(permissionUnitIds.size() == 2);
+		assertEquals(permissionUnitIds.size(), 2);
 	}
 }

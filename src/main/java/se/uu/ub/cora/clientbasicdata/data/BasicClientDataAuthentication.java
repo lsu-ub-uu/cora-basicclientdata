@@ -98,7 +98,7 @@ public class BasicClientDataAuthentication implements ClientDataAuthentication {
 		}
 
 		List<ClientDataRecordLink> permissionUnits = dataGroup
-				.getChildrenOfTypeAndName(ClientDataRecordLink.class, "permissionUnitId");
+				.getChildrenOfTypeAndName(ClientDataRecordLink.class, "permissionUnit");
 		List<String> linkIds = new ArrayList<>();
 		for (ClientDataRecordLink permissionUnit : permissionUnits) {
 			linkIds.add(permissionUnit.getLinkedRecordId());
