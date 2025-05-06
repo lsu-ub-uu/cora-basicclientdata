@@ -34,9 +34,9 @@ public class BasicClientRecordActionsToJsonConverterTest {
 	private BasicClientRecordActionsToJsonConverter actionsConverter;
 	private BasicClientJsonBuilderFactorySpy builderFactory;
 	private String baseUrl = "some/base/url/";
-	private static final String APPLICATION_VND_UUB_RECORD_LIST_JSON = "application/vnd.cora.recordList+json";
-	private static final String APPLICATION_VND_UUB_RECORD_JSON = "application/vnd.cora.record+json";
-	private static final String APPLICATION_VND_UUB_RECORDGROUP_JSON = "application/vnd.cora.recordgroup+json";
+	private static final String APPLICATION_VND_CORA_RECORD_LIST_JSON = "application/vnd.cora.recordList+json";
+	private static final String APPLICATION_VND_CORA_RECORD_JSON = "application/vnd.cora.record+json";
+	private static final String APPLICATION_VND_CORA_RECORDGROUP_JSON = "application/vnd.cora.recordgroup+json";
 	private BasicClientDataToJsonConverterFactorySpy converterFactory;
 	private BasicClientActionsConverterData actionsConverterData;
 
@@ -73,7 +73,7 @@ public class BasicClientRecordActionsToJsonConverterTest {
 				+ actionsConverterData.recordId;
 
 		String requestMethod = GET;
-		String accept = APPLICATION_VND_UUB_RECORD_JSON;
+		String accept = APPLICATION_VND_CORA_RECORD_JSON;
 		String contentType = null;
 
 		actionsConverter.toJsonObjectBuilder(actionsConverterData);
@@ -120,8 +120,8 @@ public class BasicClientRecordActionsToJsonConverterTest {
 				+ actionsConverterData.recordId;
 
 		String requestMethod = POST;
-		String accept = APPLICATION_VND_UUB_RECORD_JSON;
-		String contentType = APPLICATION_VND_UUB_RECORDGROUP_JSON;
+		String accept = APPLICATION_VND_CORA_RECORD_JSON;
+		String contentType = APPLICATION_VND_CORA_RECORDGROUP_JSON;
 
 		actionsConverter.toJsonObjectBuilder(actionsConverterData);
 
@@ -138,7 +138,7 @@ public class BasicClientRecordActionsToJsonConverterTest {
 				+ "/incomingLinks";
 
 		String requestMethod = GET;
-		String accept = APPLICATION_VND_UUB_RECORD_LIST_JSON;
+		String accept = APPLICATION_VND_CORA_RECORD_LIST_JSON;
 		String contentType = null;
 
 		actionsConverter.toJsonObjectBuilder(actionsConverterData);
@@ -173,8 +173,8 @@ public class BasicClientRecordActionsToJsonConverterTest {
 		String lowerCaseAction = action.name().toLowerCase();
 		String url = baseUrl + "workOrder/";
 		String requestMethod = POST;
-		String accept = APPLICATION_VND_UUB_RECORD_JSON;
-		String contentType = APPLICATION_VND_UUB_RECORD_JSON;
+		String accept = APPLICATION_VND_CORA_RECORD_JSON;
+		String contentType = APPLICATION_VND_CORA_RECORD_JSON;
 
 		actionsConverter.toJsonObjectBuilder(actionsConverterData);
 
@@ -221,7 +221,7 @@ public class BasicClientRecordActionsToJsonConverterTest {
 		String lowerCaseAction = action.name().toLowerCase();
 		String url = baseUrl + "searchResult/" + actionsConverterData.recordId;
 		String requestMethod = GET;
-		String accept = APPLICATION_VND_UUB_RECORD_LIST_JSON;
+		String accept = APPLICATION_VND_CORA_RECORD_LIST_JSON;
 		String contentType = null;
 
 		actionsConverter.toJsonObjectBuilder(actionsConverterData);
@@ -256,7 +256,7 @@ public class BasicClientRecordActionsToJsonConverterTest {
 		String lowerCaseAction = action.name().toLowerCase();
 		String url = baseUrl + "searchResult/" + actionsConverterData.recordId;
 		String requestMethod = GET;
-		String accept = APPLICATION_VND_UUB_RECORD_LIST_JSON;
+		String accept = APPLICATION_VND_CORA_RECORD_LIST_JSON;
 		String contentType = null;
 
 		actionsConverter.toJsonObjectBuilder(actionsConverterData);
@@ -274,7 +274,7 @@ public class BasicClientRecordActionsToJsonConverterTest {
 		actionsConverterData.searchRecordId = "someSearchRecordId";
 		String url = baseUrl + "searchResult/" + actionsConverterData.searchRecordId;
 		String requestMethod = GET;
-		String accept = APPLICATION_VND_UUB_RECORD_LIST_JSON;
+		String accept = APPLICATION_VND_CORA_RECORD_LIST_JSON;
 		String contentType = null;
 
 		actionsConverter.toJsonObjectBuilder(actionsConverterData);
@@ -292,8 +292,8 @@ public class BasicClientRecordActionsToJsonConverterTest {
 		String lowerCaseAction = action.name().toLowerCase();
 		String url = baseUrl + actionsConverterData.recordId + "/";
 		String requestMethod = POST;
-		String accept = APPLICATION_VND_UUB_RECORD_JSON;
-		String contentType = APPLICATION_VND_UUB_RECORDGROUP_JSON;
+		String accept = APPLICATION_VND_CORA_RECORD_JSON;
+		String contentType = APPLICATION_VND_CORA_RECORDGROUP_JSON;
 
 		actionsConverter.toJsonObjectBuilder(actionsConverterData);
 
@@ -310,7 +310,7 @@ public class BasicClientRecordActionsToJsonConverterTest {
 		String lowerCaseAction = action.name().toLowerCase();
 		String url = baseUrl + actionsConverterData.recordId + "/";
 		String requestMethod = GET;
-		String accept = APPLICATION_VND_UUB_RECORD_LIST_JSON;
+		String accept = APPLICATION_VND_CORA_RECORD_LIST_JSON;
 		String contentType = null;
 
 		actionsConverter.toJsonObjectBuilder(actionsConverterData);
@@ -328,8 +328,8 @@ public class BasicClientRecordActionsToJsonConverterTest {
 		String lowerCaseAction = action.name().toLowerCase();
 		String url = baseUrl + "index/" + actionsConverterData.recordId + "/";
 		String requestMethod = POST;
-		String accept = APPLICATION_VND_UUB_RECORD_JSON;
-		String contentType = APPLICATION_VND_UUB_RECORD_JSON;
+		String accept = APPLICATION_VND_CORA_RECORD_JSON;
+		String contentType = APPLICATION_VND_CORA_RECORD_JSON;
 
 		actionsConverter.toJsonObjectBuilder(actionsConverterData);
 
@@ -346,7 +346,7 @@ public class BasicClientRecordActionsToJsonConverterTest {
 		String lowerCaseAction = action.name().toLowerCase();
 		String url = baseUrl + "workOrder/";
 		String requestMethod = POST;
-		String accept = APPLICATION_VND_UUB_RECORD_JSON;
+		String accept = APPLICATION_VND_CORA_RECORD_JSON;
 		String contentType = "application/vnd.cora.workorder+json";
 
 		actionsConverter.toJsonObjectBuilder(actionsConverterData);
@@ -366,7 +366,7 @@ public class BasicClientRecordActionsToJsonConverterTest {
 				+ actionsConverterData.recordId;
 
 		String requestMethod = GET;
-		String accept = APPLICATION_VND_UUB_RECORD_JSON;
+		String accept = APPLICATION_VND_CORA_RECORD_JSON;
 		String contentType = null;
 
 		actionsConverter.toJsonObjectBuilder(actionsConverterData);
@@ -385,8 +385,8 @@ public class BasicClientRecordActionsToJsonConverterTest {
 		String url = baseUrl + actionsConverterData.recordType + "/"
 				+ actionsConverterData.recordId;
 		String requestMethod = POST;
-		String accept = APPLICATION_VND_UUB_RECORD_JSON;
-		String contentType = APPLICATION_VND_UUB_RECORDGROUP_JSON;
+		String accept = APPLICATION_VND_CORA_RECORD_JSON;
+		String contentType = APPLICATION_VND_CORA_RECORDGROUP_JSON;
 
 		actionsConverter.toJsonObjectBuilder(actionsConverterData);
 
@@ -404,7 +404,7 @@ public class BasicClientRecordActionsToJsonConverterTest {
 		String url = baseUrl + actionsConverterData.recordType + "/" + actionsConverterData.recordId
 				+ "/incomingLinks";
 		String requestMethod = GET;
-		String accept = APPLICATION_VND_UUB_RECORD_LIST_JSON;
+		String accept = APPLICATION_VND_CORA_RECORD_LIST_JSON;
 		String contentType = null;
 
 		actionsConverter.toJsonObjectBuilder(actionsConverterData);
@@ -441,8 +441,8 @@ public class BasicClientRecordActionsToJsonConverterTest {
 		String lowerCaseAction = action.name().toLowerCase();
 		String url = baseUrl + "workOrder/";
 		String requestMethod = POST;
-		String accept = APPLICATION_VND_UUB_RECORD_JSON;
-		String contentType = APPLICATION_VND_UUB_RECORD_JSON;
+		String accept = APPLICATION_VND_CORA_RECORD_JSON;
+		String contentType = APPLICATION_VND_CORA_RECORD_JSON;
 
 		actionsConverter.toJsonObjectBuilder(actionsConverterData);
 
