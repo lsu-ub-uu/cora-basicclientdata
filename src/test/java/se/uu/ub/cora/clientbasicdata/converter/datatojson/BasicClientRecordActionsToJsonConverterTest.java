@@ -36,6 +36,7 @@ public class BasicClientRecordActionsToJsonConverterTest {
 	private String baseUrl = "some/base/url/";
 	private static final String APPLICATION_VND_UUB_RECORD_LIST_JSON = "application/vnd.cora.recordList+json";
 	private static final String APPLICATION_VND_UUB_RECORD_JSON = "application/vnd.cora.record+json";
+	private static final String APPLICATION_VND_UUB_RECORDGROUP_JSON = "application/vnd.cora.recordgroup+json";
 	private BasicClientDataToJsonConverterFactorySpy converterFactory;
 	private BasicClientActionsConverterData actionsConverterData;
 
@@ -53,7 +54,7 @@ public class BasicClientRecordActionsToJsonConverterTest {
 	}
 
 	@Test
-	public void testToJsonObjectBuilder() throws Exception {
+	public void testToJsonObjectBuilder() {
 		JsonObjectBuilder objectBuilder = actionsConverter
 				.toJsonObjectBuilder(actionsConverterData);
 
@@ -63,7 +64,7 @@ public class BasicClientRecordActionsToJsonConverterTest {
 	}
 
 	@Test
-	public void testReadAction() throws Exception {
+	public void testReadAction() {
 		ClientAction action = ClientAction.READ;
 		actionsConverterData.actions.add(action);
 
@@ -111,7 +112,7 @@ public class BasicClientRecordActionsToJsonConverterTest {
 	}
 
 	@Test
-	public void testUpdateAction() throws Exception {
+	public void testUpdateAction() {
 		ClientAction action = ClientAction.UPDATE;
 		actionsConverterData.actions.add(action);
 		String lowerCaseAction = action.name().toLowerCase();
@@ -120,7 +121,7 @@ public class BasicClientRecordActionsToJsonConverterTest {
 
 		String requestMethod = POST;
 		String accept = APPLICATION_VND_UUB_RECORD_JSON;
-		String contentType = APPLICATION_VND_UUB_RECORD_JSON;
+		String contentType = APPLICATION_VND_UUB_RECORDGROUP_JSON;
 
 		actionsConverter.toJsonObjectBuilder(actionsConverterData);
 
@@ -129,7 +130,7 @@ public class BasicClientRecordActionsToJsonConverterTest {
 	}
 
 	@Test
-	public void testReadIncommingLinksAction() throws Exception {
+	public void testReadIncommingLinksAction() {
 		ClientAction action = ClientAction.READ_INCOMING_LINKS;
 		actionsConverterData.actions.add(action);
 		String lowerCaseAction = action.name().toLowerCase();
@@ -147,7 +148,7 @@ public class BasicClientRecordActionsToJsonConverterTest {
 	}
 
 	@Test
-	public void testDeleteAction() throws Exception {
+	public void testDeleteAction() {
 		ClientAction action = ClientAction.DELETE;
 		actionsConverterData.actions.add(action);
 		String lowerCaseAction = action.name().toLowerCase();
@@ -165,7 +166,7 @@ public class BasicClientRecordActionsToJsonConverterTest {
 	}
 
 	@Test
-	public void testIndexAction() throws Exception {
+	public void testIndexAction() {
 		ClientAction action = ClientAction.INDEX;
 		actionsConverterData.actions.add(action);
 
@@ -213,7 +214,7 @@ public class BasicClientRecordActionsToJsonConverterTest {
 	}
 
 	@Test
-	public void testSearchAction() throws Exception {
+	public void testSearchAction() {
 		ClientAction action = ClientAction.SEARCH;
 		actionsConverterData.actions.add(action);
 
@@ -230,7 +231,7 @@ public class BasicClientRecordActionsToJsonConverterTest {
 	}
 
 	@Test
-	public void testUploadAction() throws Exception {
+	public void testUploadAction() {
 		ClientAction action = ClientAction.UPLOAD;
 		actionsConverterData.actions.add(action);
 
@@ -248,7 +249,7 @@ public class BasicClientRecordActionsToJsonConverterTest {
 	}
 
 	@Test
-	public void testSearchActionForRecordTypeWithoutSearchId() throws Exception {
+	public void testSearchActionForRecordTypeWithoutSearchId() {
 		ClientAction action = ClientAction.SEARCH;
 		actionsConverterData.actions.add(action);
 
@@ -265,7 +266,7 @@ public class BasicClientRecordActionsToJsonConverterTest {
 	}
 
 	@Test
-	public void testSearchActionForRecordTypeTypeWithSearchId() throws Exception {
+	public void testSearchActionForRecordTypeTypeWithSearchId() {
 		ClientAction action = ClientAction.SEARCH;
 		actionsConverterData.actions.add(action);
 
@@ -283,7 +284,7 @@ public class BasicClientRecordActionsToJsonConverterTest {
 	}
 
 	@Test
-	public void testCreateAction() throws Exception {
+	public void testCreateAction() {
 		ClientAction action = ClientAction.CREATE;
 		actionsConverterData.actions.add(action);
 		actionsConverterData.recordType = "recordType";
@@ -292,7 +293,7 @@ public class BasicClientRecordActionsToJsonConverterTest {
 		String url = baseUrl + actionsConverterData.recordId + "/";
 		String requestMethod = POST;
 		String accept = APPLICATION_VND_UUB_RECORD_JSON;
-		String contentType = APPLICATION_VND_UUB_RECORD_JSON;
+		String contentType = APPLICATION_VND_UUB_RECORDGROUP_JSON;
 
 		actionsConverter.toJsonObjectBuilder(actionsConverterData);
 
@@ -301,7 +302,7 @@ public class BasicClientRecordActionsToJsonConverterTest {
 	}
 
 	@Test
-	public void testListAction() throws Exception {
+	public void testListAction() {
 		ClientAction action = ClientAction.LIST;
 		actionsConverterData.actions.add(action);
 		actionsConverterData.recordType = "recordType";
@@ -319,7 +320,7 @@ public class BasicClientRecordActionsToJsonConverterTest {
 	}
 
 	@Test
-	public void testBatchIndexAction() throws Exception {
+	public void testBatchIndexAction() {
 		ClientAction action = ClientAction.BATCH_INDEX;
 		actionsConverterData.actions.add(action);
 		actionsConverterData.recordType = "recordType";
@@ -337,7 +338,7 @@ public class BasicClientRecordActionsToJsonConverterTest {
 	}
 
 	@Test
-	public void testValidateAction() throws Exception {
+	public void testValidateAction() {
 		ClientAction action = ClientAction.VALIDATE;
 		actionsConverterData.actions.add(action);
 		actionsConverterData.recordType = "recordType";
@@ -355,7 +356,7 @@ public class BasicClientRecordActionsToJsonConverterTest {
 	}
 
 	@Test
-	public void testReadForRecordType() throws Exception {
+	public void testReadForRecordType() {
 		ClientAction readAction = ClientAction.READ;
 		actionsConverterData.actions.add(readAction);
 		actionsConverterData.recordType = "recordType";
@@ -375,7 +376,7 @@ public class BasicClientRecordActionsToJsonConverterTest {
 	}
 
 	@Test
-	public void testUpdateActionForRecordType() throws Exception {
+	public void testUpdateActionForRecordType() {
 		ClientAction action = ClientAction.UPDATE;
 		actionsConverterData.actions.add(action);
 		actionsConverterData.recordType = "recordType";
@@ -385,7 +386,7 @@ public class BasicClientRecordActionsToJsonConverterTest {
 				+ actionsConverterData.recordId;
 		String requestMethod = POST;
 		String accept = APPLICATION_VND_UUB_RECORD_JSON;
-		String contentType = APPLICATION_VND_UUB_RECORD_JSON;
+		String contentType = APPLICATION_VND_UUB_RECORDGROUP_JSON;
 
 		actionsConverter.toJsonObjectBuilder(actionsConverterData);
 
@@ -394,7 +395,7 @@ public class BasicClientRecordActionsToJsonConverterTest {
 	}
 
 	@Test
-	public void testReadIncommingLinksActionForRecordType() throws Exception {
+	public void testReadIncommingLinksActionForRecordType() {
 		ClientAction action = ClientAction.READ_INCOMING_LINKS;
 		actionsConverterData.actions.add(action);
 		actionsConverterData.recordType = "recordType";
@@ -413,7 +414,7 @@ public class BasicClientRecordActionsToJsonConverterTest {
 	}
 
 	@Test
-	public void testDeleteActionForRecordType() throws Exception {
+	public void testDeleteActionForRecordType() {
 		ClientAction action = ClientAction.DELETE;
 		actionsConverterData.actions.add(action);
 		actionsConverterData.recordType = "recordType";
@@ -432,7 +433,7 @@ public class BasicClientRecordActionsToJsonConverterTest {
 	}
 
 	@Test
-	public void testIndexActionForRecordType() throws Exception {
+	public void testIndexActionForRecordType() {
 		ClientAction action = ClientAction.INDEX;
 		actionsConverterData.actions.add(action);
 		actionsConverterData.recordType = "recordType";

@@ -28,13 +28,15 @@ import se.uu.ub.cora.clientdata.converter.ClientDataToJsonConverterFactory;
 import se.uu.ub.cora.json.builder.JsonBuilderFactory;
 import se.uu.ub.cora.json.builder.JsonObjectBuilder;
 
-public class BasicClientRecordActionsToJsonConverterImp implements BasicClientRecordActionsToJsonConverter {
+public class BasicClientRecordActionsToJsonConverterImp
+		implements BasicClientRecordActionsToJsonConverter {
 
 	private static final String RECORD_TYPE = "recordType";
 	private static final String ACCEPT = "accept";
 	private static final String CONTENT_TYPE = "contentType";
 	private static final String APPLICATION_VND_UUB_RECORD_LIST_JSON = "application/vnd.cora.recordList+json";
 	private static final String APPLICATION_VND_UUB_RECORD_JSON = "application/vnd.cora.record+json";
+	private static final String APPLICATION_VND_UUB_RECORDGROUP_JSON = "application/vnd.cora.recordgroup+json";
 
 	ClientDataToJsonConverterFactory converterFactory;
 	JsonBuilderFactory builderFactory;
@@ -53,11 +55,13 @@ public class BasicClientRecordActionsToJsonConverterImp implements BasicClientRe
 	public static BasicClientRecordActionsToJsonConverterImp usingConverterFactoryAndBuilderFactoryAndBaseUrl(
 			ClientDataToJsonConverterFactory converterFactory, JsonBuilderFactory builderFactory,
 			String baseUrl) {
-		return new BasicClientRecordActionsToJsonConverterImp(converterFactory, builderFactory, baseUrl);
+		return new BasicClientRecordActionsToJsonConverterImp(converterFactory, builderFactory,
+				baseUrl);
 	}
 
-	private BasicClientRecordActionsToJsonConverterImp(ClientDataToJsonConverterFactory converterFactory,
-			JsonBuilderFactory builderFactory, String baseUrl) {
+	private BasicClientRecordActionsToJsonConverterImp(
+			ClientDataToJsonConverterFactory converterFactory, JsonBuilderFactory builderFactory,
+			String baseUrl) {
 		this.converterFactory = converterFactory;
 		this.builderFactory = builderFactory;
 		this.baseUrl = baseUrl;
@@ -65,7 +69,8 @@ public class BasicClientRecordActionsToJsonConverterImp implements BasicClientRe
 	}
 
 	@Override
-	public JsonObjectBuilder toJsonObjectBuilder(BasicClientActionsConverterData actionsConverterData) {
+	public JsonObjectBuilder toJsonObjectBuilder(
+			BasicClientActionsConverterData actionsConverterData) {
 		this.actionsConverterData = actionsConverterData;
 		actions = actionsConverterData.actions;
 		recordType = actionsConverterData.recordType;
@@ -96,7 +101,7 @@ public class BasicClientRecordActionsToJsonConverterImp implements BasicClientRe
 			currentRequestMethod = "POST";
 			addStandardParametersToCurrentLinkBuilder();
 			currentLinkBuilder.addKeyString(ACCEPT, currentAccept);
-			currentLinkBuilder.addKeyString(CONTENT_TYPE, APPLICATION_VND_UUB_RECORD_JSON);
+			currentLinkBuilder.addKeyString(CONTENT_TYPE, APPLICATION_VND_UUB_RECORDGROUP_JSON);
 		} else if (action == ClientAction.READ_INCOMING_LINKS) {
 			currentUrl = currentUrl + "/incomingLinks";
 			addStandardParametersToCurrentLinkBuilder();
@@ -150,7 +155,7 @@ public class BasicClientRecordActionsToJsonConverterImp implements BasicClientRe
 			currentUrl = urlForRecordTypeActions;
 			addStandardParametersToCurrentLinkBuilder();
 			currentLinkBuilder.addKeyString(ACCEPT, currentAccept);
-			currentLinkBuilder.addKeyString(CONTENT_TYPE, APPLICATION_VND_UUB_RECORD_JSON);
+			currentLinkBuilder.addKeyString(CONTENT_TYPE, APPLICATION_VND_UUB_RECORDGROUP_JSON);
 		} else if (action == ClientAction.LIST) {
 			currentRequestMethod = "GET";
 			String urlForRecordTypeActions = baseUrl + recordId + "/";
@@ -194,7 +199,8 @@ public class BasicClientRecordActionsToJsonConverterImp implements BasicClientRe
 
 	private JsonObjectBuilder convertBody() {
 		BasicClientDataGroup workOrder = createWorkOrderDataGroup();
-		ClientDataToJsonConverter workOrderConverter = converterFactory.factorUsingConvertible(workOrder);
+		ClientDataToJsonConverter workOrderConverter = converterFactory
+				.factorUsingConvertible(workOrder);
 		return workOrderConverter.toJsonObjectBuilder();
 	}
 
