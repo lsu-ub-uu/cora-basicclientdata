@@ -286,7 +286,7 @@ public class JsonToBasicClientDataRecordLinkConverterTest {
 				      "requestMethod": "GET",
 				      "rel": "read",
 				      "url": "https://cora.epc.ub.uu.se/systemone/rest/record/recordType/demo",
-				      "accept": "application/vnd.uub.record+json"
+				      "accept": "application/vnd.cora.record+json"
 				    }
 				  },
 				  "name": "type"
@@ -613,7 +613,7 @@ public class JsonToBasicClientDataRecordLinkConverterTest {
 				      "requestMethod": "GET",
 				      "rel": "read",
 				      "url": "https://cora.epc.ub.uu.se/systemone/rest/record/recordType/demo",
-				      "accept": "application/vnd.uub.record+json"
+				      "accept": "application/vnd.cora.record+json"
 				    }
 				  },
 				  "name": "from",
@@ -649,7 +649,7 @@ public class JsonToBasicClientDataRecordLinkConverterTest {
 				      "requestMethod": "GET",
 				      "rel": "read",
 				      "url": "https://cora.epc.ub.uu.se/systemone/rest/record/recordType/demo",
-				      "accept": "application/vnd.uub.record+json"
+				      "accept": "application/vnd.cora.record+json"
 				    }
 				  },
 				  "name": "from",
@@ -687,7 +687,7 @@ public class JsonToBasicClientDataRecordLinkConverterTest {
 				      "requestMethod": "GET",
 				      "rel": "read",
 				      "url": "https://cora.epc.ub.uu.se/systemone/rest/record/recordType/demo",
-				      "accept": "application/vnd.uub.record+json"
+				      "accept": "application/vnd.cora.record+json"
 				    }
 				  },
 				  "name": "from",

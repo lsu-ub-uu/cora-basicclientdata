@@ -75,7 +75,7 @@ public class BasicClientDataRecordLinkToJsonConverter extends BasicClientDataGro
 		internalLinkBuilder.addKeyString("rel", READ);
 		internalLinkBuilder.addKeyString("url", recordURL);
 		internalLinkBuilder.addKeyString("requestMethod", GET);
-		internalLinkBuilder.addKeyString("accept", "application/vnd.uub.record+json");
+		internalLinkBuilder.addKeyString("accept", "application/vnd.cora.record+json");
 		return internalLinkBuilder;
 	}
 }

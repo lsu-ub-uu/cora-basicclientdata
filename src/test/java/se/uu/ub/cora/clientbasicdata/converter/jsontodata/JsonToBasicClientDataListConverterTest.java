@@ -148,7 +148,7 @@ public class JsonToBasicClientDataListConverterTest {
 				{"record":{"data":{"children":[],"name":"%s"},\
 				"actionLinks":{"read":{"requestMethod":"GET","rel":"read",\
 				"url":"https://cora.example.org/somesystem/rest/record/somerecordtype/somerecordid"\
-				,"accept":"application/vnd.uub.record+json"}}}}""";
+				,"accept":"application/vnd.cora.record+json"}}}}""";
 		String record1 = record.formatted("record1");
 		String record2 = record.formatted("record2");
 		String json = """

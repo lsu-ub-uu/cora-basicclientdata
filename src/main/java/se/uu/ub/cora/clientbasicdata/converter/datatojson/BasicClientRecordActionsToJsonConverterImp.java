@@ -33,8 +33,8 @@ public class BasicClientRecordActionsToJsonConverterImp implements BasicClientRe
 	private static final String RECORD_TYPE = "recordType";
 	private static final String ACCEPT = "accept";
 	private static final String CONTENT_TYPE = "contentType";
-	private static final String APPLICATION_VND_UUB_RECORD_LIST_JSON = "application/vnd.uub.recordList+json";
-	private static final String APPLICATION_VND_UUB_RECORD_JSON = "application/vnd.uub.record+json";
+	private static final String APPLICATION_VND_UUB_RECORD_LIST_JSON = "application/vnd.cora.recordList+json";
+	private static final String APPLICATION_VND_UUB_RECORD_JSON = "application/vnd.cora.record+json";
 
 	ClientDataToJsonConverterFactory converterFactory;
 	JsonBuilderFactory builderFactory;
@@ -174,7 +174,7 @@ public class BasicClientRecordActionsToJsonConverterImp implements BasicClientRe
 		currentUrl = baseUrl + "workOrder/";
 		addStandardParametersToCurrentLinkBuilder();
 		currentLinkBuilder.addKeyString(ACCEPT, currentAccept);
-		currentLinkBuilder.addKeyString(CONTENT_TYPE, "application/vnd.uub.workorder+json");
+		currentLinkBuilder.addKeyString(CONTENT_TYPE, "application/vnd.cora.workorder+json");
 	}
 
 	private void setStandardForAction(ClientAction action) {

@@ -66,7 +66,7 @@ public class JsonToBasicClientDataResourceLinkConverterTest {
 		String json = """
 				{
 				  "name": "master",
-				  "mimeType": "application/vnd.uub.record+json"
+				  "mimeType": "application/vnd.cora.record+json"
 				}
 				""";
 		BasicClientDataResourceLink resourceLink = (BasicClientDataResourceLink) getConvertedLink(
@@ -82,7 +82,7 @@ public class JsonToBasicClientDataResourceLinkConverterTest {
 		String json = """
 				{
 				  "name": "master",
-				  "mimeType": "application/vnd.uub.record+json"
+				  "mimeType": "application/vnd.cora.record+json"
 				}
 				""";
 		BasicClientDataResourceLink resourceLink = (BasicClientDataResourceLink) getConvertedLink(
@@ -97,14 +97,14 @@ public class JsonToBasicClientDataResourceLinkConverterTest {
 		String json = """
 				{
 				  "name": "master",
-				  "mimeType": "application/vnd.uub.record+json"
+				  "mimeType": "application/vnd.cora.record+json"
 				}
 				""";
 		BasicClientDataResourceLink resourceLink = (BasicClientDataResourceLink) getConvertedLink(
 				json);
 
 		assertEquals(resourceLink.getNameInData(), "master");
-		assertEquals(resourceLink.getMimeType(), "application/vnd.uub.record+json");
+		assertEquals(resourceLink.getMimeType(), "application/vnd.cora.record+json");
 		actionLinkConverterFactory.MCR.assertMethodNotCalled("factor");
 	}
 
@@ -151,7 +151,7 @@ public class JsonToBasicClientDataResourceLinkConverterTest {
 		String json = """
 				{
 				  "name": "master",
-				  "mimeType": "application/vnd.uub.record+json",
+				  "mimeType": "application/vnd.cora.record+json",
 				  "repeatId":"0"
 				}
 				""";
@@ -181,7 +181,7 @@ public class JsonToBasicClientDataResourceLinkConverterTest {
 	public void testExceptionNameNotExist() {
 		String json = """
 				{
-				  "mimeType": "application/vnd.uub.record+json",
+				  "mimeType": "application/vnd.cora.record+json",
 				  "repeatId":"0"
 				}
 				""";
@@ -195,7 +195,7 @@ public class JsonToBasicClientDataResourceLinkConverterTest {
 		String json = """
 				{
 				  "name": "master",
-				  "mimeType": "application/vnd.uub.record+json",
+				  "mimeType": "application/vnd.cora.record+json",
 				  "repeatId":"0",
 				  "someOther": "someOther",
 				  "someOther2": "someOther"
@@ -211,7 +211,7 @@ public class JsonToBasicClientDataResourceLinkConverterTest {
 		String json = """
 				{
 				  "name": "master",
-				  "mimeType": "application/vnd.uub.record+json",
+				  "mimeType": "application/vnd.cora.record+json",
 				  "someOther": "someOther"
 				}
 				""";
@@ -225,7 +225,7 @@ public class JsonToBasicClientDataResourceLinkConverterTest {
 		String json = """
 				{
 				  "nameSpecial": "master",
-				  "mimeType": "application/vnd.uub.record+json",
+				  "mimeType": "application/vnd.cora.record+json",
 				  "someOther": "someOther"
 				}
 				""";

@@ -57,7 +57,7 @@ public class JsonToBasicClientDataConverterFactoryTest {
 				 			"requestMethod":"GET",
 				 			"rel":"read",
 				 			"url":"https://cora.example.org/somesystem/rest/record/somerecordtype/somerecordid",
-				 			"accept":"application/vnd.uub.record+json"
+				 			"accept":"application/vnd.cora.record+json"
 						}
 					}
 				}
@@ -108,7 +108,7 @@ public class JsonToBasicClientDataConverterFactoryTest {
 				        "requestMethod": "POST",
 				        "rel": "renew",
 				        "url": "{protocol}://localhost:8080/login/rest/authToken/someTokenId",
-				        "accept": "application/vnd.uub.authentication+json"
+				        "accept": "application/vnd.cora.authentication+json"
 				      },
 				      "delete": {
 				        "requestMethod": "DELETE",
@@ -154,7 +154,7 @@ public class JsonToBasicClientDataConverterFactoryTest {
 				              "requestMethod": "GET",
 				              "rel": "read",
 				              "url": "https://cora.example.org/somesystem/rest/record/somerecordtype/somerecordid",
-				              "accept": "application/vnd.uub.record+json"
+				              "accept": "application/vnd.cora.record+json"
 				            }
 				          }
 				        }
@@ -171,7 +171,7 @@ public class JsonToBasicClientDataConverterFactoryTest {
 				              "requestMethod": "GET",
 				              "rel": "read",
 				              "url": "https://cora.example.org/somesystem/rest/record/somerecordtype/somerecordid",
-				              "accept": "application/vnd.uub.record+json"
+				              "accept": "application/vnd.cora.record+json"
 				            }
 				          }
 

@@ -233,7 +233,7 @@ public class JsonToBasicClientDataAuthenticationConverterTest {
 				        "requestMethod": "POST",
 				        "rel": "renew",
 				        "url": "https://localhost:8080/login/rest/authToken/someTokenId",
-				        "accept": "application/vnd.uub.authentication+json"
+				        "accept": "application/vnd.cora.authentication+json"
 				      },
 				      "delete": {
 				        "requestMethod": "DELETE",
@@ -264,7 +264,7 @@ public class JsonToBasicClientDataAuthenticationConverterTest {
 				"requestMethod":"POST",\
 				"rel":"renew",\
 				"url":"https://localhost:8080/login/rest/authToken/someTokenId",\
-				"accept":"application/vnd.uub.authentication+json"\
+				"accept":"application/vnd.cora.authentication+json"\
 				}""";
 		assertEquals(renewActionLinkAsJsonObject.toJsonFormattedString(), renewAction);
 

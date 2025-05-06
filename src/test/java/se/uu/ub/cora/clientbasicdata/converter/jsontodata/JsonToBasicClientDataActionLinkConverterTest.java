@@ -125,17 +125,17 @@ public class JsonToBasicClientDataActionLinkConverterTest {
 				        ],
 				        "name": "workOrder"
 				    },
-				    "contentType": "application/vnd.uub.record+json",
+				    "contentType": "application/vnd.cora.record+json",
 				    "url": "https://cora.epc.ub.uu.se/systemone/rest/record/workOrder/",
-				    "accept": "application/vnd.uub.record+json"
+				    "accept": "application/vnd.cora.record+json"
 				}""";
 		ClientActionLink clientDataActionLink = createClientDataActionLinkForJsonString(json);
 		assertEquals(clientDataActionLink.getAction(), ClientAction.INDEX);
 		assertEquals(clientDataActionLink.getURL(),
 				"https://cora.epc.ub.uu.se/systemone/rest/record/workOrder/");
 		assertEquals(clientDataActionLink.getRequestMethod(), "POST");
-		assertEquals(clientDataActionLink.getAccept(), "application/vnd.uub.record+json");
-		assertEquals(clientDataActionLink.getContentType(), "application/vnd.uub.record+json");
+		assertEquals(clientDataActionLink.getAccept(), "application/vnd.cora.record+json");
+		assertEquals(clientDataActionLink.getContentType(), "application/vnd.cora.record+json");
 
 		factory.MCR.assertMethodWasCalled("factorUsingJsonObject");
 		JsonToClientDataConverterSpy bodyConverter = (JsonToClientDataConverterSpy) factory.MCR

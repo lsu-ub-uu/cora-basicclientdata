@@ -211,7 +211,7 @@ public class JsonToBasicClientDataRecordConverterTest {
 				 			"requestMethod":"GET",
 				 			"rel":"read",
 				 			"url":"https://cora.example.org/somesystem/rest/record/somerecordtype/somerecordid",
-				 			"accept":"application/vnd.uub.record+json"
+				 			"accept":"application/vnd.cora.record+json"
 						}
 					}
 				}
@@ -226,7 +226,7 @@ public class JsonToBasicClientDataRecordConverterTest {
 				"requestMethod":"GET",\
 				"rel":"read",\
 				"url":"https://cora.example.org/somesystem/rest/record/somerecordtype/somerecordid",\
-				"accept":"application/vnd.uub.record+json"\
+				"accept":"application/vnd.cora.record+json"\
 				}""";
 		assertEquals(actionLinkAsJsonObject.toJsonFormattedString(), expectedJson);
 
