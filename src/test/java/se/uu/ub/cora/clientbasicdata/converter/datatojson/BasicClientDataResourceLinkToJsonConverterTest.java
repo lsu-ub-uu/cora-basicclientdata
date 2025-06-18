@@ -1,5 +1,5 @@
 /*
- * Copyright 2021, 2023 Uppsala University Library
+ * Copyright 2021, 2023, 2025 Uppsala University Library
  *
  * This file is part of Cora.
  *
@@ -46,17 +46,6 @@ public class BasicClientDataResourceLinkToJsonConverterTest {
 		converterFactory = new BasicClientDataToJsonConverterFactorySpy();
 
 		constructWithRecordUrl();
-
-		// recordURL = "https://somesystem.org/rest/records/someRecordType/someRecordId";
-		// dataResourceLink = new BasicClientDataResourceLinkSpy("someNameInData");
-		//
-		// jsonBuilderFactorySpy = new BasicClientJsonBuilderFactorySpy();
-		//
-		// converterFactory = new BasicClientDataToJsonConverterFactorySpy();
-		// resourceLinkToJsonConverter = BasicClientDataResourceLinkToJsonConverter
-		// .usingConverterFactoryJsonBuilderFactoryAndDataResourceLinkAndRecordUrl(
-		// converterFactory, jsonBuilderFactorySpy, dataResourceLink, recordURL);
-
 	}
 
 	private void constructWithRecordUrl() {
@@ -99,7 +88,7 @@ public class BasicClientDataResourceLinkToJsonConverterTest {
 	}
 
 	@Test
-	public void testJsonWithRepeatId() throws Exception {
+	public void testJsonWithRepeatId() {
 		dataResourceLink.MRV.setDefaultReturnValuesSupplier("hasRepeatId", () -> true);
 		dataResourceLink.MRV.setDefaultReturnValuesSupplier("getRepeatId", () -> "1");
 
@@ -137,14 +126,14 @@ public class BasicClientDataResourceLinkToJsonConverterTest {
 	}
 
 	@Test
-	public void testConverterFactorySetInParent() throws Exception {
+	public void testConverterFactorySetInParent() {
 		constructWithRecordUrl();
 
 		assertSame(converter.onlyForTestGetConverterFactory(), converterFactory);
 	}
 
 	@Test
-	public void testNoActions() throws Exception {
+	public void testNoActions() {
 		converter = BasicClientDataResourceLinkToJsonConverter
 				.usingConverterFactoryJsonBuilderFactoryAndDataResourceLinkAndRecordUrl(
 						converterFactory, jsonBuilderFactorySpy, dataResourceLink, recordURL);
@@ -164,7 +153,7 @@ public class BasicClientDataResourceLinkToJsonConverterTest {
 	}
 
 	@Test
-	public void testActionLinksBuilderAddedToMainBuilder() throws Exception {
+	public void testActionLinksBuilderAddedToMainBuilder() {
 		dataResourceLink.MRV.setDefaultReturnValuesSupplier("hasReadAction", () -> true);
 		converter = BasicClientDataResourceLinkToJsonConverter
 				.usingConverterFactoryJsonBuilderFactoryAndDataResourceLinkAndRecordUrl(
@@ -186,7 +175,7 @@ public class BasicClientDataResourceLinkToJsonConverterTest {
 	}
 
 	@Test
-	public void testActionAddedToActionBuilder() throws Exception {
+	public void testActionAddedToActionBuilder() {
 		dataResourceLink.MRV.setDefaultReturnValuesSupplier("hasReadAction", () -> true);
 		converter = BasicClientDataResourceLinkToJsonConverter
 				.usingConverterFactoryJsonBuilderFactoryAndDataResourceLinkAndRecordUrl(
@@ -216,7 +205,7 @@ public class BasicClientDataResourceLinkToJsonConverterTest {
 	}
 
 	@Test
-	public void testJsonWithActions() throws Exception {
+	public void testJsonWithActions() {
 		dataResourceLink.MRV.setDefaultReturnValuesSupplier("hasReadAction", () -> true);
 		converter = BasicClientDataResourceLinkToJsonConverter
 				.usingConverterFactoryJsonBuilderFactoryAndDataResourceLinkAndRecordUrl(
@@ -240,7 +229,7 @@ public class BasicClientDataResourceLinkToJsonConverterTest {
 	}
 
 	@Test
-	public void testJsonWithActionsButMissingURL() throws Exception {
+	public void testJsonWithActionsButMissingURL() {
 		dataResourceLink.MRV.setDefaultReturnValuesSupplier("hasReadAction", () -> true);
 		converter = BasicClientDataResourceLinkToJsonConverter
 				.usingConverterFactoryJsonBuilderFactoryAndDataResourceLinkAndRecordUrl(

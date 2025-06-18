@@ -1,5 +1,5 @@
 /*
- * Copyright 2021, 2023 Uppsala University Library
+ * Copyright 2021, 2023, 2025 Uppsala University Library
  *
  * This file is part of Cora.
  *
@@ -121,36 +121,4 @@ public class BasicClientDataResourceLinkToJsonConverter implements ClientDataToJ
 	Optional<String> onlyForTestGetRecordUrl() {
 		return recordURL;
 	}
-
-	// @Override
-	// void hookForSubclassesToImplementExtraConversion() {
-	// possiblyAddActionLink();
-	// }
-	//
-	// private void possiblyAddActionLink() {
-	// if (dataResourceLink.hasReadAction()) {
-	// createReadActionLink();
-	// }
-	// }
-	//
-	// private void createReadActionLink() {
-	// JsonObjectBuilder actionLinksObject = resourceLinkBuilderFactory.createObjectBuilder();
-	//
-	// JsonObjectBuilder internalLinkBuilder = buildInternalLinkBuilder();
-	// actionLinksObject.addKeyJsonObjectBuilder(READ, internalLinkBuilder);
-	//
-	// dataGroupJsonObjectBuilder.addKeyJsonObjectBuilder("actionLinks", actionLinksObject);
-	// }
-	//
-	// private JsonObjectBuilder buildInternalLinkBuilder() {
-	// String url = recordURL + "/" + dataResourceLink.getNameInData();
-	// String mimeType = dataResourceLink.getMimeType();
-	// JsonObjectBuilder internalLinkBuilder = resourceLinkBuilderFactory.createObjectBuilder();
-	// internalLinkBuilder.addKeyString("rel", READ);
-	// internalLinkBuilder.addKeyString("url", url);
-	// internalLinkBuilder.addKeyString("requestMethod", GET);
-	// internalLinkBuilder.addKeyString("accept", mimeType);
-	// return internalLinkBuilder;
-	// }
-
 }
