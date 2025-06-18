@@ -1,5 +1,5 @@
 /*
- * Copyright 2019, 2023 Uppsala University Library
+ * Copyright 2019, 2023, 2025 Uppsala University Library
  *
  * This file is part of Cora.
  *
@@ -62,7 +62,7 @@ public class JsonToBasicClientDataResourceLinkConverterTest {
 	}
 
 	@Test
-	public void onlyForTestGetActionLinkConverterFactory() throws Exception {
+	public void onlyForTestGetActionLinkConverterFactory() {
 		String json = """
 				{
 				  "name": "master",
@@ -78,7 +78,7 @@ public class JsonToBasicClientDataResourceLinkConverterTest {
 	}
 
 	@Test
-	public void onlyForTestGetJsonObject() throws Exception {
+	public void onlyForTestGetJsonObject() {
 		String json = """
 				{
 				  "name": "master",

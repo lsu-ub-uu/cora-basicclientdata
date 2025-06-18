@@ -1,5 +1,5 @@
 /*
- * Copyright 2019, 2023 Uppsala University Library
+ * Copyright 2019, 2023, 2025 Uppsala University Library
  *
  * This file is part of Cora.
  *
@@ -130,7 +130,8 @@ public class JsonToBasicClientDataResourceLinkConverter implements JsonToClientD
 	private ClientDataResourceLink createResourceLinkWithNameAndMimeType() {
 		String nameInData = getValueAsStringFromJsonObject("name");
 		String mimeType = getValueAsStringFromJsonObject("mimeType");
-		return BasicClientDataResourceLink.withNameInDataAndMimeType(nameInData, mimeType);
+		return BasicClientDataResourceLink.withNameInDataAndTypeAndIdAndMimeType(nameInData,
+				"someType", "someId", mimeType);
 	}
 
 	private String getValueAsStringFromJsonObject(String key) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015, 2016 Uppsala University Library
+ * Copyright 2015, 2016, 2025 Uppsala University Library
  *
  * This file is part of Cora.
  *
@@ -36,15 +36,30 @@ public final class BasicClientDataResourceLink implements ClientDataResourceLink
 	private String mimeType;
 	private String nameInData;
 	private String repeatId;
+	private String recordType;
+	private String recordId;
 
-	public static BasicClientDataResourceLink withNameInDataAndMimeType(String nameInData,
-			String mimeType) {
-		return new BasicClientDataResourceLink(nameInData, mimeType);
+	public static BasicClientDataResourceLink withNameInDataAndTypeAndIdAndMimeType(String nameInData,
+			String recordType, String recordId, String mimeType) {
+		return new BasicClientDataResourceLink(nameInData, recordType, recordId, mimeType);
 	}
 
-	private BasicClientDataResourceLink(String nameInData, String mimeType) {
+	private BasicClientDataResourceLink(String nameInData, String recordType, String recordId,
+			String mimeType) {
 		this.nameInData = nameInData;
+		this.recordType = recordType;
+		this.recordId = recordId;
 		this.mimeType = mimeType;
+	}
+
+	@Override
+	public String getType() {
+		return recordType;
+	}
+
+	@Override
+	public String getId() {
+		return recordId;
 	}
 
 	@Override
@@ -121,5 +136,4 @@ public final class BasicClientDataResourceLink implements ClientDataResourceLink
 	public Optional<String> getAttributeValue(String nameInData) {
 		throw new UnsupportedOperationException(NOT_YET_IMPLEMENTED);
 	}
-
 }
