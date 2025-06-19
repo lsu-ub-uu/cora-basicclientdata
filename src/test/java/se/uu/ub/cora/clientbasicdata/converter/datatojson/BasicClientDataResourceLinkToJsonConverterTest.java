@@ -21,6 +21,7 @@ package se.uu.ub.cora.clientbasicdata.converter.datatojson;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertSame;
 
+import java.text.MessageFormat;
 import java.util.Optional;
 
 import org.testng.annotations.BeforeMethod;
@@ -50,10 +51,11 @@ public class BasicClientDataResourceLinkToJsonConverterTest {
 
 	private void constructWithRecordUrl() {
 		dataResourceLink.MRV.setDefaultReturnValuesSupplier("getNameInData", () -> "master");
-		dataResourceLink.MRV.setDefaultReturnValuesSupplier("getMimeType",
-				() -> "application/octet-stream");
+		dataResourceLink.MRV.setDefaultReturnValuesSupplier("getType", () -> "someType");
+		dataResourceLink.MRV.setDefaultReturnValuesSupplier("getId", () -> "someId");
+		dataResourceLink.MRV.setDefaultReturnValuesSupplier("getMimeType", () -> "image/png");
 
-		recordURL = Optional.of("https://somesystem.org/rest/records/someRecordType/someRecordId");
+		recordURL = Optional.of("https://somesystem.org/rest/records");
 		converter = BasicClientDataResourceLinkToJsonConverter
 				.usingConverterFactoryJsonBuilderFactoryAndDataResourceLinkAndRecordUrl(
 						converterFactory, new OrgJsonBuilderFactoryAdapter(), dataResourceLink,
@@ -63,13 +65,33 @@ public class BasicClientDataResourceLinkToJsonConverterTest {
 	@Test
 	public void testToJson() {
 		String json = converter.toJson();
+		String jsonCompacted = converter.toJsonCompactFormat();
 
 		String expectedJson = """
 				{
-				    "name": "master",
-				    "mimeType": "application/octet-stream"
+				    "children": [
+				        {
+				            "name": "linkedRecordType",
+				            "value": "someType"
+				        },
+				        {
+				            "name": "linkedRecordId",
+				            "value": "someId"
+				        },
+				        {
+				            "name": "mimeType",
+				            "value": "image/png"
+				        }
+				    ],
+				    "name": "master"
 				}""";
 		assertEquals(json, expectedJson);
+		assertEquals(jsonCompacted, toCompactFormat(expectedJson));
+	}
+
+	private String toCompactFormat(String json) {
+		return json.replaceAll("\\s+", "");
+
 	}
 
 	@Test
@@ -78,13 +100,28 @@ public class BasicClientDataResourceLinkToJsonConverterTest {
 		dataResourceLink.MRV.setDefaultReturnValuesSupplier("getMimeType", () -> "image/jpeg");
 
 		String json = converter.toJson();
+		String jsonCompacted = converter.toJsonCompactFormat();
 
 		String expectedJson = """
 				{
-				    "name": "thumbnail",
-				    "mimeType": "image/jpeg"
+				    "children": [
+				        {
+				            "name": "linkedRecordType",
+				            "value": "someType"
+				        },
+				        {
+				            "name": "linkedRecordId",
+				            "value": "someId"
+				        },
+				        {
+				            "name": "mimeType",
+				            "value": "image/jpeg"
+				        }
+				    ],
+				    "name": "thumbnail"
 				}""";
 		assertEquals(json, expectedJson);
+		assertEquals(jsonCompacted, toCompactFormat(expectedJson));
 	}
 
 	@Test
@@ -93,36 +130,29 @@ public class BasicClientDataResourceLinkToJsonConverterTest {
 		dataResourceLink.MRV.setDefaultReturnValuesSupplier("getRepeatId", () -> "1");
 
 		String json = converter.toJson();
+		String jsonCompacted = converter.toJsonCompactFormat();
 
 		String expectedJson = """
 				{
 				    "repeatId": "1",
-				    "name": "master",
-				    "mimeType": "application/octet-stream"
+				    "children": [
+				        {
+				            "name": "linkedRecordType",
+				            "value": "someType"
+				        },
+				        {
+				            "name": "linkedRecordId",
+				            "value": "someId"
+				        },
+				        {
+				            "name": "mimeType",
+				            "value": "image/png"
+				        }
+				    ],
+				    "name": "master"
 				}""";
 		assertEquals(json, expectedJson);
-	}
-
-	@Test
-	public void testToJsonCompactFormatWithoutRepeatId() {
-		String json = converter.toJsonCompactFormat();
-
-		String expectedJson = """
-				{"name":"master","mimeType":"application/octet-stream"}""";
-
-		assertEquals(json, expectedJson);
-	}
-
-	@Test
-	public void testToJsonCompactFormatWithRepeatId() {
-		dataResourceLink.MRV.setDefaultReturnValuesSupplier("hasRepeatId", () -> true);
-		dataResourceLink.MRV.setDefaultReturnValuesSupplier("getRepeatId", () -> "1");
-
-		String json = converter.toJsonCompactFormat();
-
-		String expectedJson = """
-				{"repeatId":"1","name":"master","mimeType":"application/octet-stream"}""";
-		assertEquals(json, expectedJson);
+		assertEquals(jsonCompacted, toCompactFormat(expectedJson));
 	}
 
 	@Test
@@ -184,14 +214,13 @@ public class BasicClientDataResourceLinkToJsonConverterTest {
 		converter.toJsonObjectBuilder();
 
 		BasicClientJsonObjectBuilderSpy actionLinksBuilderSpy = getActionsBuilder();
-		BasicClientJsonObjectBuilderSpy internalLinkBuilderSpy = (BasicClientJsonObjectBuilderSpy) jsonBuilderFactorySpy.MCR
-				.getReturnValue("createObjectBuilder", 2);
+		BasicClientJsonObjectBuilderSpy internalLinkBuilderSpy = getJsonBuilderForActionLinksFields();
 		actionLinksBuilderSpy.MCR.assertParameters("addKeyJsonObjectBuilder", 0, "read",
 				internalLinkBuilderSpy);
 
 		internalLinkBuilderSpy.MCR.assertParameters("addKeyString", 0, "rel", "read");
 		internalLinkBuilderSpy.MCR.assertParameters("addKeyString", 1, "url",
-				recordURL.get() + "/" + dataResourceLink.getNameInData());
+				generateURL("someType", "someId", dataResourceLink.getNameInData()));
 		internalLinkBuilderSpy.MCR.assertParameters("addKeyString", 2, "requestMethod", "GET");
 		String mimeType = (String) dataResourceLink.MCR.getReturnValue("getMimeType", 0);
 		internalLinkBuilderSpy.MCR.assertParameters("addKeyString", 3, "accept", mimeType);
@@ -199,9 +228,19 @@ public class BasicClientDataResourceLinkToJsonConverterTest {
 
 	}
 
+	private BasicClientJsonObjectBuilderSpy getJsonBuilderForActionLinksFields() {
+		return (BasicClientJsonObjectBuilderSpy) jsonBuilderFactorySpy.MCR
+				.getReturnValue("createObjectBuilder", 5);
+	}
+
 	private BasicClientJsonObjectBuilderSpy getActionsBuilder() {
 		return (BasicClientJsonObjectBuilderSpy) jsonBuilderFactorySpy.MCR
-				.getReturnValue("createObjectBuilder", 1);
+				.getReturnValue("createObjectBuilder", 4);
+	}
+
+	private String generateURL(String recordType, String recordId, String nameInData) {
+		return MessageFormat.format("{0}/{1}/{2}/{3}", recordURL.get(), recordType, recordId,
+				nameInData);
 	}
 
 	@Test
@@ -216,14 +255,27 @@ public class BasicClientDataResourceLinkToJsonConverterTest {
 
 		String excpectedJson = """
 				{
+				    "children": [
+				        {
+				            "name": "linkedRecordType",
+				            "value": "someType"
+				        },
+				        {
+				            "name": "linkedRecordId",
+				            "value": "someId"
+				        },
+				        {
+				            "name": "mimeType",
+				            "value": "image/png"
+				        }
+				    ],
 				    "actionLinks": {"read": {
 				        "requestMethod": "GET",
 				        "rel": "read",
-				        "url": "https://somesystem.org/rest/records/someRecordType/someRecordId/master",
-				        "accept": "application/octet-stream"
+				        "url": "https://somesystem.org/rest/records/someType/someId/master",
+				        "accept": "image/png"
 				    }},
-				    "name": "master",
-				    "mimeType": "application/octet-stream"
+				    "name": "master"
 				}""";
 		assertEquals(json, excpectedJson);
 	}
@@ -240,8 +292,21 @@ public class BasicClientDataResourceLinkToJsonConverterTest {
 
 		String excpectedJson = """
 				{
-				    "name": "master",
-				    "mimeType": "application/octet-stream"
+				    "children": [
+				        {
+				            "name": "linkedRecordType",
+				            "value": "someType"
+				        },
+				        {
+				            "name": "linkedRecordId",
+				            "value": "someId"
+				        },
+				        {
+				            "name": "mimeType",
+				            "value": "image/png"
+				        }
+				    ],
+				    "name": "master"
 				}""";
 		assertEquals(json, excpectedJson);
 	}

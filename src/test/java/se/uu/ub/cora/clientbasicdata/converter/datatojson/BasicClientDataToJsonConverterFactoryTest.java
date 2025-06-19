@@ -23,6 +23,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 import java.util.Optional;
 
@@ -185,6 +186,7 @@ public class BasicClientDataToJsonConverterFactoryTest {
 
 	@Test
 	public void testDataResourceLinkWithUrl() {
+		fail("recordUrl must not have type or id, it must be included in ResourceLink");
 		BasicClientDataResourceLinkToJsonConverter converter = (BasicClientDataResourceLinkToJsonConverter) converterFactory
 				.factorUsingBaseUrlAndRecordUrlAndConvertible(baseUrl, recordUrl, dataResourceLink);
 

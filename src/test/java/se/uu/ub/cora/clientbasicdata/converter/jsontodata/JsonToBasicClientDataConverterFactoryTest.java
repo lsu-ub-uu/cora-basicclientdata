@@ -1,5 +1,5 @@
 /*
- * Copyright 2015, 2023 Uppsala University Library
+ * Copyright 2015, 2023, 2025 Uppsala University Library
  *
  * This file is part of Cora.
  *
@@ -36,7 +36,6 @@ import se.uu.ub.cora.json.parser.org.OrgJsonParser;
 
 public class JsonToBasicClientDataConverterFactoryTest {
 	private JsonToClientDataConverterFactory jsonToDataConverterFactory;
-	private String json;
 
 	@BeforeMethod
 	public void beforeMethod() {
@@ -82,8 +81,7 @@ public class JsonToBasicClientDataConverterFactoryTest {
 
 	private JsonObject parseToJsonObject(String json) {
 		JsonParser jsonParser = new OrgJsonParser();
-		JsonObject jsonObject = jsonParser.parseStringAsObject(json);
-		return jsonObject;
+		return jsonParser.parseStringAsObject(json);
 	}
 
 	@Test
@@ -207,7 +205,7 @@ public class JsonToBasicClientDataConverterFactoryTest {
 
 	@Test
 	public void testFactorOnJsonStringDataGroupEmptyChildren() {
-		json = """
+		String json = """
 				{"name":"groupNameInData", "children":[]}""";
 		JsonToClientDataConverter jsonToDataConverter = jsonToDataConverterFactory
 				.factorUsingString(json);
@@ -546,11 +544,21 @@ public class JsonToBasicClientDataConverterFactoryTest {
 	public void testFactorOnJsonStringCompleteSetupFactorsDataResourceLink() {
 		String json = """
 				{
-					"mimeType": "application/octet-stream",
-					"name": "master"
-				}
-				""";
-
+				  "name": "master",
+				  "children": [
+				    {"name": "linkedRecordType", "value": "someType"                  },
+				    {"name": "linkedRecordId",   "value": "someId"},
+				    {"name": "mimeType",           "value": "image/png"               }
+				  ],
+				  "actionLinks": {
+				    "read": {
+				      "requestMethod": "GET",
+				      "rel": "read",
+				      "url": "https://cora.epc.ub.uu.se/systemone/rest/record/someType/someId/master",
+				      "accept": "image/png"
+				    }
+				  }
+				}""";
 		JsonToClientDataConverter jsonToDataConverter = jsonToDataConverterFactory
 				.factorUsingString(json);
 
@@ -563,7 +571,37 @@ public class JsonToBasicClientDataConverterFactoryTest {
 	}
 
 	@Test
+	public void testFactorOnJsonStringCompleteSetupFactorsDataResourceLinkWithRepeatId() {
+		String json = """
+				{
+				  "name": "master",
+				  "children": [
+				    {"name": "linkedRecordType", "value": "someType"                  },
+				    {"name": "linkedRecordId",   "value": "someId"},
+				    {"name": "mimeType",           "value": "image/png"               }
+				  ],
+				  "repeatId":"0",
+				  "actionLinks": {
+				    "read": {
+				      "requestMethod": "GET",
+				      "rel": "read",
+				      "url": "https://cora.epc.ub.uu.se/systemone/rest/record/someType/someId/master",
+				      "accept": "image/png"
+				    }
+				  }
+				}""";
+		JsonToClientDataConverter jsonToDataConverter = jsonToDataConverterFactory
+				.factorUsingString(json);
 
+		assertTrue(jsonToDataConverter instanceof JsonToBasicClientDataResourceLinkConverter);
+		JsonToBasicClientDataResourceLinkConverter converter = (JsonToBasicClientDataResourceLinkConverter) jsonToDataConverter;
+		JsonToBasicClientDataActionLinkConverterFactory createdActionLinkConverterFactory = converter
+				.onlyForTestGetActionLinkConverterFactory();
+		assertTrue(
+				createdActionLinkConverterFactory instanceof JsonToBasicClientDataActionLinkConverterFactoryImp);
+	}
+
+	@Test
 	public void testFactorOnJsonStringDataAtomic() {
 		String json = "{\"name\":\"atomicNameInData\",\"value\":\"atomicValue\"}";
 		JsonToClientDataConverter jsonToDataConverter = jsonToDataConverterFactory
