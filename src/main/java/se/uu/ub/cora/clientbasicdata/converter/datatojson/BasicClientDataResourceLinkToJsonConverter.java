@@ -35,11 +35,11 @@ public class BasicClientDataResourceLinkToJsonConverter implements ClientDataToJ
 
 	private ClientDataResourceLink dataResourceLink;
 	private Optional<String> baseUrl;
-	JsonBuilderFactory jsonBuilderFactory;
+	private JsonBuilderFactory jsonBuilderFactory;
 	private JsonObjectBuilder jsonObjectBuilder;
 	private static final String READ = "read";
 	private static final String GET = "GET";
-	ClientDataToJsonConverterFactory converterFactory;
+	private ClientDataToJsonConverterFactory converterFactory;
 
 	public static BasicClientDataResourceLinkToJsonConverter usingConverterFactoryJsonBuilderFactoryAndDataResourceLinkAndRecordUrl(
 			ClientDataToJsonConverterFactory converterFactory, JsonBuilderFactory factory,
@@ -151,7 +151,7 @@ public class BasicClientDataResourceLinkToJsonConverter implements ClientDataToJ
 		return toJsonObjectBuilder().toJsonFormattedPrettyString();
 	}
 
-	Object onlyForTestGetConverterFactory() {
+	ClientDataToJsonConverterFactory onlyForTestGetConverterFactory() {
 		return converterFactory;
 	}
 
@@ -159,7 +159,7 @@ public class BasicClientDataResourceLinkToJsonConverter implements ClientDataToJ
 		return jsonBuilderFactory;
 	}
 
-	Optional<String> onlyForTestGetRecordUrl() {
+	Optional<String> onlyForTestGetBaseUrl() {
 		return baseUrl;
 	}
 }

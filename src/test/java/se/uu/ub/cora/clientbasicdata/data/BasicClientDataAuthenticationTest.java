@@ -71,6 +71,12 @@ public class BasicClientDataAuthenticationTest {
 	}
 
 	@Test
+	public void testGetAction_NonSetup() {
+		ClientActionLink expectedActionLink = new ClientActionLinkSpy();
+		assertTrue(dataAuthentication.getActionLink(expectedActionLink.getAction()).isEmpty());
+	}
+
+	@Test
 	public void testGetToken() {
 		dataGroup.MRV.setSpecificReturnValuesSupplier("getFirstAtomicValueWithNameInData",
 				() -> "someToken", "token");

@@ -138,16 +138,6 @@ public class BasicClientDataToJsonConverterFactoryTest {
 	}
 
 	@Test
-	public void testDataResourceLinkNoUrl() {
-		BasicClientDataResourceLinkToJsonConverter dataToJsonConverter = (BasicClientDataResourceLinkToJsonConverter) converterFactory
-				.factorUsingConvertible(dataResourceLink);
-
-		JsonBuilderFactory jsonBuilderFactory = dataToJsonConverter.jsonBuilderFactory;
-		assertSame(jsonBuilderFactory, builderFactory);
-		// assertFalse(dataToJsonConverter instanceof BasicClientDataResourceLinkToJsonConverter);
-	}
-
-	@Test
 	public void testDataAttributeWithUrl() {
 		BasicClientDataAttributeToJsonConverter converter = (BasicClientDataAttributeToJsonConverter) converterFactory
 				.factorUsingConvertible(dataAttribute);
@@ -181,10 +171,9 @@ public class BasicClientDataToJsonConverterFactoryTest {
 		BasicClientDataResourceLinkToJsonConverter converter = (BasicClientDataResourceLinkToJsonConverter) converterFactory
 				.factorUsingBaseUrlAndConvertible(baseUrl, dataResourceLink);
 
-		JsonBuilderFactory jsonBuilderFactory = converter.jsonBuilderFactory;
-		assertSame(jsonBuilderFactory, builderFactory);
-		assertSame(converter.converterFactory, converterFactory);
-		assertEquals(converter.onlyForTestGetRecordUrl(), Optional.of(baseUrl));
+		assertSame(converter.onlyForTestGetJsonBuilderFactory(), builderFactory);
+		assertSame(converter.onlyForTestGetConverterFactory(), converterFactory);
+		assertEquals(converter.onlyForTestGetBaseUrl(), Optional.of(baseUrl));
 	}
 
 	@Test
@@ -192,10 +181,9 @@ public class BasicClientDataToJsonConverterFactoryTest {
 		BasicClientDataResourceLinkToJsonConverter converter = (BasicClientDataResourceLinkToJsonConverter) converterFactory
 				.factorUsingConvertible(dataResourceLink);
 
-		JsonBuilderFactory jsonBuilderFactory = converter.jsonBuilderFactory;
-		assertSame(jsonBuilderFactory, builderFactory);
-		assertSame(converter.converterFactory, converterFactory);
-		assertTrue(converter.onlyForTestGetRecordUrl().isEmpty());
+		assertSame(converter.onlyForTestGetJsonBuilderFactory(), builderFactory);
+		assertSame(converter.onlyForTestGetConverterFactory(), converterFactory);
+		assertTrue(converter.onlyForTestGetBaseUrl().isEmpty());
 	}
 
 	@Test

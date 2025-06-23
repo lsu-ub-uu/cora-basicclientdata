@@ -311,4 +311,14 @@ public class BasicClientDataResourceLinkToJsonConverterTest {
 		assertEquals(json, excpectedJson);
 	}
 
+	@Test
+	public void testOnlyForTests() {
+		var tmpConverter = BasicClientDataResourceLinkToJsonConverter
+				.usingConverterFactoryJsonBuilderFactoryAndDataResourceLinkAndRecordUrl(
+						converterFactory, jsonBuilderFactorySpy, dataResourceLink, baseUrl);
+
+		assertEquals(tmpConverter.onlyForTestGetJsonBuilderFactory(), jsonBuilderFactorySpy);
+		assertEquals(tmpConverter.onlyForTestGetBaseUrl(), baseUrl);
+	}
+
 }
