@@ -36,7 +36,7 @@ public class BasicClientDataResourceLinkToJsonConverterTest {
 	BasicClientDataResourceLinkToJsonConverter resourceLinkToJsonConverter;
 	ClientDataToJsonConverterFactory converterFactory;
 	BasicClientJsonBuilderFactorySpy jsonBuilderFactorySpy;
-	Optional<String> recordURL;
+	Optional<String> baseUrl;
 	private ClientDataResourceLinkSpy dataResourceLink;
 	private BasicClientDataResourceLinkToJsonConverter converter;
 
@@ -55,11 +55,11 @@ public class BasicClientDataResourceLinkToJsonConverterTest {
 		dataResourceLink.MRV.setDefaultReturnValuesSupplier("getId", () -> "someId");
 		dataResourceLink.MRV.setDefaultReturnValuesSupplier("getMimeType", () -> "image/png");
 
-		recordURL = Optional.of("https://somesystem.org/rest/records");
+		baseUrl = Optional.of("https://somesystem.org/rest/records/");
 		converter = BasicClientDataResourceLinkToJsonConverter
 				.usingConverterFactoryJsonBuilderFactoryAndDataResourceLinkAndRecordUrl(
 						converterFactory, new OrgJsonBuilderFactoryAdapter(), dataResourceLink,
-						recordURL);
+						baseUrl);
 	}
 
 	@Test
@@ -166,7 +166,7 @@ public class BasicClientDataResourceLinkToJsonConverterTest {
 	public void testNoActions() {
 		converter = BasicClientDataResourceLinkToJsonConverter
 				.usingConverterFactoryJsonBuilderFactoryAndDataResourceLinkAndRecordUrl(
-						converterFactory, jsonBuilderFactorySpy, dataResourceLink, recordURL);
+						converterFactory, jsonBuilderFactorySpy, dataResourceLink, baseUrl);
 
 		converter.toJsonObjectBuilder();
 
@@ -187,7 +187,7 @@ public class BasicClientDataResourceLinkToJsonConverterTest {
 		dataResourceLink.MRV.setDefaultReturnValuesSupplier("hasReadAction", () -> true);
 		converter = BasicClientDataResourceLinkToJsonConverter
 				.usingConverterFactoryJsonBuilderFactoryAndDataResourceLinkAndRecordUrl(
-						converterFactory, jsonBuilderFactorySpy, dataResourceLink, recordURL);
+						converterFactory, jsonBuilderFactorySpy, dataResourceLink, baseUrl);
 
 		converter.toJsonObjectBuilder();
 
@@ -209,7 +209,7 @@ public class BasicClientDataResourceLinkToJsonConverterTest {
 		dataResourceLink.MRV.setDefaultReturnValuesSupplier("hasReadAction", () -> true);
 		converter = BasicClientDataResourceLinkToJsonConverter
 				.usingConverterFactoryJsonBuilderFactoryAndDataResourceLinkAndRecordUrl(
-						converterFactory, jsonBuilderFactorySpy, dataResourceLink, recordURL);
+						converterFactory, jsonBuilderFactorySpy, dataResourceLink, baseUrl);
 
 		converter.toJsonObjectBuilder();
 
@@ -239,7 +239,7 @@ public class BasicClientDataResourceLinkToJsonConverterTest {
 	}
 
 	private String generateURL(String recordType, String recordId, String nameInData) {
-		return MessageFormat.format("{0}/{1}/{2}/{3}", recordURL.get(), recordType, recordId,
+		return MessageFormat.format("{0}{1}/{2}/{3}", baseUrl.get(), recordType, recordId,
 				nameInData);
 	}
 
@@ -249,7 +249,7 @@ public class BasicClientDataResourceLinkToJsonConverterTest {
 		converter = BasicClientDataResourceLinkToJsonConverter
 				.usingConverterFactoryJsonBuilderFactoryAndDataResourceLinkAndRecordUrl(
 						converterFactory, new OrgJsonBuilderFactoryAdapter(), dataResourceLink,
-						recordURL);
+						baseUrl);
 
 		String json = converter.toJson();
 

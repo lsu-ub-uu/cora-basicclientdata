@@ -34,7 +34,7 @@ import se.uu.ub.cora.json.builder.JsonObjectBuilder;
 public class BasicClientDataResourceLinkToJsonConverter implements ClientDataToJsonConverter {
 
 	private ClientDataResourceLink dataResourceLink;
-	Optional<String> recordURL;
+	private Optional<String> baseUrl;
 	JsonBuilderFactory jsonBuilderFactory;
 	private JsonObjectBuilder jsonObjectBuilder;
 	private static final String READ = "read";
@@ -43,25 +43,25 @@ public class BasicClientDataResourceLinkToJsonConverter implements ClientDataToJ
 
 	public static BasicClientDataResourceLinkToJsonConverter usingConverterFactoryJsonBuilderFactoryAndDataResourceLinkAndRecordUrl(
 			ClientDataToJsonConverterFactory converterFactory, JsonBuilderFactory factory,
-			ClientDataResourceLink convertible, Optional<String> recordURL) {
+			ClientDataResourceLink convertible, Optional<String> baseUrl) {
 
 		return new BasicClientDataResourceLinkToJsonConverter(converterFactory, convertible,
-				recordURL, factory);
+				baseUrl, factory);
 	}
 
 	private BasicClientDataResourceLinkToJsonConverter(
 			ClientDataToJsonConverterFactory converterFactory,
-			ClientDataResourceLink dataResourceLink, Optional<String> recordURL,
+			ClientDataResourceLink dataResourceLink, Optional<String> baseUrl,
 			JsonBuilderFactory jsonBuilderFactory) {
 
 		this.converterFactory = converterFactory;
 		this.dataResourceLink = dataResourceLink;
-		this.recordURL = recordURL;
+		this.baseUrl = baseUrl;
 		this.jsonBuilderFactory = jsonBuilderFactory;
 	}
 
 	private void possiblyAddActionLink() {
-		if (dataResourceLink.hasReadAction() && recordURL.isPresent()) {
+		if (dataResourceLink.hasReadAction() && baseUrl.isPresent()) {
 			createReadActionLink();
 		}
 	}
@@ -87,7 +87,7 @@ public class BasicClientDataResourceLinkToJsonConverter implements ClientDataToJ
 	}
 
 	private String generateURL(String recordType, String recordId, String nameInData) {
-		return MessageFormat.format("{0}/{1}/{2}/{3}", recordURL.get(), recordType, recordId,
+		return MessageFormat.format("{0}{1}/{2}/{3}", baseUrl.get(), recordType, recordId,
 				nameInData);
 	}
 
@@ -160,6 +160,6 @@ public class BasicClientDataResourceLinkToJsonConverter implements ClientDataToJ
 	}
 
 	Optional<String> onlyForTestGetRecordUrl() {
-		return recordURL;
+		return baseUrl;
 	}
 }

@@ -42,14 +42,4 @@ public class BasicClientDataToJsonConverterFactorySpy implements ClientDataToJso
 		MCR.addReturned(converter);
 		return converter;
 	}
-
-	@Override
-	public ClientDataToJsonConverter factorUsingBaseUrlAndRecordUrlAndConvertible(String baseUrl,
-			String recordUrl, ClientConvertible convertible) {
-		MCR.addCall("baseUrl", baseUrl, "recordUrl", recordUrl, "convertible", convertible);
-		BasicClientDataToJsonConverterSpy converter = new BasicClientDataToJsonConverterSpy();
-		MCR.addReturned(converter);
-		return converter;
-	}
-
 }

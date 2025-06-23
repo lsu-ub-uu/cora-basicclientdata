@@ -23,7 +23,6 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.fail;
 
 import java.util.Optional;
 
@@ -50,7 +49,6 @@ public class BasicClientDataToJsonConverterFactoryTest {
 	private BasicClientDataAttribute dataAttribute;
 	private BasicClientDataRecordLink dataRecordLink;
 	private BasicClientDataResourceLink dataResourceLink;
-	private String recordUrl;
 	private String baseUrl;
 
 	@BeforeMethod
@@ -60,7 +58,6 @@ public class BasicClientDataToJsonConverterFactoryTest {
 		converterFactory = BasicClientDataToJsonConverterFactory
 				.usingBuilderFactory(builderFactory);
 		baseUrl = "some/url/";
-		recordUrl = "some/url/type/id";
 	}
 
 	private void createConvertibles() {
@@ -150,9 +147,6 @@ public class BasicClientDataToJsonConverterFactoryTest {
 		// assertFalse(dataToJsonConverter instanceof BasicClientDataResourceLinkToJsonConverter);
 	}
 
-	// TODO: Implement Converter for ClientDataList add test
-	// TODO: Implement Converter for ClientDataRecord add test
-
 	@Test
 	public void testDataAttributeWithUrl() {
 		BasicClientDataAttributeToJsonConverter converter = (BasicClientDataAttributeToJsonConverter) converterFactory
@@ -165,7 +159,7 @@ public class BasicClientDataToJsonConverterFactoryTest {
 	@Test
 	public void testRecordLinkWithUrl() {
 		BasicClientDataRecordLinkToJsonConverter converter = (BasicClientDataRecordLinkToJsonConverter) converterFactory
-				.factorUsingBaseUrlAndRecordUrlAndConvertible(baseUrl, recordUrl, dataRecordLink);
+				.factorUsingBaseUrlAndConvertible(baseUrl, dataRecordLink);
 
 		JsonBuilderFactory jsonBuilderFactory = converter.jsonBuilderFactory;
 		assertSame(jsonBuilderFactory, builderFactory);
@@ -175,9 +169,7 @@ public class BasicClientDataToJsonConverterFactoryTest {
 
 	@Test
 	public void testRectorDownToRecordLink() {
-
-		converterFactory.factorUsingBaseUrlAndRecordUrlAndConvertible(baseUrl, recordUrl,
-				dataRecordLink);
+		converterFactory.factorUsingBaseUrlAndConvertible(baseUrl, dataRecordLink);
 		ClientDataToJsonConverter converter = converterFactory
 				.factorUsingConvertible(dataRecordLink);
 
@@ -186,14 +178,24 @@ public class BasicClientDataToJsonConverterFactoryTest {
 
 	@Test
 	public void testDataResourceLinkWithUrl() {
-		fail("recordUrl must not have type or id, it must be included in ResourceLink");
 		BasicClientDataResourceLinkToJsonConverter converter = (BasicClientDataResourceLinkToJsonConverter) converterFactory
-				.factorUsingBaseUrlAndRecordUrlAndConvertible(baseUrl, recordUrl, dataResourceLink);
+				.factorUsingBaseUrlAndConvertible(baseUrl, dataResourceLink);
 
 		JsonBuilderFactory jsonBuilderFactory = converter.jsonBuilderFactory;
 		assertSame(jsonBuilderFactory, builderFactory);
 		assertSame(converter.converterFactory, converterFactory);
-		assertEquals(converter.recordURL, Optional.of(recordUrl));
+		assertEquals(converter.onlyForTestGetRecordUrl(), Optional.of(baseUrl));
+	}
+
+	@Test
+	public void testDataResourceLinkWithoutUrl() {
+		BasicClientDataResourceLinkToJsonConverter converter = (BasicClientDataResourceLinkToJsonConverter) converterFactory
+				.factorUsingConvertible(dataResourceLink);
+
+		JsonBuilderFactory jsonBuilderFactory = converter.jsonBuilderFactory;
+		assertSame(jsonBuilderFactory, builderFactory);
+		assertSame(converter.converterFactory, converterFactory);
+		assertTrue(converter.onlyForTestGetRecordUrl().isEmpty());
 	}
 
 	@Test
@@ -228,18 +230,6 @@ public class BasicClientDataToJsonConverterFactoryTest {
 		forTest.MCR.assertParameters("factorUsingConvertible", 0, dataRecordLink);
 		forTest.MCR.assertReturn("factorUsingConvertible", 0, converter);
 
-	}
-
-	@Test
-	public void testFactorUsingRecordUrlAndConvertibleUsesFactorUsingConvertible() {
-		BasicDataToJsonConverterFactoryForTest forTest = new BasicDataToJsonConverterFactoryForTest();
-		ClientDataToJsonConverter converter = forTest
-				.factorUsingBaseUrlAndRecordUrlAndConvertible(baseUrl, recordUrl, dataRecordLink);
-
-		assertEquals(forTest.baseUrl, baseUrl);
-		assertEquals(forTest.recordUrl, recordUrl);
-		forTest.MCR.assertParameters("factorUsingConvertible", 0, dataRecordLink);
-		forTest.MCR.assertReturn("factorUsingConvertible", 0, converter);
 	}
 
 	class BasicDataToJsonConverterFactoryForTest extends BasicClientDataToJsonConverterFactory {
