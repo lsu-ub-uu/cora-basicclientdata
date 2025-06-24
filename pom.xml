@@ -27,7 +27,7 @@
 	</parent>
 
 	<artifactId>basicclientdata</artifactId>
-	<version>2.0-SNAPSHOT</version>
+	<version>2.0.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>Basic client data</name>
@@ -43,7 +43,7 @@
 		<connection>scm:git:https://github.com/lsu-ub-uu/cora-basicclientdata.git</connection>
 		<developerConnection>scm:git:https://github.com/lsu-ub-uu/cora-basicclientdata.git</developerConnection>
 		<url>https://github.com/lsu-ub-uu/cora-basicclientdata.git</url>
-		<tag>HEAD</tag>
+		<tag>release/2.0</tag>
 	</scm>
 
 	<dependencies>
