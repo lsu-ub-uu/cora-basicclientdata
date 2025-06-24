@@ -1,5 +1,5 @@
 /*
- * Copyright 2015, 2019, 2021 Uppsala University Library
+ * Copyright 2015, 2019, 2021, 2025 Uppsala University Library
  *
  * This file is part of Cora.
  *
@@ -58,30 +58,27 @@ public class BasicClientDataToJsonConverterFactory implements ClientDataToJsonCo
 
 	@Override
 	public ClientDataToJsonConverter factorUsingConvertible(ClientConvertible convertible) {
-		if (convertible instanceof ClientDataList) {
+		if (isDataList(convertible)) {
 			return BasicClientDataListToJsonConverter.usingJsonFactoryForDataList(this,
 					builderFactory, (ClientDataList) convertible);
 		}
-
 		if (isDataRecordLinkAndHasBaseUrl(convertible)) {
 			return BasicClientDataRecordLinkToJsonConverter
 					.usingConverterFactoryAndJsonBuilderFactoryAndDataRecordLinkAndBaseUrl(this,
 							builderFactory, (ClientDataRecordLink) convertible, baseUrl);
 		}
 		if (isDataResourceLink(convertible)) {
-			Optional<String> optionalRecordUrl = Optional.ofNullable(recordUrl);
 			return BasicClientDataResourceLinkToJsonConverter
 					.usingConverterFactoryJsonBuilderFactoryAndDataResourceLinkAndRecordUrl(this,
 							builderFactory, (ClientDataResourceLink) convertible,
-							optionalRecordUrl);
-
+							getBaseUrlAsOptional());
 		}
-		if (convertible instanceof ClientDataGroup) {
+		if (isDataGroup(convertible)) {
 			return BasicClientDataGroupToJsonConverter
 					.usingConverterFactoryAndBuilderFactoryAndDataGroup(this, builderFactory,
 							(ClientDataGroup) convertible);
 		}
-		if (convertible instanceof ClientDataAtomic) {
+		if (isAtomic(convertible)) {
 			return BasicClientDataAtomicToJsonConverter.usingJsonBuilderFactoryAndDataAtomic(
 					builderFactory, (ClientDataAtomic) convertible);
 		}
@@ -89,30 +86,34 @@ public class BasicClientDataToJsonConverterFactory implements ClientDataToJsonCo
 				builderFactory, (ClientDataAttribute) convertible);
 	}
 
-	// private boolean isDataResourceLinkAndHasRecordUrl(ClientConvertible convertible) {
-	// return (convertible instanceof ClientDataResourceLink) && (recordUrl != null);
-	// }
-	private boolean isDataResourceLink(ClientConvertible convertible) {
-		return (convertible instanceof ClientDataResourceLink);
+	private Optional<String> getBaseUrlAsOptional() {
+		return Optional.ofNullable(baseUrl);
+	}
+
+	private boolean isDataList(ClientConvertible convertible) {
+		return convertible instanceof ClientDataList;
 	}
 
 	private boolean isDataRecordLinkAndHasBaseUrl(ClientConvertible convertible) {
 		return baseUrl != null && (convertible instanceof ClientDataRecordLink);
 	}
 
+	private boolean isDataResourceLink(ClientConvertible convertible) {
+		return (convertible instanceof ClientDataResourceLink);
+	}
+
+	private boolean isDataGroup(ClientConvertible convertible) {
+		return convertible instanceof ClientDataGroup;
+	}
+
+	private boolean isAtomic(ClientConvertible convertible) {
+		return convertible instanceof ClientDataAtomic;
+	}
+
 	@Override
 	public ClientDataToJsonConverter factorUsingBaseUrlAndConvertible(String baseUrl,
 			ClientConvertible convertible) {
 		this.baseUrl = baseUrl;
-
-		return factorUsingConvertible(convertible);
-	}
-
-	@Override
-	public ClientDataToJsonConverter factorUsingBaseUrlAndRecordUrlAndConvertible(String baseUrl,
-			String recordUrl, ClientConvertible convertible) {
-		this.baseUrl = baseUrl;
-		this.recordUrl = recordUrl;
 
 		return factorUsingConvertible(convertible);
 	}

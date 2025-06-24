@@ -1,5 +1,5 @@
 /*
- * Copyright 2019, 2022 Uppsala University Library
+ * Copyright 2019, 2022, 2025 Uppsala University Library
  * Copyright 2022, 2023 Olov McKie
  * 
  * This file is part of Cora.
@@ -160,9 +160,12 @@ public class BasicClientDataFactoryTest {
 	@Test
 	public void testFactorResourceLinkUsingNameInData() {
 		ClientDataResourceLink factoredDataResourceLink = dataFactory
-				.factorResourceLinkUsingNameInDataAndMimeType(nameInData, "someMimeType");
+				.factorResourceLinkUsingNameInDataAndTypeAndIdAndMimeType(nameInData, recordType,
+						recordId, "someMimeType");
 		assertTrue(factoredDataResourceLink instanceof BasicClientDataResourceLink);
 		assertEquals(factoredDataResourceLink.getNameInData(), nameInData);
+		assertEquals(factoredDataResourceLink.getType(), recordType);
+		assertEquals(factoredDataResourceLink.getId(), recordId);
 		assertEquals(factoredDataResourceLink.getMimeType(), "someMimeType");
 	}
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015, 2022, 2023 Uppsala University Library
+ * Copyright 2015, 2022, 2023, 2025 Uppsala University Library
  *
  * This file is part of Cora.
  *
@@ -33,8 +33,11 @@ import se.uu.ub.cora.json.parser.org.OrgJsonParser;
 
 public class JsonToBasicClientDataConverterFactoryImp implements JsonToClientDataConverterFactory {
 
+	private static final int NUM_OF_RESOURCELINK_CHILDREN = 3;
+
 	@Override
 	public JsonToClientDataConverter factorUsingString(String jsonString) {
+
 		JsonParser jsonParser = new OrgJsonParser();
 		JsonObject json = jsonParser.parseStringAsObject(jsonString);
 
@@ -54,16 +57,8 @@ public class JsonToBasicClientDataConverterFactoryImp implements JsonToClientDat
 		if (isRecord(json)) {
 			return createJsonToClientDataRecordConverter(json);
 		}
-		if (isRecordGroup(json)) {
-			return JsonToBasicClientDataRecordGroupConverter.forJsonObject(json);
-		}
-		if (isGroup(json)) {
-			return createConverterForGroupOrLink(json);
-		}
-		if (isResourceLink(json)) {
-			return JsonToBasicClientDataResourceLinkConverter
-					.usingActionLinkConverterFactoryforJsonObject(
-							createActionLinkConverterFactory(), json);
+		if (hasChildren(json)) {
+			return determineElementWithChildrenAndReturnConverter(json);
 		}
 		if (isAtomicData(json)) {
 			return JsonToBasicClientDataAtomicConverter.forJsonObject(json);
@@ -72,6 +67,23 @@ public class JsonToBasicClientDataConverterFactoryImp implements JsonToClientDat
 			return createJsonToClientDataAuthenticationConverter(json);
 		}
 		return JsonToBasicClientDataAttributeConverter.forJsonObject(json);
+	}
+
+	private JsonToClientDataConverter determineElementWithChildrenAndReturnConverter(
+			JsonObject json) {
+		if (isRecordGroup(json)) {
+			return JsonToBasicClientDataRecordGroupConverter.forJsonObject(json);
+		}
+		if (isResourceLink(json)) {
+			return JsonToBasicClientDataResourceLinkConverter
+					.usingActionLinkConverterFactoryforJsonObject(
+							createActionLinkConverterFactory(), json);
+		}
+		if (isRecordLink(json)) {
+			return JsonToBasicClientDataRecordLinkConverter
+					.forJsonObject(createActionLinkConverterFactory(), json);
+		}
+		return JsonToBasicClientDataGroupConverter.forJsonObject(json);
 	}
 
 	private boolean isDataList(JsonObject json) {
@@ -116,10 +128,7 @@ public class JsonToBasicClientDataConverterFactoryImp implements JsonToClientDat
 	}
 
 	private boolean isRecordGroup(JsonObject jsonObject) {
-		if (isGroup(jsonObject)) {
-			return recordInfoExists(jsonObject);
-		}
-		return false;
+		return recordInfoExists(jsonObject);
 	}
 
 	private boolean recordInfoExists(JsonObject jsonObject) {
@@ -127,23 +136,15 @@ public class JsonToBasicClientDataConverterFactoryImp implements JsonToClientDat
 		return foundNames.contains("recordInfo");
 	}
 
-	private JsonToClientDataConverter createConverterForGroupOrLink(JsonObject jsonObject) {
-		List<String> foundNames = extractChildNames(jsonObject);
-		if (isRecordLink(foundNames)) {
-			JsonToBasicClientDataActionLinkConverterFactory actionLinkconverterFactory = JsonToBasicClientDataActionLinkConverterFactoryImp
-					.usingJsonToClientDataConverterFactory(this);
-			return JsonToBasicClientDataRecordLinkConverter
-					.forJsonObject(actionLinkconverterFactory, jsonObject);
-		}
-
-		return JsonToBasicClientDataGroupConverter.forJsonObject(jsonObject);
+	private boolean isResourceLink(JsonObject json) {
+		List<String> foundNames = extractChildNames(json);
+		return foundNames.size() == NUM_OF_RESOURCELINK_CHILDREN
+				&& foundNames.contains("linkedRecordType") && foundNames.contains("linkedRecordId")
+				&& foundNames.contains("mimeType");
 	}
 
-	private boolean isResourceLink(JsonObject jsonObject) {
-		return jsonObject.containsKey("name") && jsonObject.containsKey("mimeType");
-	}
-
-	private boolean isRecordLink(List<String> foundNames) {
+	private boolean isRecordLink(JsonObject json) {
+		List<String> foundNames = extractChildNames(json);
 		return correctChildrenForLink(foundNames);
 	}
 
@@ -165,7 +166,7 @@ public class JsonToBasicClientDataConverterFactoryImp implements JsonToClientDat
 		return jsonObject.containsKey("value");
 	}
 
-	private boolean isGroup(JsonObject jsonObject) {
+	private boolean hasChildren(JsonObject jsonObject) {
 		return jsonObject.containsKey("children");
 	}
 

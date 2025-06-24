@@ -1,5 +1,5 @@
 /*
- * Copyright 2019, 2022 Uppsala University Library
+ * Copyright 2019, 2022, 2025 Uppsala University Library
  * Copyright 2022, 2023 Olov McKie
  * 
  * This file is part of Cora.
@@ -99,9 +99,10 @@ public class BasicClientDataFactory implements ClientDataFactory {
 	}
 
 	@Override
-	public ClientDataResourceLink factorResourceLinkUsingNameInDataAndMimeType(String nameInData,
-			String mimeType) {
-		return BasicClientDataResourceLink.withNameInDataAndMimeType(nameInData, mimeType);
+	public ClientDataResourceLink factorResourceLinkUsingNameInDataAndTypeAndIdAndMimeType(
+			String nameInData, String recordType, String recordId, String mimeType) {
+		return BasicClientDataResourceLink.withNameInDataAndTypeAndIdAndMimeType(nameInData,
+				recordType, recordId, mimeType);
 	}
 
 	@Override
