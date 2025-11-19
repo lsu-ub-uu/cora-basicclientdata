@@ -23,6 +23,7 @@ import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.testng.annotations.BeforeMethod;
@@ -55,7 +56,7 @@ public class JsonToBasicClientDataRecordConverterTest {
 	}
 
 	@Test
-	public void testFactoryIsSentAlong() throws Exception {
+	public void testFactoryIsSentAlong() {
 
 		JsonObject jsonObject = (JsonObject) jsonParser.parseString("{\"record\":\"record\"}");
 
@@ -67,7 +68,7 @@ public class JsonToBasicClientDataRecordConverterTest {
 
 	@Test(expectedExceptions = JsonParseException.class, expectedExceptionsMessageRegExp = ""
 			+ "Error parsing jsonRecord: Record data must contain key: record")
-	public void testNotARecordString() throws Exception {
+	public void testNotARecordString() {
 		parseStringAndCreateConverter("{\"not\":\"record\"}");
 	}
 
@@ -81,13 +82,13 @@ public class JsonToBasicClientDataRecordConverterTest {
 
 	@Test(expectedExceptions = JsonParseException.class, expectedExceptionsMessageRegExp = ""
 			+ "Error parsing jsonRecord: Not an object")
-	public void testRecordIsNotAnObject() throws Exception {
+	public void testRecordIsNotAnObject() {
 		parseStringAndCreateConverter("{\"record\":\"record\"}");
 	}
 
 	@Test(expectedExceptions = JsonParseException.class, expectedExceptionsMessageRegExp = ""
 			+ "Error parsing jsonRecord: Record data must contain child with key: data")
-	public void testRecordDoesNotContainData() throws Exception {
+	public void testRecordDoesNotContainData() {
 		String json = "{\"record\":{";
 		json += "\"notData\":\"notData\"";
 		json += "}}";
@@ -96,7 +97,7 @@ public class JsonToBasicClientDataRecordConverterTest {
 
 	@Test(expectedExceptions = JsonParseException.class, expectedExceptionsMessageRegExp = ""
 			+ "Error parsing jsonRecord: Not an object")
-	public void testRecordDataNotAnObject() throws Exception {
+	public void testRecordDataNotAnObject() {
 		String json = "{\"record\":{";
 		json += "\"data\":\"notData\"";
 		json += ",\"actionLinks\":\"noActionLink\"";
@@ -106,7 +107,7 @@ public class JsonToBasicClientDataRecordConverterTest {
 
 	@Test(expectedExceptions = JsonParseException.class, expectedExceptionsMessageRegExp = ""
 			+ "Error parsing jsonRecord: Record data must contain only key: record")
-	public void testRecordExtraKey() throws Exception {
+	public void testRecordExtraKey() {
 		String json = """
 				{
 					"record":{
@@ -122,18 +123,9 @@ public class JsonToBasicClientDataRecordConverterTest {
 	}
 
 	@Test(expectedExceptions = JsonParseException.class, expectedExceptionsMessageRegExp = ""
-			+ "Error parsing jsonRecord: Record data must contain child with key: actionLinks")
-	public void testRecordNoActionLinks() throws Exception {
-		String json = "{\"record\":{\"data\":{\"name\":\"groupNameInData\",\"children\":[]},"
-				+ "\"permissions\":{\"read\":[\"librisId\"],\"write\":[\"librisId\",\"rootOrganisation\"]}}}";
-
-		parseStringAndCreateConverter(json);
-	}
-
-	@Test(expectedExceptions = JsonParseException.class, expectedExceptionsMessageRegExp = ""
 			+ "Error parsing jsonRecord: Record data must contain keys: data and actionLinks "
 			+ "and possibly permissions and otherProtocols")
-	public void testRecordExtraKeyOnSecondLevel() throws Exception {
+	public void testRecordExtraKeyOnSecondLevel() {
 		String json = """
 				{
 				  "record": {
@@ -169,7 +161,7 @@ public class JsonToBasicClientDataRecordConverterTest {
 	@Test(expectedExceptions = JsonParseException.class, expectedExceptionsMessageRegExp = ""
 			+ "Error parsing jsonRecord: Record data must contain keys: data and actionLinks "
 			+ "and possibly permissions and otherProtocols")
-	public void testMaxNumberOfKeysOnSecondLevelNoPermissions() throws Exception {
+	public void testMaxNumberOfKeysOnSecondLevelNoPermissions() {
 		String json = """
 				  {"record": {
 				    "data": {
@@ -197,7 +189,7 @@ public class JsonToBasicClientDataRecordConverterTest {
 	}
 
 	@Test
-	public void providedFactoryIsUsedForActionLinks() throws Exception {
+	public void providedFactoryIsUsedForActionLinks() {
 		setActionLinkConvereterToReturnClientDataGroup();
 		String json = """
 				{
@@ -220,7 +212,7 @@ public class JsonToBasicClientDataRecordConverterTest {
 		ClientDataRecord clientDataRecord = (ClientDataRecord) parseStringAndCreateConverter(json);
 
 		JsonObject actionLinkAsJsonObject = (JsonObject) actionLinkConverterFactory.MCR
-				.getValueForMethodNameAndCallNumberAndParameterName("factor", 0, "jsonObject");
+				.getParameterForMethodAndCallNumberAndParameter("factor", 0, "jsonObject");
 		String expectedJson = """
 				{\
 				"requestMethod":"GET",\
@@ -241,11 +233,43 @@ public class JsonToBasicClientDataRecordConverterTest {
 	private void setActionLinkConvereterToReturnClientDataGroup() {
 		ClientDataRecordGroupSpy clientDataRecordGroup = new ClientDataRecordGroupSpy();
 
-		JsonToClientDataConverterSpy jsonToDataConverter = new JsonToClientDataConverterSpy();
-		jsonToDataConverter.MRV.setDefaultReturnValuesSupplier("toInstance",
-				() -> clientDataRecordGroup);
-		factory.MRV.setDefaultReturnValuesSupplier("factorUsingJsonObject",
-				() -> jsonToDataConverter);
+		JsonToClientDataConverterSpy converter = new JsonToClientDataConverterSpy();
+		converter.MRV.setDefaultReturnValuesSupplier("toInstance", () -> clientDataRecordGroup);
+		factory.MRV.setDefaultReturnValuesSupplier("factorUsingJsonObject", () -> converter);
+	}
+
+	@Test
+	public void testRecordNoActionLinks() {
+		setActionLinkConvereterToReturnClientDataGroup();
+		String json = """
+				{
+				"record":{
+				"data":{
+				"name":"groupNameInData"
+				, "children":[]
+				}
+				}
+				}""";
+
+		ClientDataRecord clientDataRecord = (ClientDataRecord) parseStringAndCreateConverter(json);
+
+		assertNoActionsAddedToTheRecord(clientDataRecord);
+	}
+
+	private void assertNoActionsAddedToTheRecord(ClientDataRecord clientDataRecord) {
+		assertEquals(clientDataRecord.getActionLink(ClientAction.READ), Optional.empty());
+		assertEquals(clientDataRecord.getActionLink(ClientAction.UPDATE), Optional.empty());
+		assertEquals(clientDataRecord.getActionLink(ClientAction.DELETE), Optional.empty());
+		assertEquals(clientDataRecord.getActionLink(ClientAction.READ_INCOMING_LINKS),
+				Optional.empty());
+		assertEquals(clientDataRecord.getActionLink(ClientAction.CREATE), Optional.empty());
+		assertEquals(clientDataRecord.getActionLink(ClientAction.LIST), Optional.empty());
+		assertEquals(clientDataRecord.getActionLink(ClientAction.SEARCH), Optional.empty());
+		assertEquals(clientDataRecord.getActionLink(ClientAction.UPLOAD), Optional.empty());
+		assertEquals(clientDataRecord.getActionLink(ClientAction.INDEX), Optional.empty());
+		assertEquals(clientDataRecord.getActionLink(ClientAction.VALIDATE), Optional.empty());
+		assertEquals(clientDataRecord.getActionLink(ClientAction.BATCH_INDEX), Optional.empty());
+		assertEquals(clientDataRecord.getActionLink(ClientAction.RENEW), Optional.empty());
 	}
 
 	@Test
@@ -283,7 +307,7 @@ public class JsonToBasicClientDataRecordConverterTest {
 	}
 
 	@Test
-	public void testOtherProtocols() throws Exception {
+	public void testOtherProtocols() {
 		setActionLinkConvereterToReturnClientDataGroup();
 
 		String json = """

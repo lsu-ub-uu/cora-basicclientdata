@@ -85,6 +85,58 @@ public class JsonToBasicClientDataRecordConverter implements JsonToClientDataCon
 		return clientDataRecord;
 	}
 
+	private void validateOnlyRecordKeyAtTopLevel() {
+		if (!json.containsKey("record")) {
+			throw new JsonParseException("Record data must contain key: record");
+		}
+		if (json.keySet().size() != 1) {
+			throw new JsonParseException("Record data must contain only key: record");
+		}
+	}
+
+	private void validateOnlyCorrectKeysAtSecondLevel() {
+		if (moreKeysThanAllowed() || maxNumOfKeysButPermissionsIsMissing()) {
+			throw new JsonParseException(
+					"Record data must contain keys: data and actionLinks and possibly "
+							+ "permissions and otherProtocols");
+
+		}
+		if (!jsonRecord.containsKey("data")) {
+			throw new JsonParseException("Record data must contain child with key: data");
+		}
+	}
+
+	private boolean moreKeysThanAllowed() {
+		return jsonRecord.keySet().size() > NUM_OF_ALLOWED_KEYS;
+	}
+
+	private boolean maxNumOfKeysButPermissionsIsMissing() {
+		return jsonRecord.keySet().size() == NUM_OF_ALLOWED_KEYS
+				&& !jsonRecord.containsKey(PERMISSIONS);
+	}
+
+	private ClientDataRecordGroup convertDataRecordGroup() {
+		JsonObject jsonDataObject = jsonRecord.getValueAsJsonObject("data");
+		JsonToClientDataConverter converter = factory.factorUsingJsonObject(jsonDataObject);
+		return (ClientDataRecordGroup) converter.toInstance();
+	}
+
+	private void possiblyAddActionLinks() {
+		if (jsonRecord.containsKey(ACTION_LINKS)) {
+			JsonObject actionLinks = jsonRecord.getValueAsJsonObject(ACTION_LINKS);
+			for (Map.Entry<String, JsonValue> actionLinkEntry : actionLinks.entrySet()) {
+				convertAndAddActionLink(actionLinkEntry);
+			}
+		}
+	}
+
+	private void convertAndAddActionLink(Map.Entry<String, JsonValue> actionLinkEntry) {
+		JsonToBasicClientDataActionLinkConverter actionLinkConverter = actionLinkConverterFactory
+				.factor((JsonObject) actionLinkEntry.getValue());
+		ClientActionLink actionLink = actionLinkConverter.toInstance();
+		clientDataRecord.addActionLink(actionLink);
+	}
+
 	private void possiblyAddPermissions() {
 		if (jsonRecord.containsKey(PERMISSIONS)) {
 			JsonObject permissions = jsonRecord.getValueAsJsonObject(PERMISSIONS);
@@ -93,11 +145,36 @@ public class JsonToBasicClientDataRecordConverter implements JsonToClientDataCon
 		}
 	}
 
+	private void possiblyAddWritePermissions(JsonObject permissions) {
+		if (permissions.containsKey("write")) {
+			JsonArray writePermissions = permissions.getValueAsJsonArray("write");
+			addWritePermissions(writePermissions);
+		}
+	}
+
+	private void addWritePermissions(JsonArray writePermissions) {
+		for (JsonValue value : writePermissions) {
+			String permission = getJsonValueAsString((JsonString) value);
+			clientDataRecord.addWritePermission(permission);
+		}
+	}
+
 	private void possiblyAddReadPermissions(JsonObject permissions) {
 		if (permissions.containsKey("read")) {
 			JsonArray readPermissions = permissions.getValueAsJsonArray("read");
 			addReadPermissions(readPermissions);
 		}
+	}
+
+	private void addReadPermissions(JsonArray readPermissions) {
+		for (JsonValue value : readPermissions) {
+			String permission = getJsonValueAsString((JsonString) value);
+			clientDataRecord.addReadPermission(permission);
+		}
+	}
+
+	private String getJsonValueAsString(JsonString value) {
+		return value.getStringValue();
 	}
 
 	private void possiblyOtherProtocols() {
@@ -130,84 +207,6 @@ public class JsonToBasicClientDataRecordConverter implements JsonToClientDataCon
 
 	private String readPropertyValue(Entry<String, JsonValue> propertiesEntry) {
 		return ((JsonString) propertiesEntry.getValue()).getStringValue();
-	}
-
-	private void addReadPermissions(JsonArray readPermissions) {
-		for (JsonValue value : readPermissions) {
-			String permission = getJsonValueAsString((JsonString) value);
-			clientDataRecord.addReadPermission(permission);
-		}
-	}
-
-	private String getJsonValueAsString(JsonString value) {
-		return value.getStringValue();
-	}
-
-	private void possiblyAddWritePermissions(JsonObject permissions) {
-		if (permissions.containsKey("write")) {
-			JsonArray writePermissions = permissions.getValueAsJsonArray("write");
-			addWritePermissions(writePermissions);
-		}
-	}
-
-	private void addWritePermissions(JsonArray writePermissions) {
-		for (JsonValue value : writePermissions) {
-			String permission = getJsonValueAsString((JsonString) value);
-			clientDataRecord.addWritePermission(permission);
-		}
-	}
-
-	private void validateOnlyRecordKeyAtTopLevel() {
-		if (!json.containsKey("record")) {
-			throw new JsonParseException("Record data must contain key: record");
-		}
-		if (json.keySet().size() != 1) {
-			throw new JsonParseException("Record data must contain only key: record");
-		}
-	}
-
-	private void validateOnlyCorrectKeysAtSecondLevel() {
-		if (moreKeysThanAllowed() || maxNumOfKeysButPermissionsIsMissing()) {
-			throw new JsonParseException(
-					"Record data must contain keys: data and actionLinks and possibly "
-							+ "permissions and otherProtocols");
-
-		}
-		if (!jsonRecord.containsKey("data")) {
-			throw new JsonParseException("Record data must contain child with key: data");
-		}
-		if (!jsonRecord.containsKey(ACTION_LINKS)) {
-			throw new JsonParseException("Record data must contain child with key: actionLinks");
-		}
-	}
-
-	private boolean moreKeysThanAllowed() {
-		return jsonRecord.keySet().size() > NUM_OF_ALLOWED_KEYS;
-	}
-
-	private boolean maxNumOfKeysButPermissionsIsMissing() {
-		return jsonRecord.keySet().size() == NUM_OF_ALLOWED_KEYS
-				&& !jsonRecord.containsKey(PERMISSIONS);
-	}
-
-	private ClientDataRecordGroup convertDataRecordGroup() {
-		JsonObject jsonDataObject = jsonRecord.getValueAsJsonObject("data");
-		JsonToClientDataConverter converter = factory.factorUsingJsonObject(jsonDataObject);
-		return (ClientDataRecordGroup) converter.toInstance();
-	}
-
-	private void possiblyAddActionLinks() {
-		JsonObject actionLinks = jsonRecord.getValueAsJsonObject(ACTION_LINKS);
-		for (Map.Entry<String, JsonValue> actionLinkEntry : actionLinks.entrySet()) {
-			convertAndAddActionLink(actionLinkEntry);
-		}
-	}
-
-	private void convertAndAddActionLink(Map.Entry<String, JsonValue> actionLinkEntry) {
-		JsonToBasicClientDataActionLinkConverter actionLinkConverter = actionLinkConverterFactory
-				.factor((JsonObject) actionLinkEntry.getValue());
-		ClientActionLink actionLink = actionLinkConverter.toInstance();
-		clientDataRecord.addActionLink(actionLink);
 	}
 
 	public JsonToClientDataConverterFactory onlyForTestGetConverterFactory() {
