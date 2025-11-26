@@ -1,5 +1,5 @@
 /*
- * Copyright 2015, 2022 Uppsala University Library
+ * Copyright 2015, 2022, 2025 Uppsala University Library
  *
  * This file is part of Cora.
  *
@@ -108,6 +108,11 @@ public final class BasicClientDataAtomic implements ClientDataAtomic {
 	}
 
 	@Override
+	public void setValue(String value) {
+		this.value = value;
+	}
+
+	@Override
 	public boolean hasRepeatId() {
 		return repeatId != null && !"".equals(repeatId);
 	}
@@ -131,5 +136,4 @@ public final class BasicClientDataAtomic implements ClientDataAtomic {
 		}
 		return Optional.empty();
 	}
-
 }

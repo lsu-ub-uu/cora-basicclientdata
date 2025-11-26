@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Uppsala University Library
+ * Copyright 2015, 2025 Uppsala University Library
  *
  * This file is part of Cora.
  *
@@ -21,14 +21,27 @@ package se.uu.ub.cora.clientbasicdata.data;
 
 import static org.testng.Assert.assertEquals;
 
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 public class BasicClientDataAttributeTest {
+	private BasicClientDataAttribute dataAttribute;
+
+	@BeforeMethod
+	public void beforeMethod() {
+		dataAttribute = BasicClientDataAttribute.withNameInDataAndValue("nameInData", "value");
+	}
+
 	@Test
 	public void testInit() {
-		BasicClientDataAttribute dataAttribute = BasicClientDataAttribute
-				.withNameInDataAndValue("nameInData", "value");
 		assertEquals(dataAttribute.getNameInData(), "nameInData");
 		assertEquals(dataAttribute.getValue(), "value");
+	}
+
+	@Test
+	public void testSetValue() {
+		dataAttribute.setValue("someValue");
+
+		assertEquals(dataAttribute.getValue(), "someValue");
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015, 2016, 2019 Uppsala University Library
+ * Copyright 2015, 2016, 2019, 2025 Uppsala University Library
  *
  * This file is part of Cora.
  *
@@ -148,13 +148,13 @@ public class BasicClientDataRecordLinkTest {
 	}
 
 	@Test
-	public void testHasReadDatasNoReadData() throws Exception {
+	public void testHasReadDatasNoReadData() {
 		assertFalse(recordLink.hasReadAction());
 
 	}
 
 	@Test
-	public void testHasReadDatasReadData() throws Exception {
+	public void testHasReadDatasReadData() {
 		ClientActionLink actionLinkSpy = new ClientActionLinkSpy();
 		recordLink.addActionLink(actionLinkSpy);
 
@@ -163,14 +163,14 @@ public class BasicClientDataRecordLinkTest {
 	}
 
 	@Test
-	public void testGetActionLinkNoActionAdded() throws Exception {
+	public void testGetActionLinkNoActionAdded() {
 		Optional<ClientActionLink> actionLink = recordLink.getActionLink(ClientAction.READ);
 
 		assertTrue(actionLink.isEmpty());
 	}
 
 	@Test
-	public void testGetActionLink() throws Exception {
+	public void testGetActionLink() {
 		ClientActionLink actionLinkSpy = new ClientActionLinkSpy();
 
 		recordLink.addActionLink(actionLinkSpy);
@@ -181,27 +181,33 @@ public class BasicClientDataRecordLinkTest {
 	}
 
 	@Test
-	public void testGetLinkedRecordType() throws Exception {
+	public void testGetLinkedRecordType() {
 		assertEquals(recordLink.getLinkedRecordType(), "myLinkedRecordType");
 	}
 
 	@Test(expectedExceptions = ClientDataMissingException.class)
-	public void testGetLinkedRecordTypeMissing() throws Exception {
+	public void testGetLinkedRecordTypeMissing() {
 		BasicClientDataRecordLink withNameInData = BasicClientDataRecordLink
 				.withNameInData("nameInData");
 		withNameInData.getLinkedRecordType();
 	}
 
 	@Test
-	public void testGetLinkedRecordId() throws Exception {
+	public void testGetLinkedRecordId() {
 		assertEquals(recordLink.getLinkedRecordId(), "myLinkedRecordId");
 	}
 
 	@Test(expectedExceptions = ClientDataMissingException.class)
-	public void testGetLinkedRecordIdMissing() throws Exception {
+	public void testGetLinkedRecordIdMissing() {
 		BasicClientDataRecordLink withNameInData = BasicClientDataRecordLink
 				.withNameInData("nameInData");
 		withNameInData.getLinkedRecordId();
 	}
 
+	@Test
+	public void testSetLinkedRecordId() {
+		recordLink.setLinkedRecordId("someId");
+
+		assertEquals(recordLink.getLinkedRecordId(), "someId");
+	}
 }

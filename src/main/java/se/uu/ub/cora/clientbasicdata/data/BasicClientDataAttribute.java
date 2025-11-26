@@ -1,5 +1,5 @@
 /*
- * Copyright 2015, 2019 Uppsala University Library
+ * Copyright 2015, 2019, 2025 Uppsala University Library
  *
  * This file is part of Cora.
  *
@@ -45,4 +45,8 @@ public final class BasicClientDataAttribute implements ClientDataAttribute {
 		return value;
 	}
 
+	@Override
+	public void setValue(String value) {
+		this.value = value;
+	}
 }

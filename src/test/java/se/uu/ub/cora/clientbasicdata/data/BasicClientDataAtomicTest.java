@@ -1,5 +1,5 @@
 /*
- * Copyright 2015, 2022 Uppsala University Library
+ * Copyright 2015, 2022, 2025 Uppsala University Library
  *
  * This file is part of Cora.
  *
@@ -66,18 +66,25 @@ public class BasicClientDataAtomicTest {
 	}
 
 	@Test
-	public void testHasRepeatIdNotSet() throws Exception {
+	public void testSetValue() {
+		dataAtomic.setValue("someValue");
+
+		assertEquals(dataAtomic.getValue(), "someValue");
+	}
+
+	@Test
+	public void testHasRepeatIdNotSet() {
 		assertFalse(dataAtomic.hasRepeatId());
 	}
 
 	@Test
-	public void testHasRepeatIdSetToEmpty() throws Exception {
+	public void testHasRepeatIdSetToEmpty() {
 		dataAtomic.setRepeatId("");
 		assertFalse(dataAtomic.hasRepeatId());
 	}
 
 	@Test
-	public void testHasRepeatIdSet() throws Exception {
+	public void testHasRepeatIdSet() {
 		dataAtomic.setRepeatId("3");
 		assertTrue(dataAtomic.hasRepeatId());
 	}
@@ -123,14 +130,14 @@ public class BasicClientDataAtomicTest {
 	}
 
 	@Test
-	public void testGetAttributeValueNoAttribute() throws Exception {
+	public void testGetAttributeValueNoAttribute() {
 		Optional<String> attributeValue = dataAtomic.getAttributeValue("attributeNameInData");
 
 		assertTrue(attributeValue.isEmpty());
 	}
 
 	@Test
-	public void testGetAttributeValueAttributeExists() throws Exception {
+	public void testGetAttributeValueAttributeExists() {
 		dataAtomic.addAttributeByIdWithValue("someAttributeName3", "someValue");
 		dataAtomic.addAttributeByIdWithValue("someAttributeName2", "someValue");
 		dataAtomic.addAttributeByIdWithValue("someAttributeName", "someValue");

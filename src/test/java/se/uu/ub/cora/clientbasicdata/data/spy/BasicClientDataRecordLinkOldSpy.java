@@ -69,4 +69,10 @@ public class BasicClientDataRecordLinkOldSpy extends BasicClientDataGroupOldSpy
 		return Optional.empty();
 	}
 
+	@Override
+	public void setLinkedRecordId(String value) {
+		// TODO Auto-generated method stub
+
+	}
+
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015, 2016, 2019 Uppsala University Library
+ * Copyright 2015, 2016, 2019, 2025 Uppsala University Library
  *
  * This file is part of Cora.
  *
@@ -24,6 +24,7 @@ import java.util.Optional;
 
 import se.uu.ub.cora.clientdata.ClientAction;
 import se.uu.ub.cora.clientdata.ClientActionLink;
+import se.uu.ub.cora.clientdata.ClientDataAtomic;
 import se.uu.ub.cora.clientdata.ClientDataChild;
 import se.uu.ub.cora.clientdata.ClientDataGroup;
 import se.uu.ub.cora.clientdata.ClientDataRecordLink;
@@ -86,6 +87,12 @@ public final class BasicClientDataRecordLink extends BasicClientDataGroup
 	}
 
 	@Override
+	public void setLinkedRecordId(String linkedRecordId) {
+		ClientDataAtomic linkedId = super.getFirstDataAtomicWithNameInData(LINKED_RECORD_ID);
+		linkedId.setValue(linkedRecordId);
+	}
+
+	@Override
 	public void addActionLink(ClientActionLink actionLink) {
 		actions.put(actionLink.getAction(), actionLink);
 	}
@@ -97,5 +104,4 @@ public final class BasicClientDataRecordLink extends BasicClientDataGroup
 		}
 		return Optional.empty();
 	}
-
 }

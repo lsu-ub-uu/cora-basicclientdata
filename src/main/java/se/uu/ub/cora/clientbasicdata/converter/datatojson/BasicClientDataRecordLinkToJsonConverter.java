@@ -34,15 +34,16 @@ public class BasicClientDataRecordLinkToJsonConverter extends BasicClientDataGro
 	ClientDataRecordLink dataRecordLink;
 
 	public static BasicClientDataRecordLinkToJsonConverter usingConverterFactoryAndJsonBuilderFactoryAndDataRecordLinkAndBaseUrl(
-			ClientDataToJsonConverterFactory converterFactory, JsonBuilderFactory jsonBuilderFactory,
-			ClientDataRecordLink dataRecordLink, String baseURL) {
-		return new BasicClientDataRecordLinkToJsonConverter(converterFactory, dataRecordLink, baseURL,
-				jsonBuilderFactory);
+			ClientDataToJsonConverterFactory converterFactory,
+			JsonBuilderFactory jsonBuilderFactory, ClientDataRecordLink dataRecordLink,
+			String baseURL) {
+		return new BasicClientDataRecordLinkToJsonConverter(converterFactory, dataRecordLink,
+				baseURL, jsonBuilderFactory);
 	}
 
-	private BasicClientDataRecordLinkToJsonConverter(ClientDataToJsonConverterFactory converterFactory,
-			ClientDataRecordLink dataRecordLink, String baseURL,
-			JsonBuilderFactory jsonBuilderFactory) {
+	private BasicClientDataRecordLinkToJsonConverter(
+			ClientDataToJsonConverterFactory converterFactory, ClientDataRecordLink dataRecordLink,
+			String baseURL, JsonBuilderFactory jsonBuilderFactory) {
 		super(converterFactory, jsonBuilderFactory, (ClientDataGroup) dataRecordLink);
 		this.dataRecordLink = dataRecordLink;
 		this.baseURL = baseURL;
